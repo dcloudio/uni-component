@@ -1,0 +1,43 @@
+<template>
+	<div>
+		<animation-view class="animation" :path="path" :loop="loop" :autoplay="autoplay" :action="action"
+			:hidden="hidden" @bindended="lottieEnd">
+		</animation-view>
+		<button @click="playLottie" type="primary">{{status}}lottie动画</button>
+	</div>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				path: 'https://b.bdstatic.com/miniapp/images/lottie_example_one.json',
+				loop: false,
+				autoplay: false,
+				action: 'play',
+				hidden: false,
+				status: '暂停'
+			}
+		},
+		methods: {
+			playLottie() {
+				this.action = ('play' !== this.action) ? 'play' : 'pause';
+				this.status = ('pause' === this.action) ? '播放' : '暂停';
+			},
+			lottieEnd() {
+				this.status = '播放';
+				this.action = 'stop';
+				console.log('动画播放结束');
+			}
+		}
+	}
+</script>
+
+<style>
+	.animation {
+		width: 750rpx;
+		height: 300rpx;
+		background-color: #FF0000;
+		margin-bottom: 20px;
+	}
+</style>
