@@ -80,15 +80,15 @@
 		watch: {
 			"path": {
 				handler(newValue: string, oldValue: string) {
-					this.path = newValue
-					this.playAnimation()
+					if (this.autoplay) {
+						this.playAnimation()
+					}
 				},
 				immediate: false //创建时是否通过此方法更新属性，默认值为false  
 			},
 			"loop": {
 				handler(newValue: boolean, oldValue: boolean) {
-					this.loop = newValue
-					if (this.loop) {
+					if (newValue) {
 						this.$el.loopMode = LottieLoopMode.loop
 					} else {
 						this.$el.loopMode = LottieLoopMode.playOnce
@@ -98,8 +98,7 @@
 			},
 			"autoplay": {
 				handler(newValue: boolean, oldValue: boolean) {
-					this.autoplay = newValue
-					if (this.autoplay) {
+					if (newValue) {
 						this.playAnimation()
 					}
 				},
@@ -108,9 +107,7 @@
 			"action": {
 				handler(newValue: string, oldValue: string) {
 					const action = newValue
-
 					if (action == "play" || action == "pause" || action == "stop") {
-						this.action = action
 						switch (action) {
 							case "play":
 								this.playAnimation()
@@ -133,7 +130,6 @@
 
 			"hidden": {
 				handler(newValue: boolean, oldValue: boolean) {
-					this.hidden = newValue
 					this.$el.isHidden = this.hidden
 				},
 				immediate: false //创建时是否通过此方法更新属性，默认值为false  
