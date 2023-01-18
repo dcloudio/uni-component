@@ -49,14 +49,14 @@
                 default: ""
             },
             /**
-             * 动画是否循环播放
+             * 动画是否自动播放
              */
             "autoplay": {
                 type: Boolean,
                 default: false
             },
             /**
-             * 动画是否自动播放
+             * 动画是否循环播放
              */
             "loop": {
                 type: Boolean,
