@@ -12,7 +12,7 @@
 		"HBuilderX": "^3.7.0"
 	},
 	"dcloudext": {
-		"type": "uts",
+		"type": "component-uts",
 		"sale": {
 			"regular": {
 				"price": "0.00"
