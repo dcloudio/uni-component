@@ -1,7 +1,7 @@
 {
     "name" : "uni-component",
     "appid" : "__UNI__0094991",
-    "description" : "",
+    "description" : "uts组件示例",
     "versionName" : "1.0.0",
     "versionCode" : "100",
     "transformPx" : false,
