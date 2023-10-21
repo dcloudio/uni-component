@@ -20,22 +20,22 @@
                 this.comp = com
             }
 
-        override onAnimationStart(animation: Animator | null) {}
+        override onAnimationStart(animation: Animator) {}
 
-        override onAnimationEnd(animation: Animator | null, isReverse: Boolean) {
+        override onAnimationEnd(animation: Animator, isReverse: Boolean) {
             this.comp.$emit("bindended")
         }
 
-        override onAnimationEnd(animation: Animator | null) {}
+        override onAnimationEnd(animation: Animator) {}
 
-        override onAnimationCancel(animation: Animator | null) {}
+        override onAnimationCancel(animation: Animator) {}
 
-        override onAnimationRepeat(animation: Animator | null) {}
+        override onAnimationRepeat(animation: Animator) {}
     }
 
     //原生提供以下属性或方法的实现  
     export default {
-        name: "animation-view",
+        name: "uts-animation-view",
         /**
          * 当播放到末尾时触发 ended 事件（自然播放结束会触发回调，循环播放结束及手动停止动画不会触发）
          */
@@ -56,7 +56,7 @@
                 default: false
             },
             /**
-             * 动画是否循环播放
+			 * 动画是否循环播放
              */
             "loop": {
                 type: Boolean,

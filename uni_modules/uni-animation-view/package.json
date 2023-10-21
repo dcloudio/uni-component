@@ -9,7 +9,7 @@
 	],
 	"repository": "",
 	"engines": {
-		"HBuilderX": "^3.7.0"
+		"HBuilderX": "^3.94"
 	},
 	"dcloudext": {
 		"type": "component-uts",
