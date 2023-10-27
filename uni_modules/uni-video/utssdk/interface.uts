@@ -1,6 +1,3 @@
-import { ComponentPublicInstance } from 'vue'
-
-export type CreateVideoContext = (videoId: VideoIdString, component?: ComponentPublicInstance | null) => VideoContext | null;
 
 export type Danmu = {
   /**
@@ -146,26 +143,4 @@ export interface VideoContext {
    * @uniVueVersion 2,3
    */
   exitFullScreen(): void;
-}
-
-export interface Uni {
-  /**
-   * 创建并返回 video 上下文 videoContext 对象
-   * @description 创建并返回 video 上下文 videoContext 对象
-   * @uniPlatform {
-   *   "app": {
-   *     "android": {
-   *       "osVer": "4.4",
-   *       "uniVer": "√",
-   *       "unixVer": "√"
-   *     }
-   *   }
-   * }
-   * @uniVueVersion 2,3
-   * @return {VideoContext} 视频对象
-   *
-   * @tutorial http://uniapp.dcloud.io/api/media/video-context?id=createVideoContext
-   *
-   */
-  createVideoContext(videoId : string | HBuilderX.VideoIdString, component?: ComponentPublicInstance | null) : VideoContext | null
 }

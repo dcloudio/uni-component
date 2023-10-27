@@ -1,0 +1,70 @@
+<template>
+  <view class="content">
+    <animation-view class="animation" :path="path" :loop="loop" :autoplay="autoplay" :action="action" :hidden="hidden"
+      @bindended="lottieEnd">
+    </animation-view>
+    <button class="button" @click="playLottie" type="primary">{{status}}lottie动画</button>
+    <button class="button" @click="changeLottie" type="primary">切换{{location}}动画</button>
+    <text class="tips">注意：uts组件插件animation-view需要使用自定义基座才能生效！</text>
+  </view>
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        path: '/uni_modules/uni-animation-view/static/lottie.json',
+        loop: false,
+        autoplay: false,
+        action: 'stop',
+        hidden: false,
+        status: '播放',
+        location: '网络'
+      }
+    },
+    methods: {
+      playLottie() {
+        this.action = ('play' !== this.action) ? 'play' : 'pause';
+        this.status = ('pause' === this.action) ? '播放' : '暂停';
+      },
+      changeLottie() {
+        this.action = 'stop';
+        this.status = '播放';
+        this.path = ('网络' === this.location) ? 'https://native-res.dcloud.net.cn/uni-app/static/lottie.json' :
+          '/uni_modules/uni-animation-view/static/lottie.json';
+        this.location = ('网络' === this.location) ? '本地' : '网络';
+        console.log('path=' + this.path);
+      },
+      lottieEnd() {
+        this.status = '播放';
+        this.action = 'stop';
+        console.log('动画播放结束');
+      }
+    }
+  }
+</script>
+
+<style>
+  .content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+  }
+
+  .animation {
+    width: 750rpx;
+    height: 300rpx;
+    background-color: #CCCCCC;
+    margin-bottom: 20px;
+  }
+
+  .button {
+    width: 640rpx;
+    margin: 10px;
+  }
+
+  .tips {
+    margin: 20px;
+    color: darkred;
+  }
+</style>

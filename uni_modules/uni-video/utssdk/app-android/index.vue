@@ -28,7 +28,7 @@
 	import { Danmu, RequestFullScreenOptions } from '../interface.uts';
 
 	export default {
-		name: "video",
+		name: "video-view",
 		data() {
 			return {
 				rootView: null as FrameLayout | null,
@@ -580,8 +580,8 @@
 		override onInfo(iMediaPlayer : IMediaPlayer | null, status : Int, extra : Int) : boolean {
 			switch (status) {
 				case MediaPlayerParams.STATE_COMPLETED:
-					if ((this.comp as VideoComponent).loop) {
-						let initialTime = (this.comp as VideoComponent).initialTime as Int;
+					if ((this.comp as VideoViewComponent).loop) {
+						let initialTime = (this.comp as VideoViewComponent).initialTime as Int;
 						if (initialTime > 0) this.playerView.seekTo(initialTime * 1000);
 						this.playerView.start();
 					}

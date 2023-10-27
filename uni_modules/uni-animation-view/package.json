@@ -1,7 +1,7 @@
 {
 	"id": "uni-animation-view",
 	"displayName": "animation-view",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "使用uts组件开发，实现animation-view组件",
 	"keywords": [
 		"animation-view",

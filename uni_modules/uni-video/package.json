@@ -5,7 +5,7 @@
   "description": "uni-video",
   "keywords": [
     "uni-video"
-],
+  ],
   "repository": "",
   "engines": {
     "HBuilderX": "^3.7.0"
@@ -32,20 +32,8 @@
   },
   "uni_modules": {
     "dependencies": [
-		"uni-framework"
-	 ],
-   "uni-ext-api": {
-      "uni": {
-        "createVideoContext": {
-          "name": "createVideoContext",
-          "app": {
-            "js": false,
-            "kotlin": true,
-            "swift": false
-          }
-        }
-      }
-    },
+      "uni-framework"
+    ],
     "encrypt": [],
     "platforms": {
       "cloud": {
@@ -58,7 +46,7 @@
           "vue3": "u"
         },
         "App": {
-          "app-android": "u",
+          "app-android": "y",
           "app-ios": "u"
         },
         "H5-mobile": {
