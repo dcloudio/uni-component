@@ -34,6 +34,18 @@
     "dependencies": [
       "uni-framework"
     ],
+    "uni-ext-api": {
+      "uni": {
+        "createVideoContext": {
+          "name": "createVideoContext",
+          "app": {
+            "js": false,
+            "kotlin": true,
+            "swift": true
+          }
+        }
+      }
+    },
     "encrypt": [],
     "platforms": {
       "cloud": {
@@ -46,7 +58,7 @@
           "vue3": "u"
         },
         "App": {
-          "app-android": "y",
+          "app-android": "u",
           "app-ios": "u"
         },
         "H5-mobile": {
