@@ -58,7 +58,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -81,7 +86,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -105,7 +115,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -128,7 +143,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -152,7 +172,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -176,7 +201,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -200,7 +230,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -224,7 +259,12 @@ export interface VideoContext {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
 	 *   "web": {
      *     "uniVer": "√",
@@ -239,7 +279,6 @@ export interface VideoContext {
 export interface Uni {
 	/**
 	 * 创建并返回 video 上下文 videoContext 对象
-	 * @description 创建并返回 video 上下文 videoContext 对象
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
@@ -251,17 +290,66 @@ export interface Uni {
      *       "osVer": "12.0",
      *       "uniVer": "√",
      *       "unixVer": "4.11"
-     *     }
+     *     },
+     *    "harmony": {
+     *      "osVer": "3.0",
+     *      "uniVer": "4.23",
+     *      "unixVer": "x"
+     *    }
 	 *   },
      *   "web": {
      *     "uniVer": "√",
      *     "unixVer": "4.0"
-     *   }
+     *   },
+		 * "mp": {
+	 *		"weixin": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"alipay": {
+	 *			"hostVer": "1.10.0",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"baidu": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"toutiao": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"lark": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"qq": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"kuaishou": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		},
+	 *		"jd": {
+	 *			"hostVer": "√",
+	 *			"uniVer": "√",
+	 *			"unixVer": "x"
+	 *		}
+	 *	}
 	 * }
 	 * @uniVueVersion 2,3
 	 * @return {VideoContext} video组件上下文对象
 	 *
-	 * @tutorial http://uniapp.dcloud.io/api/media/video-context?id=createVideoContext
+	 * @tutorial-uni-app https://uniapp.dcloud.net.cn/api/media/video-context.html#createvideocontext
+	 * @tutorial-uni-app-x https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
+	 * @tutorial https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
 	 *
 	 */
 	createVideoContext : CreateVideoContext
@@ -269,12 +357,41 @@ export interface Uni {
 
 /**
  * 通用事件
+ * 临时方案，规避组件Event接口无法直接继承UniEvent的问题
  */
 interface UniVideoEvent {
+	/**
+	 * 是否冒泡
+	 */
+	bubbles : boolean
+	/**
+	 * 是否可以取消
+	 */
+	cancelable : boolean
+	/**
+	 * 事件类型
+	 */
 	type : string
-	target : Element | null
-	currentTarget : Element | null
+	/**
+	 * 触发事件的组件
+	 */
+	target ?: UniElement | null
+	/**
+	 * 当前组件
+	 */
+	currentTarget ?: UniElement | null
+	/**
+	 * 事件发生时的时间戳
+	 */
 	timeStamp : Long
+	/**
+	 * 阻止当前事件的进一步传播
+	 */
+	stopPropagation() : void
+	/**
+	 * 阻止当前事件的默认行为
+	 */
+	preventDefault() : void
 }
 
 /**

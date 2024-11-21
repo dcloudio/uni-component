@@ -18,13 +18,17 @@
 
 	import FrameLayout from 'android.widget.FrameLayout';
 	import ViewGroup from 'android.view.ViewGroup';
+	import OnHierarchyChangeListener from 'android.view.ViewGroup.OnHierarchyChangeListener';
 	import View from 'android.view.View';
+	import WindowManager from 'android.view.WindowManager';
 	import TextUtils from 'android.text.TextUtils';
 	import JSONObject from 'org.json.JSONObject';
 	import MediaPlayer from "android.media.MediaPlayer";
 	import Bitmap from 'android.graphics.Bitmap';
 	import Handler from 'android.os.Handler';
 	import Looper from 'android.os.Looper';
+	import DisplayMetrics from 'android.util.DisplayMetrics';
+	import Context from 'android.content.Context';
 
 	import Glide from 'com.bumptech.glide.Glide';
 
@@ -37,11 +41,18 @@
 		name: "video",
 		data() {
 			return {
-				rootView: null as FrameLayout | null,
 				playerView: null as IjkPlayerView | null,
 				currentPos: 0,
 				currentFrame: null as Bitmap | null,
-				handler: new Handler(Looper.getMainLooper())
+				handler: new Handler(Looper.getMainLooper()),
+				isEnded: false,
+				isFirstLayoutFinished: false,
+				isFullScreenChanged: false,
+				screenWidth: 0,
+				screenHeight: 0,
+				layoutWidth: 0,
+				layoutHeight: 0,
+				videoBox: null as FrameLayout | null
 			};
 		},
 		emits: ["play", "pause", "ended", "timeupdate", "fullscreenchange", "waiting", "error", "progress", "fullscreenclick", "controlstoggle"],
@@ -92,7 +103,7 @@
 			},
 			"direction": { // 设置全屏时视频的方向，不指定则根据宽高比自动判断。有效值为 0（正常竖向）, 90（屏幕逆时针90度）, -90（屏幕顺时针90度）
 				type: Number,
-				default: -90
+				default: -1
 			},
 			"showProgress": { // 是否展示进度条，若不设置，宽度大于240时才会显示
 				type: Boolean,
@@ -170,7 +181,7 @@
 					if (newValue != oldValue) { // 切换资源
 						this.playerView?.setCenterPlayBntVisibility(this.showCenterPlayBtn);
 						this.playerView?.switchVideoPath(path);
-						this.reload();
+						this.reload(true);
 					} else { // 初始化资源
 						this.playerView?.setVideoPath(path);
 					}
@@ -204,13 +215,13 @@
 			},
 			"initialTime": {
 				handler(value : number) {
-					if (value > 0) this.playerView?.seekTo(value as Int * 1000);
+					if (value > 0) this.playerView?.seekTo(value.toInt() * 1000);
 				},
 				immediate: false
 			},
 			"duration": {
 				handler(value : number) {
-					if (value > 0) this.playerView?.setDuration(value as Int * 1000);
+					if (value > 0) this.playerView?.setDuration(value.toInt() * 1000);
 				},
 				immediate: false
 			},
@@ -246,7 +257,7 @@
 			},
 			"direction": {
 				handler(value : number) {
-					this.playerView?.setDirection(value as Int);
+					this.playerView?.setDirection(value.toInt());
 				},
 				immediate: false
 			},
@@ -373,26 +384,50 @@
 					if (newHeader != oldHeader) { // 切换header
 						this.playerView?.setCenterPlayBntVisibility(this.showCenterPlayBtn);
 						this.playerView?.switchVideoPath(this.getSrcPath(this.src)); // 需要重新加载
-						this.reload();
+						this.reload(true);
 					}
 				},
 				immediate: false
 			}
 		},
-		NVLoad() : FrameLayout {
-			this.rootView = new FrameLayout(this.$androidContext!);
-			this.playerView = new IjkPlayerView(this.$androidContext);
-			this.rootView?.addView(this.playerView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-			return this.rootView!;
+		NVLoad() : IjkPlayerView {
+			return new IjkPlayerView(this.$androidContext!);
 		},
 		NVLoaded() {
+			this.playerView = this.$el;
 			this.playerView?.init();
-			this.playerView?.setPlayerRootView(this.$el);
 			this.playerView?.setOnPlayerChangedListener(new OnPlayerChangedListenerImpl(this));
-			this.playerView?.setOnInfoListener(new OnInfoListenerImpl(this, this.playerView!));
+			this.playerView?.setOnInfoListener(new OnInfoListenerImpl(this));
 			this.playerView?.setOnBufferingUpdateListener(new OnBufferingUpdateListenerImpl(this));
 			this.playerView?.setOnErrorListener(new OnErrorListenerImpl(this));
-			this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this, this.playerView!));
+			this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this));
+			this.playerView?.setOnHierarchyChangeListener(new OnHierarchyChangeListenerImpl(this));
+		},
+		NVLayouted() {
+			if (!this.isFirstLayoutFinished) {
+				this.isFirstLayoutFinished = true;
+				this.playerView?.setPlayerRootView(this.$el!.getParent() as ViewGroup);
+				this.layoutWidth = this.getLayoutWidth();
+				this.layoutHeight = this.getLayoutHeight();
+				const metrics = new DisplayMetrics();
+				(this.$androidContext!.getSystemService(Context.WINDOW_SERVICE) as WindowManager).getDefaultDisplay().getRealMetrics(metrics);
+				this.screenWidth = metrics.widthPixels;
+				this.screenHeight = metrics.heightPixels;
+				// 调整子组件视图层级
+				this.videoBox = this.playerView?.findViewWithTag<FrameLayout>("fl_video_box");
+				(this.playerView as IjkPlayerView).removeView(this.videoBox);
+				(this.playerView as IjkPlayerView).addView(this.videoBox, 0);
+			}
+			if (isFullScreenChanged) {
+				isFullScreenChanged = false;
+				if (this.playerView!.isFullscreen()) {
+					if (this.getLayoutWidth() != this.screenHeight) this.setStyleWidth(this.screenHeight.toFloat());
+					if (this.getLayoutHeight() != this.screenWidth) this.setStyleHeight(this.screenWidth.toFloat());
+				} else {
+					if (this.getLayoutWidth() != this.layoutWidth) this.setStyleWidth(this.layoutWidth.toFloat());
+					if (this.getLayoutHeight() != this.layoutHeight) this.setStyleHeight(this.layoutHeight.toFloat());
+				}
+			}
 		},
 		NVUnloaded() { // 资源回收
 			if (this.$el != null) { // 如果组件绑定了视图则需要在组件销毁时释放视图相关资源
@@ -401,18 +436,18 @@
 			}
 		},
 		NVRecycler() {
-			this.playerView = this.$el?.getChildAt(0) as IjkPlayerView;
+			this.playerView = this.$el;
 			this.playerView?.reset();
 			this.resetListener();
 			if (this.currentPos > 0) {
 				this.runDelayed(() => {
 					this.playerView?.hidePoster();
 					this.playerView?.showLastFrame(this.currentFrame);
-					this.playerView?.seekTo(this.currentPos as Int);
+					this.playerView?.seekTo(this.currentPos.toInt());
 				}, 100);
 			}
 		},
-		expose: ['play', 'pause', 'seek', 'requestFullScreen', 'exitFullScreen', 'stop', 'hide', 'show', 'close', 'sendDanmu', 'playbackRate', 'currentPos', 'currentFrame'],
+		expose: ['play', 'pause', 'seek', 'requestFullScreen', 'exitFullScreen', 'stop', 'hide', 'show', 'close', 'sendDanmu', 'playbackRate', 'currentPos', 'currentFrame', 'isEnded', 'isFirstLayoutFinished', 'isFullScreenChanged', 'videoBox'],
 		methods: {
 			/**
 			 * 播放视频
@@ -435,7 +470,7 @@
 			 * @param pos 跳转到的位置，单位：秒（s）
 			 */
 			seek: function (pos : number) {
-				this.playerView?.seekTo((pos as Int) * 1000);
+				this.playerView?.seekTo(pos.toInt() * 1000);
 			},
 			/**
 			 * 切换到全屏
@@ -443,11 +478,11 @@
 			 */
 			requestFullScreen: function (options : RequestFullScreenOptions | null) {
 				this.runOnMain(function () {
-					let direction = -90;
+					let direction = -1;
 					if (options != null) {
-						direction = options.direction as Int;
+						direction = options.direction ?? -1;
 					}
-					this.playerView?.fullScreen(direction as Int);
+					this.playerView?.fullScreen(direction.toInt());
 				});
 			},
 			/**
@@ -463,7 +498,9 @@
 			 */
 			stop: function () {
 				this.runOnMain(() => {
-					this.playerView?.stop();
+					this.playerView?.reset();
+					this.playerView?.setCenterPlayBntVisibility(this.showCenterPlayBtn);
+					this.reload(false);
 					this.currentPos = 0;
 					this.currentFrame = null;
 				});
@@ -500,6 +537,10 @@
 			 */
 			sendDanmu: function (danmu : Danmu) {
 				this.runOnMain(function () {
+					if (!this.enableDanmu) {
+						console.error('sendDanmu is disabled, set enable-danmu true first!');
+						return;
+					}
 					const data = new JSONObject();
 					data.put('text', danmu.text);
 					data.put('color', danmu.color);
@@ -515,16 +556,17 @@
 			},
 			/**
 			 * 内部函数
-			 * 切换src、header后重新加载
+			 * 重新加载
+			 * @param autoplay autoplay属性是否生效 切换src、header生效 stop不生效
 			 */
-			reload: function () {
+			reload: function (autoplay : boolean) {
 				this.runOnMain(function () {
-					this.playerView?.setDuration(this.duration as Int * 1000);
-					this.playerView?.seekTo(this.initialTime as Int * 1000);
+					this.playerView?.setDuration(this.duration.toInt() * 1000);
+					this.playerView?.seekTo(this.initialTime.toInt() * 1000);
 					this.playerView?.setMutePlayer(this.playerView?.isMutePlayer() == true);
 					this.playerView?.clearDanma();
-					this.playerView?.enableDanmaku(this.enableDanmu)
-					if (this.autoplay) this.playerView?.start();
+					this.playerView?.enableDanmaku(this.enableDanmu);
+					if (autoplay && this.autoplay) this.playerView?.start();
 				});
 			},
 			/**
@@ -556,12 +598,12 @@
 			 * 内部函数
 			 * 重置监听，复用时调用
 			 */
-			resetListener() {
+			resetListener: function () {
 				this.playerView?.setOnPlayerChangedListener(new OnPlayerChangedListenerImpl(this));
-				this.playerView?.setOnInfoListener(new OnInfoListenerImpl(this, this.playerView!));
+				this.playerView?.setOnInfoListener(new OnInfoListenerImpl(this));
 				this.playerView?.setOnBufferingUpdateListener(new OnBufferingUpdateListenerImpl(this));
 				this.playerView?.setOnErrorListener(new OnErrorListenerImpl(this));
-				this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this, this.playerView!));
+				this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this));
 			}
 		}
 	}
@@ -581,11 +623,13 @@
 
 	class OnPlayerChangedListenerImpl implements OnPlayerChangedListener {
 
-		private comp : UTSContainer<FrameLayout>;
+		private comp : UTSContainer<IjkPlayerView>;
+		private playerView : IjkPlayerView;
 
-		constructor(comp : UTSContainer<FrameLayout>) {
+		constructor(comp : UTSContainer<IjkPlayerView>) {
 			super();
 			this.comp = comp;
+			this.playerView = comp.$el!;
 		}
 
 		override onChanged(type : String, msg : String) : void {
@@ -594,7 +638,16 @@
 					this.comp.$emit("timeupdate", new UniVideoTimeUpdateEventImpl(JSON.parse<UniVideoTimeUpdateEventDetail>(msg)!));
 					break;
 				case "fullscreenchange":
-					this.comp.$emit("fullscreenchange", new UniVideoFullScreenChangeEventImpl(JSON.parse<UniVideoFullScreenChangeEventDetail>(msg)!));
+					(this.comp as VideoComponent).isFullScreenChanged = true;
+					const detail = JSON.parse<UniVideoFullScreenChangeEventDetail>(msg)!;
+					if (detail.fullScreen) { // 进入全屏时取消监听，避免触发暂停逻辑
+						this.playerView.setOnTextureRenderViewListener(null);
+					} else { // 退出全屏时重新监听
+						setTimeout(() => {
+							this.playerView.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this.comp));
+						}, 100);
+					}
+					this.comp.$emit("fullscreenchange", new UniVideoFullScreenChangeEventImpl(detail));
 					break;
 				case "fullscreenclick":
 					this.comp.$emit("fullscreenclick", new UniVideoFullScreenClickEventImpl(JSON.parse<UniVideoFullScreenClickEventDetail>(msg)!));
@@ -606,51 +659,41 @@
 					this.comp.$emit("error", new UniVideoErrorEventImpl(new VideoErrorImpl(100001)));
 					break;
 			}
-			// if (type == "fullscreenchange") {
-			// 	if (playerView?.isFullscreen() == true) {
-			// 		let container = rootView?.getChildAt(1);
-			// 		if (container == null) return;
-			// 		setTimeout(() => {
-			// 			rootView?.removeView(container);
-			// 			playerView?.addView(container);
-			// 			container?.bringToFront();
-			// 		}, 100);
-			// 	} else {
-			// 		let container = playerView?.getChildAt(1);
-			// 		if (container == null) return;
-			// 		setTimeout(() => {
-			// 			playerView?.removeView(container);
-			// 			rootView?.addView(container);
-			// 			container?.bringToFront();
-			// 		}, 100);
-			// 	}
-			// }
 		}
 	}
 
 	class OnInfoListenerImpl implements OnInfoListener {
 
-		private comp : UTSContainer<FrameLayout>;
+		private comp : UTSContainer<IjkPlayerView>;
 		private playerView : IjkPlayerView;
 
-		constructor(comp : UTSContainer<FrameLayout>, playerView : IjkPlayerView) {
+		constructor(comp : UTSContainer<IjkPlayerView>) {
 			super();
 			this.comp = comp;
-			this.playerView = playerView;
+			this.playerView = comp.$el!;
 		}
 
 		override onInfo(iMediaPlayer : IMediaPlayer | null, status : Int, extra : Int) : boolean {
 			switch (status) {
 				case MediaPlayerParams.STATE_COMPLETED:
 					this.comp.$emit("ended", new UniEvent("ended"));
+					(this.comp as VideoComponent).isEnded = true;
 					if ((this.comp as VideoComponent).loop) {
-						let initialTime = (this.comp as VideoComponent).initialTime as Int;
-						if (initialTime > 0) this.playerView.seekTo(initialTime * 1000);
+						let initialTime = (this.comp as VideoComponent).initialTime;
+						if (initialTime > 0) this.playerView.seekTo(initialTime.toInt() * 1000);
 						this.playerView.start();
+						(this.comp as VideoComponent).isEnded = false;
 					}
 					break;
 				case MediaPlayerParams.STATE_PLAYING:
 					this.comp.$emit("play", new UniEvent("play"));
+					setTimeout(() => {
+						if ((this.comp as VideoComponent).isEnded) {
+							let initialTime = (this.comp as VideoComponent).initialTime;
+							if (initialTime > 0) this.playerView.seekTo(initialTime.toInt() * 1000);
+							(this.comp as VideoComponent).isEnded = false;
+						}
+					}, 100);
 					break;
 				case MediaPlayerParams.STATE_PAUSED:
 					this.comp.$emit("pause", new UniEvent("pause"));
@@ -669,14 +712,14 @@
 
 	class OnBufferingUpdateListenerImpl implements OnBufferingUpdateListener {
 
-		private comp : UTSContainer<FrameLayout>;
+		private comp : UTSContainer<IjkPlayerView>;
 
-		constructor(comp : UTSContainer<FrameLayout>) {
+		constructor(comp : UTSContainer<IjkPlayerView>) {
 			super();
 			this.comp = comp;
 		}
 
-		override onBufferingUpdate(iMediaPlayer : IMediaPlayer, i : Int) : void {
+		override onBufferingUpdate(iMediaPlayer : IMediaPlayer | null, i : Int) : void {
 			const detail : UniVideoProgressEventDetail = {
 				buffered: i
 			};
@@ -686,14 +729,14 @@
 
 	class OnErrorListenerImpl implements OnErrorListener {
 
-		private comp : UTSContainer<FrameLayout>;
+		private comp : UTSContainer<IjkPlayerView>;
 
-		constructor(comp : UTSContainer<FrameLayout>) {
+		constructor(comp : UTSContainer<IjkPlayerView>) {
 			super();
 			this.comp = comp;
 		}
 
-		override onError(iMediaPlayer : IMediaPlayer, what : Int, extra : Int) : Boolean {
+		override onError(iMediaPlayer : IMediaPlayer | null, what : Int, extra : Int) : Boolean {
 			if (what == MediaPlayer.MEDIA_ERROR_UNKNOWN) {
 				this.comp.$emit("error", new UniVideoErrorEventImpl(new VideoErrorImpl(200001)));
 			} else {
@@ -705,13 +748,13 @@
 
 	class OnTextureRenderViewListenerImpl implements OnTextureRenderViewListener {
 
-		private comp : UTSContainer<FrameLayout>;
+		private comp : UTSContainer<IjkPlayerView>;
 		private playerView : IjkPlayerView;
 
-		constructor(comp : UTSContainer<FrameLayout>, playerView : IjkPlayerView) {
+		constructor(comp : UTSContainer<IjkPlayerView>) {
 			super();
 			this.comp = comp;
-			this.playerView = playerView;
+			this.playerView = comp.$el!;
 		}
 
 		override onDetachedFromWindow() : void {
@@ -722,6 +765,32 @@
 				(this.comp as VideoComponent).currentFrame?.recycle();
 				(this.comp as VideoComponent).currentFrame = this.playerView.captureFrame();
 			}
+		}
+	}
+
+	class OnHierarchyChangeListenerImpl implements OnHierarchyChangeListener {
+
+		private comp : UTSContainer<IjkPlayerView>;
+		private playerView : IjkPlayerView;
+
+		constructor(comp : UTSContainer<IjkPlayerView>) {
+			super();
+			this.comp = comp;
+			this.playerView = comp.$el!;
+		}
+
+		override onChildViewAdded(parent : View, child : View) : void {
+			// 处理子组件动态添加的情况
+			if ((this.comp as VideoComponent).isFirstLayoutFinished) {
+				if (this.playerView.indexOfChild((this.comp as VideoComponent).videoBox) != 0) {
+					this.playerView.removeView((this.comp as VideoComponent).videoBox);
+					this.playerView.addView((this.comp as VideoComponent).videoBox, 0);
+				}
+			}
+		}
+
+		override onChildViewRemoved(parent : View, child : View) : void {
+
 		}
 	}
 </script>

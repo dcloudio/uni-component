@@ -444,7 +444,7 @@
 				this.present?.palybackRate(rate);
 			},
 			
-			updateProp: function (key: string, value: any) {
+			updateProp: function (key: string, value: any | null) {
 				DispatchQueue.main.async(execute=():void => {
 					this.present?.setControlValue(value, key)
 				})
@@ -492,7 +492,11 @@
 		}
 		
 		loadImage(url: string, complete: (image: UIImage) => void) {
-			UTSiOS.loadImage(url, complete);
+			UTSiOS.loadImage(url,(image,data) => {
+				if(image != null){
+					complete(image!);
+				}
+			});
 		}
 		
 		lockScreen() {
