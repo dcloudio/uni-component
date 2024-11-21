@@ -6,16 +6,17 @@
 <script lang="uts">
 	import { UniVideoPlayerConfig, UniVideoPlayerViewPresent } from "DCUniVideo"  assert { type: "implementationOnly" };
 	import { URL, NSDictionary, CGFloat } from "Foundation";
-	import { UIImage, UIInterfaceOrientationMask, UIInterfaceOrientation, UIView } from 'UIKit';
+	import { UIImage, UIInterfaceOrientationMask, UIInterfaceOrientation, UIView, UIScreen, CGRect } from 'UIKit';
 	import { Bool, Int } from 'Swift';
-	import { Danmu } from "../interface.uts"
-	
+	import { Danmu } from "../interface.uts";
+	import { UniCssFlexEdge } from "DCloudUniappRuntime";
+
 	export default {
 		name: "video",
 		data() {
 			return {
-			  present: null as UniVideoPlayerViewPresent | null,
-			  delegate: null as DCloudUniVideoComponentDelegate | null,
+				present: null as UniVideoPlayerViewPresent | null,
+				delegate: null as DCloudUniVideoComponentDelegate | null,
 			};
 		},
 		emits: ["play", "pause", "ended", "timeupdate", "fullscreenchange", "waiting", "error", "progress", "fullscreenclick", "controlstoggle"],
@@ -146,42 +147,42 @@
 				immediate: false
 			},
 			"autoplay": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("autoplay", newValue);
 				},
 				immediate: false
 			},
 			"loop": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("loop", newValue);
 				},
 				immediate: false
 			},
 			"muted": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("muted", newValue);
 				},
 				immediate: false
 			},
 			"initialTime": {
-				handler(newValue: Number, oldValue: Number) {
+				handler(newValue : Number, oldValue : Number) {
 					"[weak self]"
 					this?.updateProp("initialTime", newValue);
 				},
 				immediate: false
 			},
 			"duration": {
-				handler(newValue: Number, oldValue: Number) {
+				handler(newValue : Number, oldValue : Number) {
 					"[weak self]"
 					this?.updateProp("duration", newValue);
 				},
 				immediate: false
 			},
 			"controls": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("controls", newValue);
 				},
@@ -195,140 +196,140 @@
 				immediate: false
 			},
 			"danmuBtn": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("danmuBtn", newValue);
 				},
 				immediate: false
 			},
 			"enableDanmu": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("enableDanmu", newValue);
 				},
 				immediate: false
 			},
 			"pageGesture": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("pageGesture", newValue);
 				},
 				immediate: false
 			},
 			"direction": {
-				handler(newValue: Number, oldValue: Number) {
+				handler(newValue : Number, oldValue : Number) {
 					"[weak self]"
 					this?.updateProp("direction", newValue);
 				},
 				immediate: false
 			},
 			"showProgress": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showProgress", newValue);
 				},
 				immediate: false
 			},
 			"showFullscreenBtn": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showFullscreenBtn", newValue);
 				},
 				immediate: false
 			},
 			"showPlayBtn": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showPlayBtn", newValue);
 				},
 				immediate: false
 			},
 			"showCenterPlayBtn": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showCenterPlayBtn", newValue);
 				},
 				immediate: false
 			},
 			"showLoading": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showLoading", newValue);
 				},
 				immediate: false
 			},
 			"enableProgressGesture": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("enableProgressGesture", newValue);
 				},
 				immediate: false
 			},
 			"objectFit": {
-				handler(newValue: String, oldValue: String) {
+				handler(newValue : String, oldValue : String) {
 					"[weak self]"
 					this?.updateProp("objectFit", newValue);
 				},
 				immediate: false
 			},
 			"poster": {
-				handler(newValue: String, oldValue: String) {
+				handler(newValue : String, oldValue : String) {
 					"[weak self]"
 					this?.updateProp("poster", newValue);
 				},
 				immediate: false
 			},
 			"showMuteBtn": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("showMuteBtn", newValue);
 				},
 				immediate: false
 			},
 			"title": {
-				handler(newValue: String, oldValue: String) {
+				handler(newValue : String, oldValue : String) {
 					"[weak self]"
 					this?.updateProp("title", newValue);
 				},
 				immediate: false
 			},
 			"enablePlayGesture": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("enablePlayGesture", newValue);
 				},
 				immediate: false
 			},
 			"vslideGesture": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("vslideGesture", newValue);
 				},
 				immediate: false
 			},
 			"vslideGestureInFullscreen": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("vslideGestureInFullscreen", newValue);
 				},
 				immediate: false
 			},
 			"httpCache": {
-				handler(newValue: Boolean, oldValue: Boolean) {
+				handler(newValue : Boolean, oldValue : Boolean) {
 					"[weak self]"
 					this?.updateProp("httpCache", newValue);
 				},
 				immediate: false
 			},
 			"codec": {
-				handler(newValue: string, oldValue: string) {
+				handler(newValue : string, oldValue : string) {
 					"[weak self]"
 					this?.updateProp("codec", newValue);
 				},
 				immediate: false
 			},
 			"playStrategy": {
-				handler(newValue: number, oldValue: number) {
+				handler(newValue : number, oldValue : number) {
 					"[weak self]"
 					this?.updateProp("playStrategy", newValue);
 				},
@@ -346,7 +347,7 @@
 				immediate: false
 			}
 		},
-		
+
 		created() {
 			let config = UniVideoPlayerConfig.init(options = this.attributes)
 			this.delegate = new DCloudUniVideoComponentDelegate(this)
@@ -355,39 +356,39 @@
 				this.present!.delegate = this.delegate
 			}
 		},
-		
+
 		NVLoad() : UIView {
 			if (this.present != null) {
 				return this.present!.contentView;
-			} else{
+			} else {
 				return new UIView()
 			}
 		},
-		
+
 		NVLayouted() {
 			if (!UTSiOS.isScreenLocked()) {
 				this.present?.updateViewFrame(this.calculatedFrame);
 			}
 		},
-		
+
 		unmounted() { //释放播放器
 			this.present?.destroy();
 		},
-		
-		expose: ['play', 'pause', 'seek', 'stop', 'sendDanmu',  'playbackRate', 'requestFullScreen', 'exitFullScreen', 'showStatusBar', 'hideStatusBar'],
-		
+
+		expose: ['play', 'pause', 'seek', 'stop', 'sendDanmu', 'playbackRate', 'requestFullScreen', 'exitFullScreen', 'showStatusBar', 'hideStatusBar'],
+
 		methods: {
 			/**
 			 * 播放视频
 			 */
 			play: function () {
-				this.present?.play() 
+				this.present?.play()
 			},
 			/**
 			 * 暂停视频
 			 */
 			pause: function () {
-				this.present?.pause() 
+				this.present?.pause()
 			},
 			/**
 			 * 跳转到指定位置
@@ -414,7 +415,7 @@
 			 * 停止播放视频
 			 */
 			stop: function () {
-				this.present?.stop() 
+				this.present?.stop()
 			},
 			/** 
 			 * 显示状态栏，仅在iOS全屏下有效
@@ -443,46 +444,48 @@
 			playbackRate: function (rate : string) {
 				this.present?.palybackRate(rate);
 			},
-			
-			updateProp: function (key: string, value: any) {
-				DispatchQueue.main.async(execute=():void => {
+
+			updateProp: function (key : string, value : any | null) {
+				DispatchQueue.main.async(execute = () : void => {
 					this.present?.setControlValue(value, key)
 				})
-				
+
 			}
 		}
 	}
 	@UTSiOS.keyword("private")
 	class DCloudUniVideoComponentDelegate implements UniVideoPlayerProtocol {
 		@UTSiOS.keyword("weak")
-		private component: VideoComponent | null = null
-		
-		constructor(component: VideoComponent) {
+		private component : VideoComponent | null = null
+		private originalFrame : CGRect | null = null
+
+		//todotest
+		constructor(component : VideoComponent) {
 			this.component = component
 			super.init()
 		}
-		
-		getCookieString(url: URL): string | null {
+
+		getCookieString(url : URL) : string | null {
 			return UTSiOS.getCookieString(url)
 		}
-		
-		getCurrentUA(): string {
+
+		getCurrentUA() : string {
 			return UTSiOS.getUserAgent()
 		}
-		
-		sendEvent(name: string, params: Dictionary<string,any> | null) {
-			switch (name){
+
+		sendEvent(name : string, params : Dictionary<string, any> | null) {
+			switch (name) {
 				case "play":
-				case "pause": 
+				case "pause":
 				case "waiting":
-				case "ended": 
-				case "error": 
+				case "ended":
+				case "error":
 				case "click":
 					this.component?.__$$emit(name);
 					break;
-				case "timeupdate": 
-				case "fullscreenclick": 
-				case "fullscreenchange": 
+				case "timeupdate":
+				case "fullscreenclick":
+				case "fullscreenchange":
 				case "controlstoggle":
 					this.component?.__$$emit(name, params);
 					break;
@@ -490,56 +493,89 @@
 					break;
 			}
 		}
-		
-		loadImage(url: string, complete: (image: UIImage) => void) {
-			UTSiOS.loadImage(url, complete);
+
+		loadImage(url : string, complete : (image : UIImage) => void) {
+			UTSiOS.loadImage(url, (image, data) => {
+				if (image != null) {
+					complete(image!);
+				}
+			});
 		}
-		
+
 		lockScreen() {
 			UTSiOS.lockScreen()
 		}
-		
+
 		unlockScreen() {
-		    UTSiOS.unlockScreen()
+			UTSiOS.unlockScreen()
 		}
-		
-		setFullScreen(yesOrNo: boolean) {
-		    UTSiOS.setFullScreen(yesOrNo)
+
+		setFullScreen(yesOrNo : boolean) {
+			UTSiOS.setFullScreen(yesOrNo)
 		}
-		
-		setHomeIndicatorAutoHidden(yesOrNo: boolean) {
-		    UTSiOS.setHomeIndicatorAutoHidden(yesOrNo)
+
+		setHomeIndicatorAutoHidden(yesOrNo : boolean) {
+			UTSiOS.setHomeIndicatorAutoHidden(yesOrNo)
 		}
-		
-		setTempOrientation(temp: UIInterfaceOrientationMask) {
-		    UTSiOS.setTempOrientation(temp)
+
+		setTempOrientation(temp : UIInterfaceOrientationMask) {
+			UTSiOS.setTempOrientation(temp)
 		}
-		
-		configSupportOrientation(orientation: UIInterfaceOrientation): boolean {
-		    return UTSiOS.configSupportOrientation(orientation)
+
+		configSupportOrientation(orientation : UIInterfaceOrientation) : boolean {
+			return UTSiOS.configSupportOrientation(orientation)
 		}
-		
-		setDeviceInterfaceOrientation(orientation: UIInterfaceOrientation) {
-		     UTSiOS.setDeviceInterfaceOrientation(orientation)
+
+		setDeviceInterfaceOrientation(orientation : UIInterfaceOrientation) {
+			UTSiOS.setDeviceInterfaceOrientation(orientation)
 		}
-		
-		h5Path2SysPath(path: string, basePath: string | null) : string {
-		    return UTSiOS.getResourceAbsolutePath(path, basePath)   
+
+		h5Path2SysPath(path : string, basePath : string | null) : string {
+			return UTSiOS.getResourceAbsolutePath(path, basePath)
 		}
-		
+
 		workRootPath() : string {
-		    return UTSiOS.getWorkRootPath()
+			return UTSiOS.getWorkRootPath()
 		}
-		
-		videoPlayerExitFullScreen(orientation: UIInterfaceOrientation) {
-			
+
+		videoPlayerWillEnterFullScreen(orientation : UIInterfaceOrientation) {
+			this.originalFrame = this.component?.view.frame
+			const deviceSize = UIScreen.main.bounds.size
+			const min = min(deviceSize.width, deviceSize.height)
+			const max = max(deviceSize.width, deviceSize.height)
+			if (orientation == UIInterfaceOrientation.portrait) {
+				this.component?.setStyleWidth(width = Float(min))
+				this.component?.setStyleHeight(height = Float(max))
+			} else {
+				this.component?.setStyleWidth(width = Float(max))
+				this.component?.setStyleHeight(height = Float(min))
+			}
+			this.component?.domNode?.setPositionEdge(UniCssFlexEdge.top, value = -Float(this.originalFrame?.minY ?? 0))
+			this.component?.domNode?.setPositionEdge(UniCssFlexEdge.left, value = -Float(self.originalFrame?.minX ?? 0))
+			this.component?.setNeedsLayout()
 		}
-		
-		videoPlayerEnterFullScreen(orientation: UIInterfaceOrientation) {
-			
+
+		videoPlayerWillExitFullScreen(orientation : UIInterfaceOrientation) {
+			if (this.originalFrame != null) {
+				const width = this.originalFrame!.size.width
+				const height = this.originalFrame!.size.height
+				this.component?.setStyleWidth(width = Float(width))
+				this.component?.setStyleHeight(height = Float(height))
+				this.component?.domNode?.setPositionEdge(UniCssFlexEdge.top, value = 0)
+				this.component?.domNode?.setPositionEdge(UniCssFlexEdge.left, value = 0)
+				this.component?.setNeedsLayout()
+			}
 		}
-		
-		videoCacheDir(): string {
+
+		videoPlayerExitFullScreen(orientation : UIInterfaceOrientation) {
+
+		}
+
+		videoPlayerEnterFullScreen(orientation : UIInterfaceOrientation) {
+
+		}
+
+		videoCacheDir() : string {
 			return UTSiOS.getVideoCacheDir()
 		}
 	}
