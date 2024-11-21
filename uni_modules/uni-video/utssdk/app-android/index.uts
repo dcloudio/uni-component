@@ -7,7 +7,7 @@ export const createVideoContext : CreateVideoContext = function (videoId : strin
 	if (component == null) {
 		const pages = getCurrentPages();
 		if (pages.length > 0) {
-			videoElement = pages[pages.length - 1].$el?.parentNode?.querySelector('#' + videoId);
+			videoElement = pages[pages.length - 1].vm!.$el?.parentNode?.querySelector('#' + videoId);
 		}
 	} else {
 		videoElement = component.$el?.parentNode?.querySelector('#' + videoId);

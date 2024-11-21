@@ -32,7 +32,8 @@
   },
   "uni_modules": {
     "dependencies": [
-      "uni-framework"
+      "uni-framework",
+	  "uni-fileSystemManager"
     ],
     "uni-ext-api": {
       "uni": {
