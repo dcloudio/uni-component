@@ -20,6 +20,8 @@
 	import ViewGroup from 'android.view.ViewGroup';
 	import OnHierarchyChangeListener from 'android.view.ViewGroup.OnHierarchyChangeListener';
 	import View from 'android.view.View';
+	import OnKeyListener from 'android.view.View.OnKeyListener';
+	import KeyEvent from 'android.view.KeyEvent';
 	import WindowManager from 'android.view.WindowManager';
 	import TextUtils from 'android.text.TextUtils';
 	import JSONObject from 'org.json.JSONObject';
@@ -31,6 +33,8 @@
 	import Context from 'android.content.Context';
 
 	import Glide from 'com.bumptech.glide.Glide';
+
+	import File from 'java.io.File';
 
 	import { Danmu, RequestFullScreenOptions } from '../interface.uts';
 	import { UniVideoTimeUpdateEventDetail, UniVideoFullScreenChangeEventDetail, UniVideoProgressEventDetail, UniVideoFullScreenClickEventDetail, UniVideoControlsToggleEventDetail } from '../interface.uts';
@@ -52,7 +56,8 @@
 				screenHeight: 0,
 				layoutWidth: 0,
 				layoutHeight: 0,
-				videoBox: null as FrameLayout | null
+				videoBox: null as FrameLayout | null,
+				copyPath: ''
 			};
 		},
 		emits: ["play", "pause", "ended", "timeupdate", "fullscreenchange", "waiting", "error", "progress", "fullscreenclick", "controlstoggle"],
@@ -402,6 +407,9 @@
 			this.playerView?.setOnErrorListener(new OnErrorListenerImpl(this));
 			this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this));
 			this.playerView?.setOnHierarchyChangeListener(new OnHierarchyChangeListenerImpl(this));
+			this.playerView?.setOnKeyListener(new OnKeyListenerImpl(this));
+			this.playerView?.setFocusable(true);
+			this.playerView?.setFocusableInTouchMode(true);
 		},
 		NVLayouted() {
 			if (!this.isFirstLayoutFinished) {
@@ -421,9 +429,11 @@
 			if (isFullScreenChanged) {
 				isFullScreenChanged = false;
 				if (this.playerView!.isFullscreen()) {
+					this.playerView?.requestFocus();
 					if (this.getLayoutWidth() != this.screenHeight) this.setStyleWidth(this.screenHeight.toFloat());
 					if (this.getLayoutHeight() != this.screenWidth) this.setStyleHeight(this.screenWidth.toFloat());
 				} else {
+					this.playerView?.clearFocus();
 					if (this.getLayoutWidth() != this.layoutWidth) this.setStyleWidth(this.layoutWidth.toFloat());
 					if (this.getLayoutHeight() != this.layoutHeight) this.setStyleHeight(this.layoutHeight.toFloat());
 				}
@@ -433,6 +443,10 @@
 			if (this.$el != null) { // 如果组件绑定了视图则需要在组件销毁时释放视图相关资源
 				this.playerView?.onDestroy();
 				this.playerView = null;
+			}
+			if (!this.copyPath.isEmpty()) {
+				const file = new File(this.copyPath);
+				if (file.exists()) file.delete();
 			}
 		},
 		NVRecycler() {
@@ -577,7 +591,21 @@
 				if (src.startsWith("https://") || src.startsWith("http://") || src.startsWith("rtmp://") || src.startsWith("rtsp://")) { // 网络地址
 					return src;
 				} else { // 本地地址
-					return UTSAndroid.convert2AbsFullPath(src);
+					const path = UTSAndroid.convert2AbsFullPath(src);
+					if (path.startsWith('/android_asset')) {
+						const destDirPath = UTSAndroid.getAppContext()!.getCacheDir().getAbsolutePath() + '/uni-net-cache/video/';
+						const destDir = new File(destDirPath);
+						if (!destDir.exists()) destDir.mkdirs();
+						const destFilePath = destDirPath + path.substring(path.lastIndexOf('/') + 1);
+						const destFile = new File(destFilePath);
+						if (!destFile.exists()) {
+							destFile.createNewFile();
+							uni.getFileSystemManager().copyFileSync(src, destFilePath);
+						}
+						this.copyPath = destFilePath;
+						return destFilePath;
+					}
+					return path;
 				}
 			},
 			/**
@@ -604,6 +632,8 @@
 				this.playerView?.setOnBufferingUpdateListener(new OnBufferingUpdateListenerImpl(this));
 				this.playerView?.setOnErrorListener(new OnErrorListenerImpl(this));
 				this.playerView?.setOnTextureRenderViewListener(new OnTextureRenderViewListenerImpl(this));
+				this.playerView?.setOnHierarchyChangeListener(new OnHierarchyChangeListenerImpl(this));
+				this.playerView?.setOnKeyListener(new OnKeyListenerImpl(this));
 			}
 		}
 	}
@@ -653,7 +683,13 @@
 					this.comp.$emit("fullscreenclick", new UniVideoFullScreenClickEventImpl(JSON.parse<UniVideoFullScreenClickEventDetail>(msg)!));
 					break;
 				case "controlstoggle":
-					this.comp.$emit("controlstoggle", new UniVideoControlsToggleEventImpl(JSON.parse<UniVideoControlsToggleEventDetail>(msg)!));
+					const detail = JSON.parse<UniVideoControlsToggleEventDetail>(msg)!;
+					if (detail.show && this.playerView.isFullscreen()) {
+						setTimeout(() => {
+							if (!this.playerView.isFocused()) this.playerView.requestFocus();
+						}, 100);
+					}
+					this.comp.$emit("controlstoggle", new UniVideoControlsToggleEventImpl(detail));
 					break;
 				case "error":
 					this.comp.$emit("error", new UniVideoErrorEventImpl(new VideoErrorImpl(100001)));
@@ -762,8 +798,9 @@
 				this.playerView.pause();
 				this.playerView.setCenterPlayBntVisibility((this.comp as VideoComponent).showCenterPlayBtn);
 				(this.comp as VideoComponent).currentPos = this.playerView.getCurPosition();
-				(this.comp as VideoComponent).currentFrame?.recycle();
-				(this.comp as VideoComponent).currentFrame = this.playerView.captureFrame();
+				const frame = this.playerView.captureFrame();
+				(this.comp as VideoComponent).currentFrame = frame;
+				this.playerView.showLastFrame(frame);
 			}
 		}
 	}
@@ -791,6 +828,28 @@
 
 		override onChildViewRemoved(parent : View, child : View) : void {
 
+		}
+	}
+
+	class OnKeyListenerImpl implements OnKeyListener {
+
+		private comp : UTSContainer<IjkPlayerView>;
+		private playerView : IjkPlayerView;
+
+		constructor(comp : UTSContainer<IjkPlayerView>) {
+			super();
+			this.comp = comp;
+			this.playerView = comp.$el!;
+		}
+
+		override onKey(v : View, keyCode : Int, event : KeyEvent) : Boolean {
+			if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+				if (this.playerView.isFullscreen()) {
+					(this.comp as VideoComponent).exitFullScreen();
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 </script>

@@ -1,7 +1,6 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.9.2 (swiftlang-5.9.2.2.56 clang-1500.1.0.2.5)
-// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name DCUniVideo
-// swift-module-flags-ignorable: -enable-bare-slash-regex
+// swift-compiler-version: Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)
+// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name DCUniVideo
 import AVFAudio
 import AVFoundation
 import CommonCrypto
@@ -58,6 +57,8 @@ public protocol UniVideoPlayerProtocol : AnyObject {
   func getCurrentUA() -> Swift.String
   func sendEvent(_ name: Swift.String, _ params: [Swift.String : Any]?)
   func loadImage(_ url: Swift.String, _ complete: @escaping (UIKit.UIImage) -> Swift.Void)
+  func videoPlayerWillEnterFullScreen(_ orientation: UIKit.UIInterfaceOrientation)
+  func videoPlayerWillExitFullScreen(_ orientation: UIKit.UIInterfaceOrientation)
   func videoPlayerExitFullScreen(_ orientation: UIKit.UIInterfaceOrientation)
   func videoPlayerEnterFullScreen(_ orientation: UIKit.UIInterfaceOrientation)
   func lockScreen()
@@ -71,6 +72,11 @@ public protocol UniVideoPlayerProtocol : AnyObject {
   func workRootPath() -> Swift.String
   func videoCacheDir() -> Swift.String
 }
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class UniMonitoredContentView : UIKit.UIView {
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func didAddSubview(_ subview: UIKit.UIView)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func layoutSubviews()
+  @objc deinit
+}
 final public class UniVideoPlayerViewPresent : DCUniVideo.ViewPresent {
   public typealias View = DCUniVideo.UniVideoPlayerView
   final public var view: DCUniVideo.UniVideoPlayerViewPresent.View
@@ -79,13 +85,16 @@ final public class UniVideoPlayerViewPresent : DCUniVideo.ViewPresent {
     get
     set
   }
-  final public var contentView: UIKit.UIView {
+  final public var contentView: DCUniVideo.UniMonitoredContentView {
     get
     set
   }
   public init(_ config: DCUniVideo.UniVideoPlayerConfig, _ delegate: (any DCUniVideo.UniVideoPlayerProtocol)?, _ frame: CoreFoundation.CGRect = .zero)
   @objc deinit
   final public func updateViewFrame(_ rect: CoreFoundation.CGRect)
+}
+extension DCUniVideo.UniVideoPlayerViewPresent {
+  final public func onVideoComponentReused(_ config: DCUniVideo.UniVideoPlayerConfig)
 }
 extension DCUniVideo.UniVideoPlayerViewPresent {
   final public func play()
