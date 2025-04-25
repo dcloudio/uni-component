@@ -31,6 +31,10 @@
     "npmurl": ""
   },
   "uni_modules": {
+    "components": {
+      "app-android": false,
+      "app-ios": false
+    },
     "dependencies": [
       "uni-framework",
 	  "uni-fileSystemManager"
@@ -60,7 +64,8 @@
         },
         "App": {
           "app-android": "u",
-          "app-ios": "u"
+          "app-ios": "u",
+          "app-harmony": "u"
         },
         "H5-mobile": {
           "Safari": "u",

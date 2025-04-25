@@ -1,0 +1,13 @@
+import { UniVideoEvent as IUniVideoEvent } from '../../interface'
+
+class UniVideoEventDetail {}
+
+export class UniVideoEvent<T = UniVideoEventDetail> extends UniCustomEvent<T> implements IUniVideoEvent {
+  constructor(target : UniElement, type : string, detail ?: T) {
+    super(type, detail ?? new UniVideoEventDetail() as T)
+    if (!this.target) {
+      this.target = target
+    }
+    this.currentTarget = target
+  }
+}

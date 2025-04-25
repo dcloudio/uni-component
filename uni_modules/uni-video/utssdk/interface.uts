@@ -18,10 +18,6 @@ export type Danmu = {
 export type RequestFullScreenOptions = {
     /**
      * direction
-     * - 0: 正常竖向
-     * - 90: 屏幕逆时针90度
-     * - -90: 屏幕顺时针90度
-     * @type 0 | 90 | -90
      * @uniPlatform {
      *   "app": {
      *     "android": {
@@ -83,7 +79,19 @@ export type RequestFullScreenOptions = {
      *   }
      * }
      */
-    direction?: number | null
+    direction?:
+    /**
+     * 正常竖向
+     */
+    0 |
+    /**
+     * 屏幕逆时针90度
+     */
+    90 |
+    /**
+     * 屏幕顺时针90度
+     */
+    -90 | null
 };
 
 export interface VideoContext {
@@ -669,58 +677,58 @@ export interface Uni {
      *       "uniVer": "√",
      *       "unixVer": "4.11"
      *     },
-     *    "harmony": {
-     *      "osVer": "3.0",
-     *      "uniVer": "4.23",
-     *      "unixVer": "x"
-     *    }
+     *     "harmony": {
+     *       "osVer": "5.0.0",
+     *       "uniVer": "4.23",
+     *       "unixVer": "4.61"
+     *     }
      *   },
      *   "web": {
      *     "uniVer": "√",
      *     "unixVer": "4.0"
      *   },
-         * "mp": {
-     *		"weixin": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "4.41"
-     *		},
-     *		"alipay": {
-     *			"hostVer": "1.10.0",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"baidu": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"toutiao": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"lark": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"qq": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"kuaishou": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		},
-     *		"jd": {
-     *			"hostVer": "√",
-     *			"uniVer": "√",
-     *			"unixVer": "x"
-     *		}
-     *	}
+     *   "mp": {
+     *     "weixin": {
+     *       "hostVer": "1.9.6",
+     *       "uniVer": "√",
+     *       "unixVer": "4.41"
+     *     },
+     *     "alipay": {
+     *       "hostVer": "1.10.0",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "baidu": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "toutiao": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "lark": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "qq": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "kuaishou": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     },
+     *     "jd": {
+     *       "hostVer": "√",
+     *       "uniVer": "√",
+     *       "unixVer": "x"
+     *     }
+     *   }
      * }
      * @uniVueVersion 2,3
      * @return {VideoContext} video组件上下文对象
@@ -728,7 +736,7 @@ export interface Uni {
      * @tutorial-uni-app https://uniapp.dcloud.net.cn/api/media/video-context.html#createvideocontext
      * @tutorial-uni-app-x https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
      * @tutorial https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
-     *
+     * @tutorial_weixin https://developers.weixin.qq.com/miniprogram/dev/api/media/video/VideoContext.html
      */
     createVideoContext: CreateVideoContext
 }
@@ -737,7 +745,7 @@ export interface Uni {
  * 通用事件
  * 临时方案，规避组件Event接口无法直接继承UniEvent的问题
  */
-interface UniVideoEvent {
+export interface UniVideoEvent {
     /**
      * 是否冒泡
      */
@@ -758,10 +766,18 @@ interface UniVideoEvent {
      * 当前组件
      */
     currentTarget?: UniElement | null
+    // #ifndef APP-HARMONY
     /**
      * 事件发生时的时间戳
      */
     timeStamp: Long
+    // #endif
+    // #ifdef APP-HARMONY
+    /**
+     * 事件发生时的时间戳
+     */
+    timeStamp: number
+    // #endif
     /**
      * 阻止当前事件的进一步传播
      */
@@ -799,15 +815,25 @@ export interface UniVideoFullScreenChangeEvent extends UniVideoEvent {
     detail: UniVideoFullScreenChangeEventDetail
 }
 
+export type UniVideoFullScreenDirection =
+/**
+ * 竖屏
+ */
+'vertical' |
+/**
+ * 横屏
+ */
+'horizontal'
+
 export type UniVideoFullScreenChangeEventDetail = {
     /**
      * 是否全屏
      */
     fullScreen: boolean,
     /**
-     * 横竖屏，取值 vertical 或 horizontal
+     * 横竖屏
      */
-    direction: string
+    direction: UniVideoFullScreenDirection
 }
 
 /**
@@ -820,11 +846,20 @@ export interface UniVideoErrorEvent extends UniVideoEvent {
 
 /**
  * 统一错误码
- * 100001 网络错误
- * 200001 内部错误
- * 300001 SDK错误
  */
-export type VideoErrorCode = 100001 | 200001 | 300001
+export type VideoErrorCode =
+/**
+ * 网络错误
+ */
+100001 |
+/**
+ * 内部错误
+ */
+200001 |
+/**
+ * SDK错误
+ */
+300001
 
 export interface VideoError extends IUniError {
     errCode: VideoErrorCode

@@ -1,0 +1,10 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoFullScreenClickEvent as IUniVideoFullScreenClickEvent, UniVideoFullScreenClickEventDetail } from '../../interface'
+
+export class UniVideoFullScreenClickEvent extends UniVideoEvent<UniVideoFullScreenClickEventDetail> implements IUniVideoFullScreenClickEvent {
+  constructor(target : UniElement, screenX : number, screenY : number, screenWidth : number, screenHeight : number) {
+    super(target, 'fullscreenclick', {
+      screenX, screenY, screenWidth, screenHeight
+    } as UniVideoFullScreenClickEventDetail)
+  }
+}
