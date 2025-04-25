@@ -250,7 +250,10 @@
 			},
 			"enableDanmu": {
 				handler(value : boolean) {
-					this.playerView?.enableDanmaku(value);
+					this.runDelayed(() => {
+						this.playerView?.enableDanmaku(value);
+						this.playerView?.enableDanmuBtn(this.danmuBtn);
+					}, 0);
 				},
 				immediate: false
 			},

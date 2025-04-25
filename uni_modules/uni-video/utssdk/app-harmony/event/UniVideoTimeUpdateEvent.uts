@@ -1,0 +1,11 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoTimeUpdateEvent as IUniVideoTimeUpdateEvent, UniVideoTimeUpdateEventDetail } from '../../interface'
+
+export class UniVideoTimeUpdateEvent extends UniVideoEvent<UniVideoTimeUpdateEventDetail> implements IUniVideoTimeUpdateEvent {
+  constructor(target : UniElement, currentTime : number, duration : number) {
+    super(target, 'timeupdate', {
+      currentTime,
+      duration
+    } as UniVideoTimeUpdateEventDetail)
+  }
+}

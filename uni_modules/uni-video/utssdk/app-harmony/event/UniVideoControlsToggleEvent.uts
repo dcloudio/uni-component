@@ -1,0 +1,8 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoControlsToggleEvent as IUniVideoControlsToggleEvent, UniVideoControlsToggleEventDetail } from '../../interface'
+
+export class UniVideoControlsToggleEvent extends UniVideoEvent<UniVideoControlsToggleEventDetail> implements IUniVideoControlsToggleEvent {
+  constructor(target : UniElement, show : boolean) {
+    super(target, 'controlstoggle', { show } as UniVideoControlsToggleEventDetail)
+  }
+}

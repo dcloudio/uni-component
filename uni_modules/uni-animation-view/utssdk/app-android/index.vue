@@ -10,7 +10,6 @@
     import LottieAnimationView from 'com.airbnb.lottie.LottieAnimationView'
     import LottieDrawable from 'com.airbnb.lottie.LottieDrawable'
 	import FileInputStream from 'java.io.FileInputStream'
-	import { UTSAndroid } from "io.dcloud.uts";
 
     class CustomAnimListener extends Animator.AnimatorListener {
 
@@ -94,9 +93,13 @@
 						    if (newPath.startsWith("http://") || newPath.startsWith("https://")) {
 						        lottieAnimationView.setAnimationFromUrl(newPath)
 						    } else {
-						        // 默认是static了
-								var realJsonPath = UTSAndroid.getResourcePath(newPath)
-						        lottieAnimationView.setAnimation(new FileInputStream(realJsonPath),newPath)
+								// uni-app x 正式打包会放在asset中，需要特殊处理
+								let realJsonPath = UTSAndroid.getResourcePath(newPath)
+								if(realJsonPath.startsWith("/android_asset")){
+								  lottieAnimationView.setAnimation(realJsonPath.substring(15))
+								}else{
+								  lottieAnimationView.setAnimation(new FileInputStream(realJsonPath),newPath)
+								}
 						    }
 						}
 						if (this.autoplay) {

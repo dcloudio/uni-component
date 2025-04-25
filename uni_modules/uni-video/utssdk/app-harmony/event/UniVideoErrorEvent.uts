@@ -1,0 +1,8 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoErrorEvent as IUniVideoErrorEvent, VideoError } from '../../interface'
+
+export class UniVideoErrorEvent extends UniVideoEvent<VideoError> implements IUniVideoErrorEvent {
+  constructor(target : UniElement) {
+    super(target, 'error', { errCode: 200001, errSubject: 'uni-video' } as VideoError)
+  }
+}
