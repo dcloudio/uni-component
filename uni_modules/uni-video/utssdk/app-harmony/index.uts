@@ -108,8 +108,8 @@ UTSHarmony.onAppAbilityWindowStageCreate((window) => {
 export class Video {
   private bindVideoController?: BindVideoController
   private harmonyBuilderNode: BuilderNode<[BuilderVideoParams]> | null = null
-  private params: BuilderVideoParams
   fullscreening: boolean = false
+  params: BuilderVideoParams
 
   constructor(element: UniNativeViewElement, params: BuilderVideoParams) {
     const videoEvent : VideoEvent = {};
@@ -164,11 +164,11 @@ export class Video {
     })
   }
 
-  private updateParams() {
+  updateParams() {
     this.harmonyBuilderNode?.update(this.params)
   }
 
-  private getObjectFit(objectFit: ObjectFit): ImageFit {
+  getObjectFit(objectFit: ObjectFit): ImageFit {
     switch (objectFit) {
       case 'contain':
         return ImageFit.Contain;
@@ -181,7 +181,7 @@ export class Video {
     }
   }
 
-  private formatPlaybackRate(rate: number): number {
+  formatPlaybackRate(rate: number): number {
     // NOTE 鸿蒙仅支持 0.75，1.0，1.25，1.75，2.0
     const validValues = [0.75, 1.0, 1.25, 1.75, 2.0];
     let closest = validValues[0];
@@ -337,29 +337,33 @@ export class UniVideoElement extends UniViewElementImpl implements IUniVideoElem
   }
 
   override requestFullscreen(options?: ESObject | undefined): void {
-    if (this.page.fullscreenElement) {
+    if (this.page?.fullscreenElement) {
       options?.fail?.()
       this.callFullscreenerrorCallbacks('The current page already has a fullscreen element.')
       return
     }
-    if (this.isFullscreen) return
+    if (this.isFullscreen) {
+      return
+    }
     this.isFullscreen = true
     this.video && (this.video.fullscreening = true);
-    this.lastNavigationStyle = this.page.getPageStyle().get('navigationStyle') ?? ''
+    this.lastNavigationStyle = this.page?.getPageStyle().get('navigationStyle') ?? ''
     this.resolveIsFullscreenFrameNode(options)
       .then(() => {
-        this.page.fullscreenElement = this
-        this.page.setPageStyle(new UTSJSONObject({
+        this.page?.setPageStyle(new UTSJSONObject({
           navigationStyle: 'custom'
         }))
         this.checkPosition(true)
+        if (this.page) {
+          this.page.fullscreenElement = this
+        }
         options?.success?.()
         this.callFullscreenchangeCallbacks()
       })
       .catch(() => {
-        this.page.setPageOrientation(this.page.getPageStyle().toMap())
         this.requestFullscreenError()
-        this.page.setPageStyle(new UTSJSONObject({
+        getCurrentMP()?.window?.setPreferredOrientation(OHWindow.Orientation.AUTO_ROTATION_LANDSCAPE)
+        this.page?.setPageStyle(new UTSJSONObject({
           navigationStyle: this.lastNavigationStyle
         }))
         this.video && (this.video.fullscreening = false);
@@ -396,7 +400,7 @@ export class UniVideoElement extends UniViewElementImpl implements IUniVideoElem
     }
     this.isFullscreen = false
     this.video && (this.video.fullscreening = true);
-    this.page.setPageStyle(new UTSJSONObject({
+    this.page?.setPageStyle(new UTSJSONObject({
       navigationStyle: this.lastNavigationStyle
     }))
     this.exitFullscreenResetStyle()
@@ -404,7 +408,7 @@ export class UniVideoElement extends UniViewElementImpl implements IUniVideoElem
   }
 
   exitFullScreen() {
-    this.page.exitFullscreen();
+    this.page?.exitFullscreen();
   }
 }
 
@@ -475,6 +479,7 @@ class VideoContextImpl implements VideoContext {
 }
 
 export class AudioManager {
+  audioVolumeGroupManager: audio.AudioVolumeGroupManager | null = null
   offVolumeChange: () => void = () => { }
   currentVolume: number = 0
   maxVolume: number = 1
@@ -493,10 +498,10 @@ export class AudioManager {
 
     audioVolumeManager.on('volumeChange', volumeChange);
 
-    const audioVolumeGroupManager = audioVolumeManager.getVolumeGroupManagerSync(audio.DEFAULT_VOLUME_GROUP_ID);
-    this.currentVolume = audioVolumeGroupManager.getVolumeSync(VolumeMEDIA)
-    this.minVolume = audioVolumeGroupManager.getMinVolumeSync(VolumeMEDIA)
-    this.maxVolume = audioVolumeGroupManager.getMaxVolumeSync(VolumeMEDIA)
+    this.audioVolumeGroupManager = audioVolumeManager.getVolumeGroupManagerSync(audio.DEFAULT_VOLUME_GROUP_ID);
+    this.currentVolume = this.audioVolumeGroupManager.getVolumeSync(VolumeMEDIA)
+    this.minVolume = this.audioVolumeGroupManager.getMinVolumeSync(VolumeMEDIA)
+    this.maxVolume = this.audioVolumeGroupManager.getMaxVolumeSync(VolumeMEDIA)
 
     this.offVolumeChange = () => {
       // @ts-ignore
