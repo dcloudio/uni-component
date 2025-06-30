@@ -1,0 +1,478 @@
+import { htmlParser } from "./html-parser.uts";
+
+// #ifdef APP-ANDROID
+export type RichTextItemClickEvent = UniRichTextItemClickEvent;
+// #endif
+
+type UniRichTextItemClickEventDetail = {
+	src : string | null
+	href : string | null
+}
+
+export class UniRichTextItemClickEvent extends UniCustomEvent<UniRichTextItemClickEventDetail> {
+	constructor(type : string, src : string | null, href : string | null) {
+		super(type, { src, href } as UniRichTextItemClickEventDetail)
+	}
+}
+
+export class UniRichTextElement extends UniViewElementImpl implements UniCustomElement {
+	static get observedAttributes() : Array<string> {
+		return ['selectable', 'nodes', 'style', 'mode']
+	}
+
+	// 信任的标签
+	private trustLabel = new Set([
+		'a', 'abbr', 'address', 'article', 'aside', 'b', 'bdi', 'bdo', 'big', 'blockquote', 'br', 'caption',
+		'center', 'cite', 'code', 'col', 'colgroup', 'dd', 'del', 'div', 'dl', 'dt', 'em', 'fieldset',
+		'font', 'footer', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'i', 'img', 'ins', 'label',
+		'legend', 'li', 'mark', 'nav', 'ol', 'p', 'pre', 'q', 'rt', 'ruby', 's', 'section', 'small', 'span',
+		'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'tt', 'u', 'ul'
+	]);
+
+	private textHeight = 0
+	private htmlString = ""
+	private richTextElement! : UniWebViewElement
+	// #ifdef APP-ANDROID
+	private nativeRichTextElement! : UniNativeRichTextElement;
+	private mode = 'web';
+	// #endif
+	private _fontFamily = ""
+	private _lineHeight = ""
+	private _fontSize = ""
+
+	constructor() {
+		super()
+		const richTextEle = this.uniPage.createElement('web-view')
+		richTextEle.setAnyAttribute('bounces', false)
+		richTextEle.setAnyAttribute('verticalScrollBarAccess', false);
+		richTextEle.setAnyAttribute('webview-styles', { 'progress': false })
+		this.richTextElement = richTextEle as UniWebViewElement
+
+		// #ifdef APP-ANDROID
+		this.nativeRichTextElement = this.uniPage.createElement('rich-text-native') as UniNativeRichTextElement;
+		this.nativeRichTextElement.addEventListener('itemclick', (event : UniNativeRichTextItemClickEvent) => {
+			if (event.detail.href != null) {
+				this.dispatchEvent(new UniRichTextItemClickEvent("itemclick", null, event.detail.href));
+			} else if (event.detail.src != null) {
+				this.dispatchEvent(new UniRichTextItemClickEvent("itemclick", event.detail.src, null));
+			}
+		});
+		// #endif
+
+		// 监听item click 事件
+		richTextEle.addEventListener('message', (event : UniWebViewMessageEvent) => {
+			"[weak self]"
+			if (event.detail.data.length > 0) {
+				const data = event.detail.data[0] as UTSJSONObject
+
+				const linkClick = data["linkClick"] as string | null
+				if (linkClick != null) {
+					this.dispatchEvent(new UniRichTextItemClickEvent("itemclick", null, linkClick as string))
+				} else {
+					const imgClick = data["imgClick"] as string | null
+					if (imgClick != null) {
+						this.dispatchEvent(new UniRichTextItemClickEvent("itemclick", imgClick as string, null))
+					}
+				}
+			}
+		});
+
+		// 监听text内容高度变化
+		richTextEle.addEventListener('contentheightchange', (event : UniWebViewContentHeightChangeEvent) => {
+			"[weak self]"
+			if (event.detail.height != this.textHeight && event.detail.height != 8) {
+				this.textHeight = event.detail.height
+				this.updateStyleHeight()
+			}
+		});
+
+		richTextEle.addEventListener('load', (_event : UniWebViewLoadEvent) => {
+			"[weak self]"
+			this.updateSelectable()
+		});
+	}
+
+	connectedCallback() {
+		// #ifndef APP-ANDROID
+		this.appendChild(this.richTextElement);
+		// #endif
+		// #ifdef APP-ANDROID
+		if (this.mode == 'web') {
+			this.appendChild(this.richTextElement);
+		} else if (this.mode == 'native') {
+			this.appendChild(this.nativeRichTextElement);
+		}
+		// #endif
+	}
+
+	override insertBefore(
+		child : UniElement,
+		anchor ?: UniElement | null
+	) : UniElement | null {
+		// #ifdef APP-HARMONY
+		if (child != this.richTextElement) {
+			return child
+		}
+		// #endif
+		// #ifdef APP-IOS
+		if ((child as UniElementImpl) != this.richTextElement as UniElementImpl) {
+			return child
+		}
+		// #endif
+		// #ifdef APP-ANDROID
+		if (child != this.richTextElement && child != this.nativeRichTextElement) {
+			return child;
+		}
+		// #endif
+		return super.insertBefore(child, anchor)
+	}
+
+	attributeChangedCallback(name : string, _oldValue : any | null, _newValue : any | null) {
+		switch (name) {
+			case 'nodes':
+				this.updateNodes()
+				break
+			case 'selectable':
+				this.updateSelectable()
+				break
+			case 'style':
+				this._updateStyle()
+				break
+			// #ifdef APP-ANDROID
+			case 'mode':
+				this.updateMode(_newValue as string | null);
+				break;
+			// #endif
+		}
+	}
+
+	// #ifdef APP-ANDROID
+	private updateMode(mode : string | null) {
+		if (this.mode != mode) {
+			if (mode == 'web') {
+				this.mode = mode;
+				if (this.children.includes(this.nativeRichTextElement)) {
+					this.removeChild(this.nativeRichTextElement);
+					this.appendChild(this.richTextElement);
+				}
+				this.updateNodes();
+				this.updateSelectable();
+			} else if (mode == 'native') {
+				this.mode = mode;
+				if (this.children.includes(this.richTextElement)) {
+					this.removeChild(this.richTextElement);
+					this.appendChild(this.nativeRichTextElement);
+				}
+				this.updateNodes();
+				this.updateSelectable();
+			}
+		}
+	}
+	// #endif
+
+	/**
+	 * 更新样式高度
+	 */
+	private updateStyleHeight() {
+		this.richTextElement.style.setProperty('height', this.textHeight + 'px')
+	}
+
+	private updateNodes() {
+		const nodes = this.getAnyAttribute('nodes')
+		// #ifndef APP-ANDROID
+		if (nodes != null && nodes instanceof Array<Map<string, any>>) {
+			const htmlstr = this.generateHTML(nodes as Array<Map<string, any>>)
+			this.parseHtmlString(htmlstr)
+		} else if (nodes != null && typeof (nodes) == "string") {
+			this.parseHtmlString(nodes as string)
+		}
+		// #endif
+		// #ifdef APP-ANDROID
+		if (this.mode == 'web') {
+			if (nodes != null && nodes instanceof Array<UTSJSONObject>) {
+				const htmlstr = this.generateHTML(nodes as Array<UTSJSONObject>);
+				this.parseHtmlString(htmlstr);
+			} else if (nodes != null && typeof (nodes) == "string" && nodes.length > 0) {
+				this.parseHtmlString(nodes as string);
+			}
+		} else if (this.mode == 'native') {
+			if (nodes != null) {
+				this.nativeRichTextElement.setAnyAttribute('nodes', nodes);
+			}
+		} else
+		// #endif
+	}
+
+	private updateSelectable() {
+		const selectable = this.getAttributeValue('selectable', 'false')
+		// #ifndef APP-ANDROID
+		let scriptSource = `updateSelection(${selectable})`;
+		this.richTextElement.evalJS(scriptSource)
+		// #endif
+		// #ifdef APP-ANDROID
+		if (this.mode == 'web') {
+			let scriptSource = `updateSelection(${selectable})`;
+			this.richTextElement.evalJS(scriptSource);
+		} else if (this.mode == 'native') {
+			this.nativeRichTextElement.setAnyAttribute('selectable', selectable);
+		}
+		// #endif
+	}
+
+	/**
+	 * 将节点数组转换为HTML字符串
+	 * @param nodes 节点数组
+	 * @returns 生成的HTML字符串
+	 */
+	// #ifdef APP-ANDROID
+	private generateHTML(nodes : Array<UTSJSONObject>) : string {
+		let html = "";
+
+		for (const node of nodes) {
+			if (node["text"] != null) {
+				html += node["text"] as string;
+			} else {
+				if (node["name"] != null) {
+					const name = node["name"] as string;
+					// 过滤掉不信任标签
+					if (!this.trustLabel.has(name)) {
+						continue;
+					}
+
+					html += `<${name}`;
+					if (node["attrs"] != null) {
+						const attrs = node["attrs"] as UTSJSONObject;
+						attrs.toMap().forEach((value : any | null, key : string) => {
+							html += ` ${key}="${value}"`;
+						})
+					}
+					// 如果是 'img' 标签，使用自闭合形式
+					if (name == "img") {
+						html += " />";
+					} else {
+						html += ">";
+					}
+				}
+				const children = node["children"] as any | null
+				if (children != null) {
+					const name = node["name"] as string
+					if (children instanceof Array<UTSJSONObject> && typeof (name) == "string" && name as string != "img") {
+						html += this.generateHTML(children as Array<UTSJSONObject>);
+						html += `</${name as string}>`;
+					}
+				}
+			}
+		}
+
+		return html;
+	}
+	// #endif
+
+	// #ifndef APP-ANDROID
+	private generateHTML(nodes : Array<Map<string, any>>) : string {
+		let html = "";
+
+		for (const node of nodes) {
+			if (node["text"] != null) {
+				html += node["text"] as string;
+			} else {
+				if (node["name"] != null) {
+					const name = node["name"] as string;
+					// 过滤掉不信任标签
+					if (!this.trustLabel.has(name)) {
+						continue;
+					}
+
+					html += `<${name}`;
+					if (node["attrs"] != null) {
+						const attrs = node["attrs"] as Map<string, string>;
+						attrs.forEach((value, key) => {
+							html += ` ${key}="${value}"`;
+						})
+					}
+					// 如果是 'img' 标签，使用自闭合形式
+					if (name == "img") {
+						html += " />";
+					} else {
+						html += ">";
+					}
+				}
+				const children = node["children"] as any | null
+				const name = node["name"] as string
+				if (children instanceof Array<Map<string, any>> && typeof (name) == "string" && name as string != "img") {
+					html += this.generateHTML(children as Array<Map<string, any>>);
+					html += `</${name as string}>`;
+				}
+			}
+		}
+
+		return html;
+	}
+	// #endif
+
+	/**
+	 * 解析HTML字符串并更新WebView的内容
+	 * @param {string} nodes - 包含HTML内容的字符串
+	 */
+	private parseHtmlString(nodes : string) {
+		const htmlstr = this.removeDistrustTags(nodes)
+		if (htmlstr != this.htmlString) {
+			this.htmlString = htmlstr
+			this.reloadHtmlString()
+		}
+	}
+
+	/**
+	 * 删除字符串中不信任的HTML标签及其内容
+	 * @param {string} string - 包含HTML标签的输入字符串
+	 * @returns {string} - 处理后的字符串，只保留信任的HTML标签及内容
+	 */
+	private removeDistrustTags(string : string) {
+		return htmlParser(string);
+	}
+
+	/**
+	 * 重新加载HTML字符串
+	 * @description 该方法用于重新加载HTML字符串，并更新WebView的内容
+	 */
+	private reloadHtmlString() {
+		const fontFamily = this.getStyleValue('fontFamily', '-apple-system, HelveticaNeue')
+		const lineHeight = this.getStyleValue('lineHeight', '1.5')
+		const fontSize = this.getStyleValue('fontSize', '16px')
+
+		this._fontFamily = fontFamily
+		this._lineHeight = lineHeight
+		this._fontSize = fontSize
+
+		const htmlString = this.createHTMLString(this.htmlString, fontFamily, lineHeight, fontSize)
+		this.richTextElement.loadData({ data: htmlString } as UniWebViewElementLoadDataOptions)
+	}
+
+	/**
+	 * 创建一个HTML字符串，设置背景颜色、字体、行高和字体大小
+	 * @param {string} content - 要包装的HTML内容
+	 * @param {string} fontFamily - 字体系列
+	 * @param {string} lineHeight - 行高
+	 * @param {string} fontSize - 字体大小
+	 * @returns {string} - 完整的HTML字符串
+	 */
+	private createHTMLString(content : string, fontFamily : string, lineHeight : string, fontSize : string) {
+		const htmlString = `
+	    <!DOCTYPE html>
+	    <html>
+	    <head>
+	      <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	      <style>
+	        body {
+	          background-color: transparent;
+	          font-family: ${fontFamily};
+	          line-height: ${lineHeight};
+	          font-size: ${fontSize};
+	          overflow-x: hidden;
+	        }
+	        img {
+	          max-width: 100%;
+	          height: auto;
+	        }
+	        * {
+	          margin: 0;
+	        }
+	      </style>
+	      <script>
+			function postMessage(m) {
+				window.__uniapp_x_.postMessage(JSON.stringify(m))
+			};
+
+			function updateSelection(enabled) {
+			    if (enabled) {
+			        // 启用文本选择
+			        var style = document.getElementById('disable-selection-style');
+			        if (style) {
+	                    style.remove();
+					}
+			        document.documentElement.style.webkitTouchCallout = 'default';
+	            } else {
+					// 禁用文本选择
+			        if (!document.getElementById('disable-selection-style')) {
+		                var style = document.createElement('style');
+	                    style.id = 'disable-selection-style';
+			            style.textContent = '* { -webkit-user-select: none !important; user-select: none !important; }';
+			            document.head.appendChild(style);
+			        }
+			        document.documentElement.style.webkitTouchCallout = 'none';
+			    }
+			}
+
+	        window.onload = function() {
+	          // 为所有 a 标签添加点击事件监听器
+	          var aTags = document.getElementsByTagName('a');
+	          for (var i = 0; i < aTags.length; i++) {
+	            aTags[i].addEventListener('click', function(event) {
+	              event.preventDefault(); // 阻止默认链接行为
+	              var href = event.target.href;
+				  			postMessage({'data' : {'linkClick': href}})
+	            });
+	          }
+
+	          // 为所有 img 标签添加点击事件监听器
+	          var imgTags = document.getElementsByTagName('img');
+	          for (var i = 0; i < imgTags.length; i++) {
+	            imgTags[i].addEventListener('click', function(event) {
+	              var src = event.target.src;
+	              postMessage({'data': {'imgClick': src}})
+	            });
+	          }
+	        };
+	      </script>
+	    </head>
+	    <body>
+	      ${content}
+	    </body>
+	    </html>
+	  `;
+
+		return htmlString;
+	}
+
+	/**
+	 * 获取指定属性的值，如果属性不存在则返回默认值
+	 * @param {string} key - 属性名
+	 * @param {string} defaultValue - 默认值
+	 * @returns {string} - 属性值或默认值
+	 */
+	private getAttributeValue(key : string, defaultValue : string) : string {
+		const value = this.getAttribute(key)
+		if (value != null && value!.length > 0) {
+			return value!
+		}
+		return defaultValue
+	}
+
+	/**
+   * 获取指定CSS属性的值，如果属性不存在则返回默认值
+   * @param {string} key - CSS属性名
+   * @param {string} defaultValue - 默认值
+   * @returns {string} - CSS属性值或默认值
+   */
+	private getStyleValue(key : string, defaultValue : string) : string {
+		const value = this.style.getPropertyValue(key)
+		if (value.length > 0) {
+			return value
+		}
+		return defaultValue
+	}
+
+	private _updateStyle() {
+
+		const fontFamily = this.getStyleValue('fontFamily', this._fontFamily)
+		const lineHeight = this.getStyleValue('lineHeight', this._lineHeight)
+		const fontSize = this.getStyleValue('fontSize', this._fontSize)
+
+		// 如果字体、行高和字体大小没有变化，则不重新加载
+		if (this.htmlString.length == 0 || (fontFamily == this._fontFamily && lineHeight == this._lineHeight && fontSize == this._fontSize)) {
+			return
+		}
+
+		this.reloadHtmlString()
+	}
+}
