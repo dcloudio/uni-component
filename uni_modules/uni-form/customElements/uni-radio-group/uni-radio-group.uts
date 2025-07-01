@@ -1,0 +1,80 @@
+import { UniRadioElement } from '../uni-radio/uni-radio'
+
+type UniRadioGroupChangeEventDetail = {
+  value: string
+}
+
+export class UniRadioGroupChangeEvent extends UniCustomEvent<UniRadioGroupChangeEventDetail> {
+  constructor(value: string) {
+    super('change', { value } as UniRadioGroupChangeEventDetail)
+  }
+}
+
+export class UniRadioGroupElement extends UniFormControlElement<string> {
+  static get observedAttributes() : Array<string> {
+    return ['name', 'value']
+  }
+
+  constructor() {
+    super()
+  }
+
+  override get value(): string {
+    let returnValue = ''
+
+    const controls: UniRadioElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniRadioElement) => {
+      if (item.checked) {
+        returnValue = (item as UniFormControlElement<string>).value
+      }
+    })
+
+    return returnValue
+  }
+
+  override set value(value: string) {
+    const controls: UniRadioElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniRadioElement) => {
+      const itemValue = (item as any as UniFormControlElement<string>).value
+      if (itemValue == value) {
+        item.checked = true
+      }
+    })
+  }
+
+  override reset() {
+    const controls: UniRadioElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniRadioElement) => {
+      (item as any as UniFormControlElement<unknown>).reset()
+    })
+  }
+
+  // friend in UniRadioElement
+  _radioChange(el: UniElement, value: string) {
+    const controls: UniRadioElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniRadioElement) => {
+      if (item != el) {
+        item.checked = false
+      }
+    })
+
+    this.dispatchEvent(new UniRadioGroupChangeEvent(value))
+  }
+
+  private findChildren(el: UniElement, controls: UniRadioElement[]) {
+    if (!el.children.length) {
+      return
+    }
+    el.children.forEach((item: UniElement) => {
+      if (item instanceof UniRadioElement) {
+        controls.push(item)
+      } else {
+        this.findChildren(item, controls)
+      }
+    })
+  }
+}

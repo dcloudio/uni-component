@@ -1,0 +1,83 @@
+import { UniCheckboxElement } from '../uni-checkbox/uni-checkbox'
+
+type UniCheckboxGroupChangeEventDetail = {
+  value: string[]
+}
+
+export class UniCheckboxGroupChangeEvent extends UniCustomEvent<UniCheckboxGroupChangeEventDetail> {
+  constructor(value: string[]) {
+    super('change', { value } as UniCheckboxGroupChangeEventDetail)
+  }
+}
+
+export class UniCheckboxGroupElement extends UniFormControlElement<string[]> {
+  static get observedAttributes() : Array<string> {
+    return ['name', 'value']
+  }
+
+  constructor() {
+    super()
+  }
+
+  override get value(): string[] {
+    return this.getCheckboxValues()
+  }
+
+  override set value(value: string[]) {
+    this.setCheckboxValues(value)
+  }
+
+  override reset() {
+    const controls: UniCheckboxElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniCheckboxElement) => {
+      (item as any as UniFormControlElement<unknown>).reset()
+    })
+  }
+
+  // friend in UniCheckboxElement
+  _checkboxChange() {
+    this.dispatchEvent(new UniCheckboxGroupChangeEvent(this.getCheckboxValues()))
+  }
+
+  private getCheckboxValues(): string[] {
+    const values: string[] = [];
+
+    const controls: UniCheckboxElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniCheckboxElement) => {
+      if (item.checked) {
+        const itemValue = (item as UniFormControlElement<string>).value
+        if (itemValue) {
+          values.push(itemValue)
+        }
+      }
+    })
+
+    return values
+  }
+
+  private setCheckboxValues(values: string[]) {
+    const controls: UniCheckboxElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item: UniCheckboxElement) => {
+      const itemValue = (item as UniFormControlElement<string>).value
+      if (itemValue && values.includes(itemValue)) {
+        item.checked = true
+      }
+    })
+  }
+
+  private findChildren(el: UniElement, controls: UniCheckboxElement[]) {
+    if (!el.children.length) {
+      return
+    }
+    el.children.forEach((item: UniElement) => {
+      if (item instanceof UniCheckboxElement) {
+        controls.push(item)
+      } else {
+        this.findChildren(item, controls)
+      }
+    })
+  }
+}

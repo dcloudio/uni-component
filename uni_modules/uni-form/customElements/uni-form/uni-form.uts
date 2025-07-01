@@ -1,0 +1,79 @@
+import { UniFormControl } from '../UniFormControl'
+
+type UniFormSubmitEventDetail = {
+  value: UTSJSONObject
+}
+
+type UniFormResetEventDetail = {
+}
+
+export class UniFormSubmitEvent extends UniCustomEvent<UniFormSubmitEventDetail> {
+  constructor(value: UTSJSONObject) {
+    super('submit', { value } as UniFormSubmitEventDetail)
+  }
+}
+
+export class UniFormResetEvent extends UniCustomEvent<UniFormResetEventDetail> {
+  constructor() {
+    super('reset', {} as UniFormResetEventDetail)
+  }
+}
+
+export class UniFormElement extends UniViewElementImpl implements UniFormControl {
+  static get observedAttributes() : Array<string> {
+    return ['disabled']
+  }
+
+  constructor() {
+    super()
+  }
+
+  get disabled(): boolean {
+    return this.getAttribute('disabled') == 'true' ? true : false
+  }
+
+  submit() {
+    if (this.disabled) {
+      return
+    }
+
+    const formData = {}
+    let controls: UniFormControlElement<unknown>[] = []
+    this.findFormControls(this, controls)
+    controls.forEach((control: UniFormControlElement<unknown>) => {
+      formData[control.name] = control.value
+    })
+
+    this.dispatchEvent(new UniFormSubmitEvent(formData))
+  }
+
+  reset() {
+    if (this.disabled) {
+      return
+    }
+
+    let controls: UniFormControlElement<unknown>[] = []
+    this.findFormControls(this, controls)
+    controls.forEach((control: UniFormControlElement<unknown>) => {
+      control.reset()
+    })
+
+    this.dispatchEvent(new UniFormResetEvent())
+  }
+
+  private findFormControls(el: UniElement, controls: UniFormControlElement<unknown>[]) {
+    if (!el.children.length) {
+      return
+    }
+    el.children.forEach((value: UniElement) => {
+      if (value instanceof UniFormControlElement) {
+        const control = value as UniFormControlElement<unknown>
+        if (control.name.length > 0) {
+          controls.push(control)
+        }
+      } else {
+        this.findFormControls(value, controls)
+      }
+    })
+  }
+}

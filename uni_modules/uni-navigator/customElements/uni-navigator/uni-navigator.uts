@@ -1,0 +1,50 @@
+type OpenType = 'navigate' | 'navigateBack' | 'redirect' | 'reLaunch' | 'switchTab'
+
+export class UniNavigatorElement extends UniViewElementImpl {
+
+  static get observedAttributes() : Array<string> {
+    return ['animationType', 'delta', 'openType', 'url'];
+  }
+
+  constructor() {
+    super()
+
+    this.addEventListener('click', () => {
+      this.onClick()
+    })
+  }
+
+  onClick() {
+      const url = this.getAttribute('url');
+      const openType = (this.getAttribute('openType') || 'navigate') as OpenType;
+      const animationType = this.getAttribute('animationType');
+      switch (openType) {
+        case 'navigate':
+          uni.navigateTo({
+            url,
+            animationType
+          })
+          break;
+        case 'navigateBack':
+          uni.navigateBack()
+          break;
+        case 'redirect':
+          uni.redirectTo({
+            url
+          })
+          break;
+        case 'reLaunch':
+          uni.reLaunch({
+            url
+          });
+          break;
+        case 'switchTab':
+          uni.switchTab({
+            url
+          });
+          break;
+        default:
+          break;
+      }
+    }
+}
