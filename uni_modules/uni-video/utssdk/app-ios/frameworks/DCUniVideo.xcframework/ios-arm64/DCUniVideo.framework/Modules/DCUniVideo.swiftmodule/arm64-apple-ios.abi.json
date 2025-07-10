@@ -1,8 +1,8 @@
 {
   "ABIRoot": {
     "kind": "Root",
-    "name": "TopLevel",
-    "printedName": "TopLevel",
+    "name": "DCUniVideo",
+    "printedName": "DCUniVideo",
     "children": [
       {
         "kind": "Import",
@@ -229,6 +229,20 @@
         ],
         "enumRawTypeName": "String",
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -475,6 +489,20 @@
           "ObjectiveC.NSObject"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -768,6 +796,20 @@
           "AccessControl"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -1259,6 +1301,22 @@
         "isOpen": true,
         "declAttributes": [
           "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
         ]
       },
       {
@@ -1384,6 +1442,22 @@
         "moduleName": "DCUniVideo",
         "declAttributes": [
           "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
         ]
       },
       {
@@ -1953,6 +2027,22 @@
         "sugared_genericSig": "<Self : AnyObject>",
         "declAttributes": [
           "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
         ]
       },
       {
@@ -1986,6 +2076,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override",
               "AccessControl"
@@ -2012,6 +2103,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override",
               "AccessControl"
@@ -2024,6 +2116,7 @@
         "mangledName": "$s10DCUniVideo23UniMonitoredContentViewC",
         "moduleName": "DCUniVideo",
         "declAttributes": [
+          "Preconcurrency",
           "Custom",
           "AccessControl",
           "RawDocComment",
@@ -2038,6 +2131,20 @@
           "ObjectiveC.NSObject"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -2969,6 +3076,20 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "ViewPresent",
             "printedName": "ViewPresent",
             "children": [
@@ -3279,6 +3400,20 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "Equatable",
             "printedName": "Equatable",
             "usr": "s:SQ",
@@ -3516,6 +3651,20 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "Equatable",
             "printedName": "Equatable",
             "usr": "s:SQ",
@@ -3675,6 +3824,20 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "Equatable",
             "printedName": "Equatable",
             "usr": "s:SQ",
@@ -3766,6 +3929,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override",
               "AccessControl"
@@ -3792,6 +3956,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override",
               "AccessControl"
@@ -3830,6 +3995,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -3868,6 +4034,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -3880,6 +4047,7 @@
         "mangledName": "$s10DCUniVideo03UniB10PlayerViewC",
         "moduleName": "DCUniVideo",
         "declAttributes": [
+          "Preconcurrency",
           "Custom",
           "AccessControl",
           "ObjC"
@@ -3893,6 +4061,20 @@
           "ObjectiveC.NSObject"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -4171,6 +4353,20 @@
         "conformances": [
           {
             "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
             "name": "Equatable",
             "printedName": "Equatable",
             "usr": "s:SQ",
@@ -4208,8 +4404,9 @@
             "moduleName": "DCUniVideo",
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "AccessControl"
             ],
             "hasStorage": true,
@@ -4295,8 +4492,9 @@
             "moduleName": "DCUniVideo",
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "AccessControl",
               "RawDocComment"
             ],
@@ -4382,6 +4580,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuCellC9textLabelSo7UILabelCvp",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "Lazy",
               "SetterAccess",
@@ -4432,6 +4631,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuCellC15reuseIdentifierACSS_tcfc",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "Required",
               "AccessControl"
@@ -4473,6 +4673,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Required",
               "AccessControl"
@@ -4496,6 +4697,7 @@
             "moduleName": "DCUniVideo",
             "isOpen": true,
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -4529,6 +4731,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override"
             ],
@@ -4541,6 +4744,7 @@
         "moduleName": "DCUniVideo",
         "isOpen": true,
         "declAttributes": [
+          "Preconcurrency",
           "Custom",
           "AccessControl",
           "ObjC"
@@ -4552,6 +4756,20 @@
           "ObjectiveC.NSObject"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -4861,6 +5079,22 @@
         "moduleName": "DCUniVideo",
         "declAttributes": [
           "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
         ]
       },
       {
@@ -4903,6 +5137,22 @@
         "moduleName": "DCUniVideo",
         "declAttributes": [
           "AccessControl"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
         ]
       },
       {
@@ -5089,7 +5339,23 @@
           "AccessControl",
           "RawDocComment"
         ],
-        "hasMissingDesignatedInitializers": true
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
+        ]
       },
       {
         "kind": "TypeDecl",
@@ -5286,6 +5552,22 @@
         "inheritsConvenienceInitializers": true,
         "superclassNames": [
           "DCUniVideo.HJDanmakuSource"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
         ]
       },
       {
@@ -5483,6 +5765,22 @@
         "inheritsConvenienceInitializers": true,
         "superclassNames": [
           "DCUniVideo.HJDanmakuSource"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          }
         ]
       },
       {
@@ -6055,6 +6353,22 @@
         "declAttributes": [
           "AccessControl",
           "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
         ]
       },
       {
@@ -6268,6 +6582,22 @@
         "declAttributes": [
           "AccessControl",
           "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
         ]
       },
       {
@@ -6293,8 +6623,9 @@
             "isOpen": true,
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "AccessControl",
               "ReferenceOwnership"
             ],
@@ -6401,8 +6732,9 @@
             "isOpen": true,
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "AccessControl",
               "ReferenceOwnership"
             ],
@@ -6509,8 +6841,9 @@
             "moduleName": "DCUniVideo",
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "SetterAccess",
               "AccessControl"
             ],
@@ -6555,8 +6888,9 @@
             "moduleName": "DCUniVideo",
             "declAttributes": [
               "HasInitialValue",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "SetterAccess",
               "AccessControl"
             ],
@@ -6601,8 +6935,9 @@
             "moduleName": "DCUniVideo",
             "declAttributes": [
               "Final",
-              "HasStorage",
+              "Preconcurrency",
               "Custom",
+              "HasStorage",
               "AccessControl"
             ],
             "isLet": true,
@@ -6661,6 +6996,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC5frame13configurationACSo6CGRectV_AA0C13ConfigurationCtcfc",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -6701,6 +7037,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Required",
               "AccessControl"
@@ -6745,6 +7082,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC15prepareDanmakusyySayAA0C5ModelCGSgF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "RawDocComment"
@@ -6767,6 +7105,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC4playyyF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "RawDocComment"
@@ -6789,6 +7128,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC5pauseyyF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -6810,6 +7150,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC4stopyyF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -6831,6 +7172,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC11clearScreenyyF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -6857,6 +7199,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -6891,6 +7234,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC11sendDanmaku_11forceRenderyAA0C5ModelC_SbtF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "RawDocComment"
@@ -6927,6 +7271,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC12sendDanmakusyySayAA0C5ModelCGF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -6963,6 +7308,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC21danmakuForVisibleCellyAA0C5ModelCSgAA0cH0CF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "RawDocComment"
@@ -6994,6 +7340,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC12visibleCellsSayAA0C4CellCGvp",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -7054,6 +7401,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "Override"
             ],
@@ -7109,6 +7457,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -7165,6 +7514,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -7221,6 +7571,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -7277,6 +7628,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -7333,6 +7685,7 @@
             "declAttributes": [
               "Dynamic",
               "ObjC",
+              "Preconcurrency",
               "Custom",
               "AccessControl",
               "Override"
@@ -7375,6 +7728,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC8register_22forCellReuseIdentifieryAA0cG0Cm_SStF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -7412,6 +7766,7 @@
             "mangledName": "$s10DCUniVideo13HJDanmakuViewC19dequeueReusableCell14withIdentifierAA0cG0CSgSS_tF",
             "moduleName": "DCUniVideo",
             "declAttributes": [
+              "Preconcurrency",
               "Custom",
               "AccessControl"
             ],
@@ -7425,6 +7780,7 @@
         "moduleName": "DCUniVideo",
         "isOpen": true,
         "declAttributes": [
+          "Preconcurrency",
           "Custom",
           "AccessControl",
           "ObjC"
@@ -7436,6 +7792,20 @@
           "ObjectiveC.NSObject"
         ],
         "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
           {
             "kind": "Conformance",
             "name": "Equatable",
@@ -7625,1824 +7995,1516 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
       "kind": "StringLiteral",
       "offset": 160,
       "length": 3,
       "value": "\"0\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
       "kind": "StringLiteral",
       "offset": 191,
       "length": 3,
       "value": "\"1\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
       "kind": "StringLiteral",
       "offset": 222,
       "length": 3,
       "value": "\"2\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
-      "kind": "StringLiteral",
-      "offset": 160,
-      "length": 3,
-      "value": "\"0\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
-      "kind": "StringLiteral",
-      "offset": 191,
-      "length": 3,
-      "value": "\"1\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
-      "kind": "StringLiteral",
-      "offset": 222,
-      "length": 3,
-      "value": "\"2\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
       "kind": "FloatLiteral",
       "offset": 303,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuModel.swift",
-      "kind": "StringLiteral",
-      "offset": 240,
-      "length": 14,
-      "value": "\"DCUniVideo.HJDanmakuModel\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
       "kind": "IntegerLiteral",
       "offset": 192,
       "length": 3,
       "value": "100"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
       "kind": "IntegerLiteral",
       "offset": 198,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoCacheUtil.swift",
       "kind": "IntegerLiteral",
       "offset": 205,
       "length": 4,
       "value": "1024"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerVolumeView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerVolumeView.swift",
       "kind": "IntegerLiteral",
       "offset": 361,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
       "kind": "FloatLiteral",
       "offset": 319,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
       "kind": "FloatLiteral",
       "offset": 459,
       "length": 3,
       "value": "2.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 529,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
       "kind": "FloatLiteral",
       "offset": 657,
       "length": 4,
       "value": "30.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuConfiguration.swift",
       "kind": "IntegerLiteral",
       "offset": 794,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2712,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2751,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2791,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2828,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2876,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2911,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2949,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 2994,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 3035,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 3078,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "FloatLiteral",
       "offset": 3119,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "IntegerLiteral",
       "offset": 3157,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "IntegerLiteral",
       "offset": 3190,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "FloatLiteral",
       "offset": 3273,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "Array",
       "offset": 3370,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Present\/UniVideoPlayerViewPresent.swift",
       "kind": "BooleanLiteral",
       "offset": 3619,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "IntegerLiteral",
       "offset": 149,
       "length": 3,
       "value": "155"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "IntegerLiteral",
       "offset": 326,
       "length": 2,
       "value": "16"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 369,
       "length": 4,
       "value": "0.25"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 382,
       "length": 4,
       "value": "0.22"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 394,
       "length": 4,
       "value": "0.21"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 407,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 602,
       "length": 4,
       "value": "0.25"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 615,
       "length": 4,
       "value": "0.22"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 627,
       "length": 4,
       "value": "0.21"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 640,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "FloatLiteral",
       "offset": 925,
       "length": 4,
       "value": "0.97"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/SlidingTipsView.swift",
       "kind": "Array",
       "offset": 996,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 256,
       "length": 4,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 270,
       "length": 5,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 285,
       "length": 4,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 256,
-      "length": 4,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 270,
-      "length": 5,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 285,
-      "length": 4,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 256,
-      "length": 4,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 270,
-      "length": 5,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 285,
-      "length": 4,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "StringLiteral",
       "offset": 544,
       "length": 10,
       "value": "\"hardware\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "StringLiteral",
       "offset": 575,
       "length": 10,
       "value": "\"software\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "StringLiteral",
-      "offset": 544,
-      "length": 10,
-      "value": "\"hardware\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "StringLiteral",
-      "offset": 575,
-      "length": 10,
-      "value": "\"software\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 1145,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 1156,
       "length": 6,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "IntegerLiteral",
       "offset": 1172,
       "length": 11,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1145,
-      "length": 1,
-      "value": "0"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1156,
-      "length": 6,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1172,
-      "length": 11,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1145,
-      "length": 1,
-      "value": "0"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1156,
-      "length": 6,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "IntegerLiteral",
-      "offset": 1172,
-      "length": 11,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "FloatLiteral",
       "offset": 1367,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "FloatLiteral",
       "offset": 1427,
       "length": 3,
       "value": "0.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 1550,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 1740,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 1852,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 1915,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 1974,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2034,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2151,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2469,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2551,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2646,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2741,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2839,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 2933,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 3029,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 3584,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 3690,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
       "kind": "BooleanLiteral",
       "offset": 3836,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConfig.swift",
-      "kind": "StringLiteral",
-      "offset": 1200,
-      "length": 20,
-      "value": "\"DCUniVideo.UniVideoPlayerConfig\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "BooleanLiteral",
       "offset": 517,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "BooleanLiteral",
       "offset": 775,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "StringLiteral",
       "offset": 1007,
       "length": 13,
       "value": "\"player_play\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "BooleanLiteral",
       "offset": 1148,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "BooleanLiteral",
       "offset": 1478,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "BooleanLiteral",
       "offset": 1663,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "IntegerLiteral",
       "offset": 2379,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerView.swift",
       "kind": "IntegerLiteral",
       "offset": 2630,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuCell.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuCell.swift",
       "kind": "IntegerLiteral",
       "offset": 322,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuCell.swift",
-      "kind": "StringLiteral",
-      "offset": 269,
-      "length": 13,
-      "value": "\"DCUniVideo.HJDanmakuCell\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 167,
       "length": 4,
       "value": "16.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 208,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 244,
       "length": 4,
       "value": "44.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 282,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 889,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 924,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 960,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 1085,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 1224,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 1258,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 1479,
       "length": 13,
       "value": "\"player_stop\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 1541,
       "length": 13,
       "value": "\"player_play\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 1595,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 1606,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 1619,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 1631,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 1901,
       "length": 18,
       "value": "\"video_ic_muteoff\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 1968,
       "length": 17,
       "value": "\"video_ic_muteon\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 2026,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 2037,
       "length": 3,
       "value": "8.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 2050,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 2062,
       "length": 3,
       "value": "8.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 2178,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 2397,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 2473,
       "length": 9,
       "value": "\"0:00:00\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 2734,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 2810,
       "length": 9,
       "value": "\"0:00:00\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 3020,
       "length": 14,
       "value": "\"slider_thumb\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3103,
       "length": 2,
       "value": "66"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3108,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3120,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3124,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3135,
       "length": 3,
       "value": "191"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3141,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 3153,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3210,
       "length": 3,
       "value": "160"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3216,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3228,
       "length": 3,
       "value": "160"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3234,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3245,
       "length": 3,
       "value": "160"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 3251,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 3263,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 3295,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 3928,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 4060,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 4210,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 4216,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 4226,
       "length": 2,
       "value": "20"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 4238,
       "length": 2,
       "value": "22"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "BooleanLiteral",
       "offset": 4260,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 4312,
       "length": 16,
       "value": "\"exitfullscreen\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "StringLiteral",
       "offset": 4377,
       "length": 12,
       "value": "\"fullscreen\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "IntegerLiteral",
       "offset": 4430,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 4441,
       "length": 4,
       "value": "16.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 4455,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerBottomBar.swift",
       "kind": "FloatLiteral",
       "offset": 4467,
       "length": 3,
       "value": "8.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "BooleanLiteral",
       "offset": 439,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 475,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 510,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 539,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 563,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 625,
       "length": 2,
       "value": "-1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 970,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuSource.swift",
       "kind": "IntegerLiteral",
       "offset": 2003,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 208,
       "length": 4,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 242,
       "length": 4,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 270,
       "length": 5,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 298,
       "length": 10,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 383,
       "length": 12,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 424,
       "length": 12,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
       "kind": "IntegerLiteral",
       "offset": 463,
       "length": 13,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 208,
-      "length": 4,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 242,
-      "length": 4,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 270,
-      "length": 5,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 298,
-      "length": 10,
-      "value": "4"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 383,
-      "length": 12,
-      "value": "5"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 424,
-      "length": 12,
-      "value": "6"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 463,
-      "length": 13,
-      "value": "7"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 208,
-      "length": 4,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 242,
-      "length": 4,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 270,
-      "length": 5,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 298,
-      "length": 10,
-      "value": "4"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 383,
-      "length": 12,
-      "value": "5"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 424,
-      "length": 12,
-      "value": "6"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoInfoModel.swift",
-      "kind": "IntegerLiteral",
-      "offset": 463,
-      "length": 13,
-      "value": "7"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
       "kind": "IntegerLiteral",
       "offset": 210,
       "length": 5,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
       "kind": "IntegerLiteral",
       "offset": 226,
       "length": 4,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
       "kind": "IntegerLiteral",
       "offset": 241,
       "length": 2,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
       "kind": "IntegerLiteral",
       "offset": 254,
       "length": 4,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 210,
-      "length": 5,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 226,
-      "length": 4,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 241,
-      "length": 2,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 254,
-      "length": 4,
-      "value": "4"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 210,
-      "length": 5,
-      "value": "1"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 226,
-      "length": 4,
-      "value": "2"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 241,
-      "length": 2,
-      "value": "3"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
-      "kind": "IntegerLiteral",
-      "offset": 254,
-      "length": 4,
-      "value": "4"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Tools\/UniVideoDirectionGesture.swift",
       "kind": "FloatLiteral",
       "offset": 311,
       "length": 3,
       "value": "5.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "StringLiteral",
       "offset": 270,
       "length": 8,
       "value": "\"弹幕\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "FloatLiteral",
       "offset": 326,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 430,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 487,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 645,
       "length": 2,
       "value": "15"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 650,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 662,
       "length": 3,
       "value": "150"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 668,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 680,
       "length": 2,
       "value": "53"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "IntegerLiteral",
       "offset": 685,
       "length": 3,
       "value": "255"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "FloatLiteral",
       "offset": 697,
       "length": 3,
       "value": "1.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "BooleanLiteral",
       "offset": 2346,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoButtons.swift",
       "kind": "BooleanLiteral",
       "offset": 2774,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "FloatLiteral",
       "offset": 3578,
       "length": 3,
       "value": "0.2"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "BooleanLiteral",
       "offset": 3775,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "BooleanLiteral",
       "offset": 3821,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "StringLiteral",
       "offset": 3975,
       "length": 33,
       "value": "\"com.olinone.danmaku.renderQueue\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "StringLiteral",
       "offset": 4256,
       "length": 33,
       "value": "\"com.olinone.danmaku.sourceQueue\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "IntegerLiteral",
       "offset": 4343,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
       "kind": "IntegerLiteral",
       "offset": 4483,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/HJDanmaku\/HJDanmakuView.swift",
-      "kind": "StringLiteral",
-      "offset": 3594,
-      "length": 13,
-      "value": "\"DCUniVideo.HJDanmakuView\""
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 147,
       "length": 5,
       "value": "\"src\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 194,
       "length": 13,
       "value": "\"initialTime\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 246,
       "length": 10,
       "value": "\"duration\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 295,
       "length": 10,
       "value": "\"controls\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 348,
       "length": 13,
       "value": "\"enableDanmu\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 401,
       "length": 11,
       "value": "\"danmuList\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 452,
       "length": 10,
       "value": "\"danmuBtn\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 501,
       "length": 10,
       "value": "\"autoplay\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 546,
       "length": 6,
       "value": "\"loop\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 588,
       "length": 7,
       "value": "\"muted\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 637,
       "length": 13,
       "value": "\"pageGesture\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 690,
       "length": 11,
       "value": "\"direction\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 744,
       "length": 14,
       "value": "\"showProgress\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 807,
       "length": 19,
       "value": "\"showFullscreenBtn\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 868,
       "length": 13,
       "value": "\"showPlayBtn\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 923,
       "length": 13,
       "value": "\"showMuteBtn\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 984,
       "length": 19,
       "value": "\"showCenterPlayBtn\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1055,
       "length": 23,
       "value": "\"enableProgressGesture\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1118,
       "length": 11,
       "value": "\"objectFit\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1166,
       "length": 8,
       "value": "\"poster\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1216,
       "length": 13,
       "value": "\"showLoading\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1267,
       "length": 8,
       "value": "\"header\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1314,
       "length": 10,
       "value": "\"advanced\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1381,
       "length": 27,
       "value": "\"vslideGestureInFullscreen\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1447,
       "length": 19,
       "value": "\"enablePlayGesture\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1503,
       "length": 7,
       "value": "\"title\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1551,
       "length": 11,
       "value": "\"httpCache\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1606,
       "length": 14,
       "value": "\"playStrategy\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Model\/UniVideoPlayerConsts.swift",
       "kind": "StringLiteral",
       "offset": 1657,
       "length": 7,
       "value": "\"codec\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 148,
       "length": 4,
       "value": "50.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "StringLiteral",
       "offset": 455,
       "length": 15,
       "value": "\"backbarbutton\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 557,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 570,
       "length": 4,
       "value": "16.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 584,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 596,
       "length": 4,
       "value": "10.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerTopBar.swift",
       "kind": "FloatLiteral",
       "offset": 922,
       "length": 4,
       "value": "16.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
       "kind": "FloatLiteral",
       "offset": 299,
       "length": 3,
       "value": "4.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
       "kind": "FloatLiteral",
       "offset": 915,
       "length": 4,
       "value": "12.0"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
       "kind": "StringLiteral",
       "offset": 1146,
       "length": 6,
       "value": "\"play\""
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/View\/UniVideoPlayerOverlayView.swift",
       "kind": "BooleanLiteral",
       "offset": 1280,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
       "kind": "BooleanLiteral",
       "offset": 364,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
       "kind": "IntegerLiteral",
       "offset": 488,
       "length": 2,
       "value": "20"
     },
     {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
+      "filePath": "\/Volumes\/EXT\/share106\/iOS\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
       "kind": "FloatLiteral",
       "offset": 660,
       "length": 3,
       "value": "0.0"
-    },
-    {
-      "filePath": "\/Users\/seaman\/Desktop\/ExtApiDependency\/DCUniVideo\/DCUniVideo\/Manager\/UniVidePlayerDanmuManager.swift",
-      "kind": "StringLiteral",
-      "offset": 502,
-      "length": 25,
-      "value": "\"DCUniVideo.UniVidePlayerDanmuManager\""
     }
   ]
 }
