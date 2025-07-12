@@ -1,0 +1,202 @@
+import { UniPickerViewColumnElement } from '../uni-picker-view-column/uni-picker-view-column'
+
+type UniPickerViewChangeEventDetail = {
+  value : number[]
+}
+
+export class UniPickerViewChangeEvent extends UniCustomEvent<UniPickerViewChangeEventDetail> {
+  constructor(value : number[]) {
+    super('change', { value } as UniPickerViewChangeEventDetail)
+  }
+}
+
+export class UniPickerViewElement extends UniFormControlElement<number[]> {
+  static get observedAttributes() : Array<string> {
+    return ['value', 'indicatorStyle', 'maskTopStyle', 'maskBottomStyle', 'maskClass']
+  }
+
+  private readonly _uniResizeObserver : UniResizeObserver
+
+  constructor() {
+    super()
+
+    this.style.setProperty('flexDirection', 'row')
+
+    this._uniResizeObserver = new UniResizeObserver(
+      (_ : Array<UniResizeObserverEntry>) => {
+        this._onResize()
+      }
+    )
+  }
+
+  connectedCallback() {
+    this._uniResizeObserver!.observe(this)
+  }
+
+  disconnectedCallback() {
+    this._uniResizeObserver.disconnect()
+  }
+
+  attributeChangedCallback(name : string, oldValue : string, newValue : string) {
+    switch (name) {
+      case 'value':
+        this.setChildrenAttribute(newValue)
+        break;
+      // case 'indicatorStyle':
+      //   this._setIndicatorStyle(value)
+      //   break;
+      // case 'maskTopStyle':
+      //   this._setMaskTopStyle(value)
+      //   break;
+      // case 'maskBottomStyle':
+      //   this._setMaskBottomStyle(value)
+      //   break;
+    }
+  }
+
+  override setAnyAttribute(key : string, value : any) : void {
+    super.setAnyAttribute(key, value)
+
+    // TODO
+    switch (key) {
+      case 'indicatorStyle':
+        this._setIndicatorStyle(value as object)
+        break;
+      case 'maskClass':
+        this._setIndicatorClass(value as Map<string, string>)
+        break;
+      case 'mask-top-style':
+        this._setMaskTopStyle(value as string)
+        break;
+      case 'mask-bottom-style':
+        this._setMaskBottomStyle(value as string)
+        break;
+    }
+  }
+
+  override get value() : number[] {
+    let returnValue = new Array<number>()
+
+    const controls : UniPickerViewColumnElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item : UniPickerViewColumnElement) => {
+      returnValue.push((item as UniFormControlElement<number>).value)
+    })
+
+    return returnValue
+  }
+
+  override set value(value : number[]) {
+    const controls : UniPickerViewColumnElement[] = []
+    this.findChildren(this, controls)
+    for (let i = 0; i < controls.length; i++) {
+      if (i >= value.length) {
+        break
+      }
+      controls[i].value = value[i]
+    }
+  }
+
+  override reset() {
+    const controls : UniPickerViewColumnElement[] = []
+    this.findChildren(this, controls)
+    controls.forEach((item : UniPickerViewColumnElement) => {
+      (item as Object as UniFormControlElement<Object>).reset()
+    })
+  }
+
+  _columnChange() {
+    this.dispatchEvent(new UniPickerViewChangeEvent(this.value))
+  }
+
+  private _onResize() {
+    this.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        item.resize()
+      }
+    })
+  }
+
+  private _setIndicatorStyle(value : object) {
+    const styleMap = this._styleObjectToMap(value)
+    this.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        item.setIndicatorStyle(styleMap)
+      }
+    })
+  }
+
+  private _setIndicatorClass(styleMap : Map<string, string>) {
+    this.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        item.setIndicatorStyle(styleMap)
+      }
+    })
+  }
+
+  private _setMaskTopStyle(value : string) {
+    const styleMap = this._styleStringToMap(value)
+    this.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        item.setMaskTopStyle(styleMap)
+      }
+    })
+  }
+
+  private _setMaskBottomStyle(value : string) {
+    const styleMap = this._styleStringToMap(value)
+    this.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        item.setMaskBottomStyle(styleMap)
+      }
+    })
+  }
+
+  private _styleObjectToMap(value : object) : Map<string, string> {
+    const styleMap = new Map<string, string>()
+    Object.keys(value).forEach((key : string) => {
+      styleMap.set(key, value[key])
+    });
+    return styleMap
+  }
+
+  private _styleStringToMap(value : string) : Map<string, string> {
+    const styleMap = new Map<string, string>()
+    if (!value.length) {
+      return styleMap
+    }
+    const styles = value.split(';')
+    for (let i = 0; i < styles.length; i++) {
+      const pair = styles[i].split(':')
+      if (pair.length == 2) {
+        styleMap.set(pair[0].trim(), pair[1].trim())
+      }
+    }
+    return styleMap
+  }
+
+  private setChildrenAttribute(newValue : string) {
+    const valueStringArray = newValue.split(',')
+    const controls : UniPickerViewColumnElement[] = []
+    this.findChildren(this, controls)
+    for (let i = 0; i < controls.length; i++) {
+      if (i >= valueStringArray.length) {
+        break
+      }
+      controls[i].setAttribute('value', valueStringArray[i])
+    }
+  }
+
+  private findChildren(el : UniElement, controls : UniPickerViewColumnElement[]) {
+    if (!el.children.length) {
+      return
+    }
+    el.children.forEach((item : UniElement) => {
+      if (item instanceof UniPickerViewColumnElement) {
+        controls.push(item)
+      } else {
+        this.findChildren(item, controls)
+      }
+    })
+  }
+}

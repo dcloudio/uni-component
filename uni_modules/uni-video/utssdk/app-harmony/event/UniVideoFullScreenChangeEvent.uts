@@ -1,0 +1,13 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoFullScreenChangeEvent as IUniVideoFullScreenChangeEvent, UniVideoFullScreenChangeEventDetail } from '../../interface'
+
+export type UniVideoFullScreenDirection = 'vertical' | 'horizontal'
+
+export class UniVideoFullScreenChangeEvent extends UniVideoEvent<UniVideoFullScreenChangeEventDetail> implements IUniVideoFullScreenChangeEvent {
+  constructor(target : UniElement, fullScreen : boolean, direction : UniVideoFullScreenDirection = 'horizontal') {
+    super(target, 'fullscreenchange', {
+      fullScreen,
+      direction
+    } as UniVideoFullScreenChangeEventDetail)
+  }
+}

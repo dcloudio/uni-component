@@ -1,0 +1,10 @@
+import { UniVideoEvent } from './UniVideoEvent'
+import { UniVideoProgressEvent as IUniVideoProgressEvent, UniVideoProgressEventDetail } from '../../interface'
+
+export class UniVideoProgressEvent extends UniVideoEvent<UniVideoProgressEventDetail> implements IUniVideoProgressEvent {
+  constructor(target : UniElement, buffered : number) {
+    super(target, 'progress', {
+      buffered
+    } as UniVideoProgressEventDetail)
+  }
+}

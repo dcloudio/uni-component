@@ -1,18 +1,11 @@
-## uts插件开发文档
-[UTS 语法](https://uniapp.dcloud.net.cn/tutorial/syntax-uts.html)
-[UTS API插件](https://uniapp.dcloud.net.cn/plugin/uts-plugin.html)
-[UTS 组件插件](https://uniapp.dcloud.net.cn/plugin/uts-component.html)
-[Hello UTS](https://gitcode.net/dcloud/hello-uts)
+# animation-view
 
-
-## animation-view
-
-> animation-view组件是[uts插件](https://uniapp.dcloud.net.cn/plugin/uts-component.html)，需 HBuilderX 3.7.0+
+> animation-view组件是[uts插件](https://uniapp.dcloud.net.cn/plugin/uts-component.html)，需 HBuilderX 3.7.0+  
 
 > 使用文档：[https://uniapp.dcloud.net.cn/component/animation-view.html](https://uniapp.dcloud.net.cn/component/animation-view.html)
 
 
-### 属性说明
+### 属性说明  
 
 |属性名|类型|默认值|说明|
 |:-|:-|:-|:-|
@@ -25,10 +18,10 @@
 
 
 **注意**
-* animation-view 仅App端nvue页面支持
-* App端实现使用了Lottie三方SDK，参考开源项目：[Lottie for Android](https://github.com/airbnb/lottie-android)，[Lottie for iOS](https://github.com/airbnb/lottie-ios)
-* App-Android平台要求Android5（API Leavel 21）及以上系统
-* App-iOS平台要求iOS11及以上版本系统
+* animation-view 仅App端nvue页面支持  
+* App端实现使用了Lottie三方SDK，参考开源项目：[Lottie for Android](https://github.com/airbnb/lottie-android)，[Lottie for iOS](https://github.com/airbnb/lottie-ios)  
+* App-Android平台要求Android5（API Leavel 21）及以上系统  
+* App-iOS平台要求iOS11及以上版本系统  
 
 
 ### 代码示例

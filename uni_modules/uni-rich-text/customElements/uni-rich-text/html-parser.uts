@@ -1,0 +1,527 @@
+// 根据UTS规范修改后的代码
+
+// 使用class而非interface，以符合名义类型系统 (UTS110111101)
+class HTMLParserAttr {
+    name : string = "";
+    value : string = "";
+
+    constructor(name : string, value : string) {
+        this.name = name;
+        this.value = value;
+    }
+}
+
+// 处理函数类型
+class HTMLParserHandler {
+    // 使用函数类型的变量，而非函数声明 (UTS110111152)
+    start :
+        | ((tag : string, attrs : Array<HTMLParserAttr>, unary : boolean) => void)
+        | null = null;
+    end : ((tag : string) => void) | null = null;
+    chars : ((text : string) => void) | null = null;
+    comment : ((text : string) => void) | null = null;
+}
+
+function makeMap(str : string) : Map<string, boolean> {
+    const obj = new Map<string, boolean>();
+    const items = str.split(",");
+    for (let i = 0; i < items.length; i++) {
+        obj.set(items[i], true);
+    }
+    return obj;
+}
+
+const startTag =
+    /^<([-A-Za-z0-9_]+)((?:\s+[a-zA-Z_:][-a-zA-Z0-9_:.]*(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)>/;
+const endTag = /^<\/([-A-Za-z0-9_]+)[^>]*>/;
+// let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+
+const empty = makeMap(
+    "area,base,basefont,br,col,frame,hr,img,input,link,meta,param,embed,command,keygen,source,track,wbr"
+);
+const block = makeMap(
+    "a,address,article,applet,aside,audio,blockquote,button,canvas,center,dd,del,dir,div,dl,dt,fieldset,figcaption,figure,footer,form,frameset,h1,h2,h3,h4,h5,h6,header,hgroup,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,output,p,pre,section,script,table,tbody,td,tfoot,th,thead,tr,ul,video"
+);
+const inline = makeMap(
+    "abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var"
+);
+const closeSelf = makeMap("colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr");
+const fillAttrs = makeMap(
+    "checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected"
+);
+const special = makeMap("script,style");
+const TAGS : Map<string, string[]> = new Map([
+    ["a", ["href"]],
+    ["abbr", [""]],
+    ["address", [""]],
+    ["article", [""]],
+    ["aside", [""]],
+    ["b", [""]],
+    ["bdi", [""]],
+    ["bdo", ["dir"]],
+    ["big", [""]],
+    ["blockquote", [""]],
+    ["br", [""]],
+    ["caption", [""]],
+    ["center", [""]],
+    ["cite", [""]],
+    ["code", [""]],
+    ["col", ["span", "width"]],
+    ["colgroup", ["span", "width"]],
+    ["dd", [""]],
+    ["del", [""]],
+    ["div", [""]],
+    ["dl", [""]],
+    ["dt", [""]],
+    ["em", [""]],
+    ["fieldset", [""]],
+    ["font", [""]],
+    ["footer", [""]],
+    ["h1", [""]],
+    ["h2", [""]],
+    ["h3", [""]],
+    ["h4", [""]],
+    ["h5", [""]],
+    ["h6", [""]],
+    ["header", [""]],
+    ["hr", [""]],
+    ["i", [""]],
+    ["img", ["alt", "src", "height", "width"]],
+    ["ins", [""]],
+    ["label", [""]],
+    ["legend", [""]],
+    ["li", [""]],
+    ["mark", [""]],
+    ["nav", [""]],
+    ["ol", ["start", "type"]],
+    ["p", [""]],
+    ["pre", [""]],
+    ["q", [""]],
+    ["rt", [""]],
+    ["ruby", [""]],
+    ["s", [""]],
+    ["section", [""]],
+    ["small", [""]],
+    ["span", [""]],
+    ["strong", [""]],
+    ["sub", [""]],
+    ["sup", [""]],
+    ["table", ["width"]],
+    ["tbody", [""]],
+    ["td", ["colspan", "height", "rowspan", "width"]],
+    ["tfoot", [""]],
+    ["th", ["colspan", "height", "rowspan", "width"]],
+    ["thead", [""]],
+    ["tr", ["colspan", "height", "rowspan", "width"]],
+    ["tt", [""]],
+    ["u", [""]],
+    ["ul", [""]],
+]);
+
+function HTMLParser(html : string, handler : HTMLParserHandler) : void {
+    let index : number;
+    let chars : boolean;
+    let match : RegExpMatchArray | null;
+    const stack : string[] = [];
+
+    let last : string = html;
+
+    function stackLast() : string | null {
+        if (stack.length == 0) return null;
+        return stack[stack.length - 1];
+    }
+
+    function parseEndTag(tag : string = "", tagName : string | null = null) : void {
+        let pos = -1;
+        if (tagName == null) {
+            pos = 0;
+        } else {
+            const len = stack.length as number;
+            for (let i = len - 1; i >= 0; i--) {
+                if (stack[i] == tagName) {
+                    pos = i;
+                    break;
+                }
+            }
+        }
+        if (pos >= 0) {
+            for (let i = stack.length - 1; i >= pos; i--) {
+                if (handler.end != null) {
+                    handler.end!(stack[i]);
+                }
+            }
+            stack.splice(pos);
+        }
+    }
+
+    function parseStartTag(
+        tag : string,
+        tagName : string,
+        rest : string,
+        unary : string
+    ) : void {
+        tagName = tagName.toLowerCase();
+
+        // 使用明确的布尔条件 (UTS110111120)
+        if (block.has(tagName)) {
+            while (stackLast() != null && inline.has(stackLast()!)) {
+                parseEndTag("", stackLast()!);
+            }
+        }
+        if (closeSelf.has(tagName) && stackLast() == tagName) {
+            parseEndTag("", tagName);
+        }
+        const isUnary = empty.has(tagName) || unary.length > 0;
+        if (!isUnary) {
+            stack.push(tagName);
+        }
+        if (handler.start != null) {
+            const attrs : Array<HTMLParserAttr> = [];
+            let m : RegExpExecArray | null;
+            // let attrReg = new RegExp(attr);
+            // android 有 bug，new RegExp(attr);会死循环
+            const attrReg =
+                /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+
+            // 修正赋值表达式在条件中的用法 (UTS110111160)
+            m = attrReg.exec(rest);
+            while (m != null) {
+                const matches = m as RegExpExecArray;
+                const name = matches[1] as string;
+                const m2 = matches[2] as string | null;
+                const m3 = matches[3] as string | null;
+                const m4 = matches[4] as string | null;
+                const value =
+                    m2 != null
+                        ? m2
+                        : m3 != null
+                            ? m3
+                            : m4 != null
+                                ? m4
+                                : fillAttrs.has(name)
+                                    ? name
+                                    : "";
+
+                // 使用构造函数创建实例，而非对象字面量
+                const htmlAttr = new HTMLParserAttr(name, value);
+                attrs.push(htmlAttr);
+
+                // 获取下一个匹配
+                m = attrReg.exec(rest);
+            }
+            handler.start(tagName, attrs, isUnary);
+        }
+    }
+
+    // 主循环使用明确的布尔表达式作为条件 (UTS110111120)
+    while (html.length > 0) {
+        chars = true;
+
+        // 使用显式的布尔条件 (UTS110111120)
+        if (stackLast() == null || !special.has(stackLast()!)) {
+            if (html.indexOf("<!--") == 0) {
+                index = html.indexOf("-->") as number;
+                if (index >= 0) {
+                    if (handler.comment != null) {
+                        handler.comment(html.substring(4, index));
+                    }
+                    // #ifdef APP-IOS
+                    html = html.substring((index + 3).toInt());
+                    // #endif
+                    // #ifndef APP-IOS
+                    html = html.substring(index + 3);
+                    // #endif
+                    chars = false;
+                }
+            } else if (html.indexOf("</") == 0) {
+                match = html.match(endTag);
+                if (match != null) {
+                    const matches = match as RegExpMatchArray;
+                    const m0 = matches[0] as string;
+                    const m1 = matches[1] as string;
+                    html = html.substring(m0.length);
+                    parseEndTag(m0, m1);
+                    chars = false;
+                }
+            } else if (html.indexOf("<") == 0) {
+                match = html.match(startTag);
+                if (match != null) {
+                    const matches = match as RegExpMatchArray;
+                    const m0 = matches[0] as string;
+                    const m1 = matches[1] as string;
+                    const m2 = matches[2] as string;
+                    const m3 = matches[3] as string;
+
+                    html = html.substring(m0.length);
+                    parseStartTag(m0, m1, m2, m3);
+                    chars = false;
+                }
+            }
+            if (chars) {
+                index = html.indexOf("<") as number;
+                const text = index < 0 ? html : html.substring(0, index);
+                // #ifdef APP-IOS
+                html = index < 0 ? "" : html.substring(index.toInt());
+                // #endif
+                // #ifndef APP-IOS
+                html = index < 0 ? "" : html.substring(index);
+                // #endif
+                if (handler.chars != null) {
+                    handler.chars(text);
+                }
+            }
+        } else {
+            const reg = new RegExp("([\\s\\S]*?)</" + stackLast()! + "[^>]*>");
+            // #ifdef APP-IOS
+            html = html.replace(
+                reg,
+                (
+                    all : string,
+                    textArr : string[],
+                    offset : number,
+                    string : String
+                ) : string => {
+                    let text = textArr[0];
+                    text = text.replace(
+                        /<!--([\s\S]*?)-->|<!\[CDATA\[([\s\S]*?)]]>/g,
+                        "$1$2"
+                    );
+                    if (handler.chars != null) {
+                        handler.chars(text);
+                    }
+                    return "";
+                }
+            );
+            // #endif
+            // #ifndef APP-IOS
+            html = html.replace(
+                reg,
+                (
+                    all : string,
+                    text : string | null,
+                    offset : number,
+                    string : String
+                ) : string => {
+                    text = text!.replace(
+                        /<!--([\s\S]*?)-->|<!\[CDATA\[([\s\S]*?)]]>/g,
+                        "$1$2"
+                    );
+                    if (handler.chars != null) {
+                        handler.chars(text);
+                    }
+                    return "";
+                }
+            );
+            // #endif
+            parseEndTag("", stackLast()!);
+        }
+
+        if (html == last) {
+            console.error("Parse Error: " + html);
+            return;
+        }
+        last = html;
+    }
+    parseEndTag();
+}
+
+class Node {
+    name : string = "";
+    attrs : Map<string, string | string[]> | null = null;
+    children : Node[] | null = null;
+    type : string | null = null;
+    text : string | null = null;
+    node : string | null = null;
+}
+
+function removeDOCTYPE(html : string) : string {
+    return html
+        .replace(/<\?xml.*\?>\n/, "")
+        .replace(/<!doctype.*>\n/, "")
+        .replace(/<!DOCTYPE.*>\n/, "");
+}
+
+function parseAttrs(
+    attrs : Array<HTMLParserAttr>
+) : Map<string, string | string[]> {
+    const pre = new Map<string, string | string[]>();
+    for (let i = 0; i < attrs.length; i++) {
+        let value = attrs[i].value;
+        const name = attrs[i].name;
+
+        // 使用显式的布尔条件 (UTS110111120)
+        if (value.indexOf(" ") >= 0 && name != "style" && name != "src") {
+            const arr = value.split(" ");
+            value = arr.join(" ");
+        }
+
+        if (pre.has(name)) {
+            const oldVal = pre.get(name)!;
+            // 使用instanceof进行类型检查 (UTS110111143)
+            if (Array.isArray(oldVal)) {
+                const oldValArray = oldVal as string[];
+                oldValArray.push(value);
+                pre.set(name, oldValArray);
+            } else {
+                pre.set(name, [oldVal as string, value]);
+            }
+        } else {
+            pre.set(name, value);
+        }
+    }
+    return pre;
+}
+
+function parseHtml(html : string) : Node[] {
+    html = removeDOCTYPE(html);
+
+    const stacks : Node[] = [];
+
+    const results = new Node();
+    results.node = "root";
+    results.children = [];
+
+    const handler = new HTMLParserHandler();
+
+    // 使用箭头函数代替方法赋值 (UTS110111152)
+    handler.start = (
+        tag : string,
+        attrs : Array<HTMLParserAttr>,
+        unary : boolean
+    ) : void => {
+        // 只处理 TAGS 中存在的标签
+        if (!TAGS.has(tag)) {
+            return;
+        }
+        // 只保留 TAGS 中允许的属性
+        const allowedAttrs = TAGS.get(tag) ?? [];
+        allowedAttrs.push('class')
+        allowedAttrs.push('style')
+        const filteredAttrs : Array<HTMLParserAttr> = [];
+        for (let i = 0; i < attrs.length; i++) {
+            const attrName = attrs[i].name;
+            if (allowedAttrs.indexOf(attrName) != -1) {
+                filteredAttrs.push(attrs[i]);
+            }
+        }
+        const node = new Node();
+        node.name = tag;
+        if (filteredAttrs.length != 0) {
+            node.attrs = parseAttrs(filteredAttrs);
+        }
+        if (unary) {
+            const parent = stacks.length > 0 ? stacks[0] : results;
+            if (parent.children == null) {
+                parent.children = [];
+            }
+            parent.children!.push(node);
+        } else {
+            stacks.unshift(node);
+        }
+    };
+
+    handler.end = (tag : string) : void => {
+        if (stacks.length == 0) {
+            return;
+        }
+        const node = stacks.shift();
+        if (node == null) return;
+        if (node.name != tag) {
+            console.error("invalid state: mismatch end tag");
+        }
+        if (stacks.length == 0) {
+            results.children!.push(node);
+        } else {
+            const parent = stacks[0];
+            if (parent.children == null) {
+                parent.children = [];
+            }
+            parent.children!.push(node);
+        }
+    };
+
+    handler.chars = (text : string) : void => {
+        const node = new Node();
+        node.type = "text";
+        node.text = text;
+        if (stacks.length == 0) {
+            results.children!.push(node);
+        } else {
+            const parent = stacks[0];
+            if (parent.children == null) {
+                parent.children = [];
+            }
+            parent.children!.push(node);
+        }
+    };
+
+    handler.comment = (text : string) : void => {
+        const node = new Node();
+        node.node = "comment";
+        node.text = text;
+        const parent = stacks.length > 0 ? stacks[0] : null;
+        if (parent != null) {
+            if (parent.children == null) {
+                parent.children = [];
+            }
+            parent.children!.push(node);
+        }
+    };
+
+    HTMLParser(html, handler);
+    return results.children!;
+}
+
+// 将 attrs map 转为 html 属性字符串
+function attrsToString(attrs ?: Map<string, string | string[]>) : string {
+    if (attrs == null) return "";
+    const arr : string[] = [];
+    const attrKeys : string[] = [];
+    attrs.forEach((value, key) => {
+        attrKeys.push(key);
+    });
+    for (let key of attrKeys) {
+        const val = attrs.get(key);
+        if (Array.isArray(val)) {
+            arr.push(`${key}="${val.join(" ")}"`);
+        } else {
+            arr.push(`${key}="${val}"`);
+        }
+    }
+    return arr.length > 0 ? " " + arr.join(" ") : "";
+}
+
+// 递归将 node 转为 html 字符串
+function nodesToHtml(nodes : Node[]) : string {
+    let html = "";
+    for (let node of nodes) {
+        if (node.type == "text") {
+            html += node.text ?? "";
+        } else if (node.name.length > 0) {
+            const tag = node.name;
+            const attrsStr = node.attrs != null ? attrsToString(node.attrs) : "";
+            const childrenHtml =
+                node.children != null ? nodesToHtml(node.children) : "";
+            // 简单自闭合标签判断
+            if (
+                tag == "br" ||
+                tag == "hr" ||
+                tag == "img" ||
+                tag == "input" ||
+                tag == "meta" ||
+                tag == "link" ||
+                tag == "col" ||
+                tag == "base"
+            ) {
+                html += `<${tag}${attrsStr}/>`;
+            } else {
+                html += `<${tag}${attrsStr}>${childrenHtml}</${tag}>`;
+            }
+        }
+    }
+    return html;
+}
+
+export function htmlParser(htmlStr : string) : string {
+    return nodesToHtml(parseHtml(htmlStr));
+}

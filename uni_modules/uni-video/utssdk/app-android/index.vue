@@ -51,7 +51,6 @@
 				handler: new Handler(Looper.getMainLooper()),
 				isEnded: false,
 				isFirstLayoutFinished: false,
-				isFullScreenChanged: false,
 				screenWidth: 0,
 				screenHeight: 0,
 				layoutWidth: 0,
@@ -250,7 +249,10 @@
 			},
 			"enableDanmu": {
 				handler(value : boolean) {
-					this.playerView?.enableDanmaku(value);
+					this.runDelayed(() => {
+						this.playerView?.enableDanmaku(value);
+						this.playerView?.enableDanmuBtn(this.danmuBtn);
+					}, 0);
 				},
 				immediate: false
 			},
@@ -423,19 +425,9 @@
 				this.screenHeight = metrics.heightPixels;
 				// 调整子组件视图层级
 				this.videoBox = this.playerView?.findViewWithTag<FrameLayout>("fl_video_box");
-				(this.playerView as IjkPlayerView).removeView(this.videoBox);
-				(this.playerView as IjkPlayerView).addView(this.videoBox, 0);
-			}
-			if (isFullScreenChanged) {
-				isFullScreenChanged = false;
-				if (this.playerView!.isFullscreen()) {
-					this.playerView?.requestFocus();
-					if (this.getLayoutWidth() != this.screenHeight) this.setStyleWidth(this.screenHeight.toFloat());
-					if (this.getLayoutHeight() != this.screenWidth) this.setStyleHeight(this.screenWidth.toFloat());
-				} else {
-					this.playerView?.clearFocus();
-					if (this.getLayoutWidth() != this.layoutWidth) this.setStyleWidth(this.layoutWidth.toFloat());
-					if (this.getLayoutHeight() != this.layoutHeight) this.setStyleHeight(this.layoutHeight.toFloat());
+				if (this.playerView?.getChildCount() ?? 0 > 1) {
+					(this.playerView as IjkPlayerView).removeView(this.videoBox);
+					(this.playerView as IjkPlayerView).addView(this.videoBox, 0);
 				}
 			}
 		},
@@ -461,7 +453,7 @@
 				}, 100);
 			}
 		},
-		expose: ['play', 'pause', 'seek', 'requestFullScreen', 'exitFullScreen', 'stop', 'hide', 'show', 'close', 'sendDanmu', 'playbackRate', 'currentPos', 'currentFrame', 'isEnded', 'isFirstLayoutFinished', 'isFullScreenChanged', 'videoBox'],
+		expose: ['play', 'pause', 'seek', 'requestFullScreen', 'exitFullScreen', 'stop', 'hide', 'show', 'close', 'sendDanmu', 'playbackRate', 'currentPos', 'currentFrame', 'isEnded', 'isFirstLayoutFinished', 'videoBox', 'screenWidth', 'screenHeight', 'layoutWidth', 'layoutHeight'],
 		methods: {
 			/**
 			 * 播放视频
@@ -668,8 +660,31 @@
 					this.comp.$emit("timeupdate", new UniVideoTimeUpdateEventImpl(JSON.parse<UniVideoTimeUpdateEventDetail>(msg)!));
 					break;
 				case "fullscreenchange":
-					(this.comp as VideoComponent).isFullScreenChanged = true;
+					const screenWidth = (this.comp as VideoComponent).screenWidth;
+					const screenHeight = (this.comp as VideoComponent).screenHeight;
+					const originLayoutWidth = (this.comp as VideoComponent).layoutWidth;
+					const originLayoutHeight = (this.comp as VideoComponent).layoutHeight;
+					const currentLayoutWidth = (this.comp as VideoComponent).getLayoutWidth();
+					const currentLayoutHeight = (this.comp as VideoComponent).getLayoutHeight();
 					const detail = JSON.parse<UniVideoFullScreenChangeEventDetail>(msg)!;
+					if (detail.fullScreen) {
+						if (detail.direction == 'horizontal') {
+							if (currentLayoutWidth != screenHeight) this.comp.setStyleWidth(screenHeight.toFloat());
+							if (currentLayoutHeight != screenWidth) this.comp.setStyleHeight(screenWidth.toFloat());
+						} else if (detail.direction == 'vertical') {
+							if (currentLayoutWidth != screenWidth) this.comp.setStyleWidth(screenWidth.toFloat());
+							if (currentLayoutHeight != screenHeight) this.comp.setStyleHeight(screenHeight.toFloat());
+						}
+						setTimeout(() => {
+							if (!this.playerView.isFocused()) this.playerView.requestFocus(); 
+						}, 100);
+					} else {
+						if (currentLayoutWidth != originLayoutWidth) this.comp.setStyleWidth(originLayoutWidth.toFloat());
+						if (currentLayoutHeight != originLayoutHeight) this.comp.setStyleHeight(originLayoutHeight.toFloat());
+						setTimeout(() => {
+							if (this.playerView.isFocused()) this.playerView.clearFocus(); 
+						}, 100);
+					}
 					if (detail.fullScreen) { // 进入全屏时取消监听，避免触发暂停逻辑
 						this.playerView.setOnTextureRenderViewListener(null);
 					} else { // 退出全屏时重新监听
