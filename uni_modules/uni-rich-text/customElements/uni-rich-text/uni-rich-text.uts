@@ -130,7 +130,7 @@ export class UniRichTextElement extends UniViewElementImpl implements UniCustomE
 		return super.insertBefore(child, anchor)
 	}
 
-	attributeChangedCallback(name : string, _oldValue : string, _newValue : string) {
+	attributeChangedCallback(name : string, _oldValue : any | null, _newValue : any | null) {
 		switch (name) {
 			case 'nodes':
 				this.updateNodes()
@@ -143,14 +143,14 @@ export class UniRichTextElement extends UniViewElementImpl implements UniCustomE
 				break
 			// #ifdef APP-ANDROID
 			case 'mode':
-				this.updateMode(_newValue);
+				this.updateMode(_newValue as string | null);
 				break;
 			// #endif
 		}
 	}
 
 	// #ifdef APP-ANDROID
-	private updateMode(mode : string) {
+	private updateMode(mode : string | null) {
 		if (this.mode != mode) {
 			if (mode == 'web') {
 				this.mode = mode;

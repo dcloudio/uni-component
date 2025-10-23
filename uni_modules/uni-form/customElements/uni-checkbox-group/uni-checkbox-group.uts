@@ -1,83 +1,92 @@
 import { UniCheckboxElement } from '../uni-checkbox/uni-checkbox'
 
 type UniCheckboxGroupChangeEventDetail = {
-  value: string[]
+  value : Array<string>
 }
 
 export class UniCheckboxGroupChangeEvent extends UniCustomEvent<UniCheckboxGroupChangeEventDetail> {
-  constructor(value: string[]) {
+  constructor(value : Array<string>) {
     super('change', { value } as UniCheckboxGroupChangeEventDetail)
   }
 }
 
-export class UniCheckboxGroupElement extends UniFormControlElement<string[]> {
+export class UniCheckboxGroupElement extends UniFormControlElement<Array<string>> implements UniCustomElement {
   static get observedAttributes() : Array<string> {
-    return ['name', 'value']
+    return []
   }
 
   constructor() {
     super()
   }
 
-  override get value(): string[] {
+  override get name() : string {
+    return this.getAttributeValue('name', '')
+  }
+  override set name(value : string) {
+    this.setAttribute('name', value)
+  }
+
+  override get value() : Array<string> {
     return this.getCheckboxValues()
   }
 
-  override set value(value: string[]) {
+  override set value(value : Array<string>) {
     this.setCheckboxValues(value)
   }
 
   override reset() {
-    const controls: UniCheckboxElement[] = []
-    this.findChildren(this, controls)
-    controls.forEach((item: UniCheckboxElement) => {
-      (item as any as UniFormControlElement<unknown>).reset()
+    this.findChildren(this).forEach((item : UniCheckboxElement) => {
+      item.reset()
     })
   }
 
-  // friend in UniCheckboxElement
+  // TODO 鸿蒙Bug 当所有属性可选时必须实现一个
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
+  }
+
+  private getAttributeValue(key : string, defaultValue : string) : string {
+    const value = this.getAttribute(key)
+    if (value != null && value!.length > 0) {
+      return value!
+    }
+    return defaultValue
+  }
+
+  // friend by UniCheckboxElement
   _checkboxChange() {
     this.dispatchEvent(new UniCheckboxGroupChangeEvent(this.getCheckboxValues()))
   }
 
-  private getCheckboxValues(): string[] {
-    const values: string[] = [];
-
-    const controls: UniCheckboxElement[] = []
-    this.findChildren(this, controls)
-    controls.forEach((item: UniCheckboxElement) => {
+  private getCheckboxValues() : Array<string> {
+    const values : Array<string> = []
+    this.findChildren(this).forEach((item : UniCheckboxElement) => {
       if (item.checked) {
-        const itemValue = (item as UniFormControlElement<string>).value
-        if (itemValue) {
-          values.push(itemValue)
-        }
+        values.push(item.value)
       }
     })
-
     return values
   }
 
-  private setCheckboxValues(values: string[]) {
-    const controls: UniCheckboxElement[] = []
-    this.findChildren(this, controls)
-    controls.forEach((item: UniCheckboxElement) => {
-      const itemValue = (item as UniFormControlElement<string>).value
-      if (itemValue && values.includes(itemValue)) {
+  private setCheckboxValues(values : Array<string>) {
+    this.findChildren(this).forEach((item : UniCheckboxElement) => {
+      if (values.includes(item.value)) {
         item.checked = true
       }
     })
   }
 
-  private findChildren(el: UniElement, controls: UniCheckboxElement[]) {
-    if (!el.children.length) {
-      return
-    }
-    el.children.forEach((item: UniElement) => {
+  private findChildren(el : UniElement) : UniCheckboxElement[] {
+    const controls : UniCheckboxElement[] = []
+    el.children.forEach((item : UniElement) => {
       if (item instanceof UniCheckboxElement) {
-        controls.push(item)
+        controls.push(item as UniCheckboxElement)
       } else {
-        this.findChildren(item, controls)
+        // controls.push(...this.findChildren(item))
+        this.findChildren(item).forEach((item : UniCheckboxElement) => {
+          controls.push(item as UniCheckboxElement)
+        })
       }
     })
+    return controls
   }
 }

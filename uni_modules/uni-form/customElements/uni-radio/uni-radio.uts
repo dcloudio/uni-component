@@ -5,18 +5,18 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
     return [
       'checked',
       'value',
-      'backgroundColor',
-      'activeBackgroundColor',
-      'borderColor',
-      'activeBorderColor',
-      'foreColor',
+      'background-Color',
+      'active-Background-Color',
+      'border-Color',
+      'active-Border-Color',
+      'fore-Color',
       'color',
-      'iconColor'
+      'icon-Color'
     ];
   }
 
-  private radioView : UniElement
-  private radioText : UniTextElement
+  private radioView! : UniElement
+  private radioText! : UniTextElement
   private _initialChecked = false
   private _initialCheckedFlag = false
   private _checked = false
@@ -29,35 +29,59 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
 
     const radioView = this.uniPage.createElement('view')
     const radioViewStyle = radioView.style
-    radioViewStyle.setProperty('align-items', 'center')
-    radioViewStyle.setProperty('justify-content', 'center')
-    radioViewStyle.setProperty('border-style', 'solid')
-    radioViewStyle.setProperty('border-width', '1px')
-    radioViewStyle.setProperty('border-color', '#e9e9ea')
-    radioViewStyle.setProperty('border-radius', '50%')
+    radioViewStyle.setProperty('alignItems', 'center')
+    radioViewStyle.setProperty('justifyContent', 'center')
+    radioViewStyle.setProperty('borderStyle', 'solid')
+    radioViewStyle.setProperty('borderWidth', '1px')
+    radioViewStyle.setProperty('borderColor', '#e9e9ea')
+    radioViewStyle.setProperty('borderRadius', '12px')
     radioViewStyle.setProperty('width', '24px')
     radioViewStyle.setProperty('height', '24px')
-    radioViewStyle.setProperty('margin-right', '5px')
+    radioViewStyle.setProperty('marginRight', '5px')
 
     const radioText = this.uniPage.createElement('text') as UniTextElement
     radioText.setAttribute('value', '\uEA08')
     const radioTextStyle = radioText.style
-    radioTextStyle.setProperty('font-family', 'uni-icon')
-    radioTextStyle.setProperty('font-size', '16px')
+    radioTextStyle.setProperty('fontFamily', 'uni-icon')
+    radioTextStyle.setProperty('fontSize', '16px')
     radioTextStyle.setProperty('color', this.foreColor)
 
     this.radioView = radioView
     this.radioText = radioText
 
-    this.addEventListener('click', () => {
+    this.addEventListener('click', (e: UniPointerEvent) => {
+      "[weak self]"
+      e.stopPropagation()
       if (this.disabled) {
+        return
+      }
+      if (this.checked) {
         return
       }
       this.checked = true
       this.dispatchGroup()
     })
 
-    this.updateColor(false)
+    this.updateCheckedStyle(false)
+  }
+
+  // form
+  override get name() : string {
+    return this.getAttributeValue('name', '')
+  }
+  override set name(value : string) {
+    this.setAttribute('name', value)
+  }
+
+  override get value() : string {
+    return this.getAttributeValue('value', '')
+  }
+  override set value(value: string) {
+    this.setAttribute('value', value)
+  }
+
+  override reset() {
+    this.checked = this._initialChecked
   }
 
   connectedCallback() {
@@ -72,32 +96,28 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
     this.removeChild(this.radioView)
   }
 
-  attributeChangedCallback(name : string, oldValue : string, newValue : string) {
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'checked':
-        const value = (newValue == 'true') ? true : false
+        const value = (typeof newValue == 'string' || newValue == true) ? true : false
         if (!this._initialCheckedFlag) {
           this._initialCheckedFlag = true
           this._initialChecked = value
         }
         this.checked = value
         break;
-      case 'foreColor':
-      case 'iconColor':
+      case 'fore-color':
+      case 'icon-color':
         this.radioText.style.setProperty('color', this.foreColor)
         break;
-      case 'backgroundColor':
-      case 'activeBackgroundColor':
-      case 'borderColor':
-      case 'activeBorderColor':
+      case 'background-color':
+      case 'active-background-color':
+      case 'border-color':
+      case 'active-border-color':
       case 'color':
-        this.updateColor(this.checked)
+        this.updateCheckedStyle(this.checked)
         break;
     }
-  }
-
-  override reset() {
-    this.checked = this._initialChecked
   }
 
   get checked() : boolean {
@@ -105,8 +125,11 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
   }
 
   set checked(value : boolean) {
+    if (value == this._checked) {
+      return
+    }
     this._checked = value
-    this.updateColor(value)
+    this.updateCheckedStyle(value)
     this.updateCheckedStatus(value)
   }
 
@@ -142,19 +165,19 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
     return this.getAttributeValue('iconColor', '#fff')
   }
 
-  getAttributeValue(key : string, defaultValue : string) : string {
+  private getAttributeValue(key : string, defaultValue : string) : string {
     const value = this.getAttribute(key)
-    if (value && value.length) {
-      return value
+    if (value != null && value!.length > 0) {
+      return value!
     }
     return defaultValue
   }
 
-  private updateColor(checked : boolean) {
+  private updateCheckedStyle(checked : boolean) {
     const backgroundColor = checked ? this.activeBackgroundColor : this.backgroundColor
     const borderColor = checked ? this.activeBorderColor : this.borderColor
-    this.radioView.style.setProperty('background-color', backgroundColor)
-    this.radioView.style.setProperty('border-color', borderColor)
+    this.radioView.style.setProperty('backgroundColor', backgroundColor)
+    this.radioView.style.setProperty('borderColor', borderColor)
   }
 
   private updateCheckedStatus(checked : boolean) {
@@ -164,22 +187,22 @@ export class UniRadioElement extends UniFormControlElement<string> implements Un
         this.radioView.appendChild(this.radioText)
       }, 1)
     } else {
-      this.radioText.remove()
+      this.radioView.removeChild(this.radioText)
     }
   }
 
   private dispatchGroup() {
     let group = this.parentElement
     let maxRecursiveDeep = 32
-    while (group && maxRecursiveDeep > 0) {
+    while (group != null && maxRecursiveDeep > 0) {
       maxRecursiveDeep--
       if (group instanceof UniRadioGroupElement) {
         break
       }
-      group = group.parentElement
+      group = group!.parentElement
     }
 
-    if (group) {
+    if (group != null) {
       (group as UniRadioGroupElement)._radioChange(this, this.value)
     }
   }

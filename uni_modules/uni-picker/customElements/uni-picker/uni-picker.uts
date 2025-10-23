@@ -65,61 +65,69 @@ export class UniPickerElement extends UniFormControlElement<any> implements UniC
 	private _value : any = ''
 	private _initialValue : any = ''
 	private _initialValueFlag = false
+	
+	private readyEventName:string = ''
+	private optionsEventName :string = ''
+	private cancelEventName :string = ''
+	private selectorChangeEventName:string = ''
+	private multiSelectorChangeEventName :string = ''
+	private timeChangeEventName :string = ''
+	private columnChangeEventName :string = ''
 	constructor() {
 		super()
 		this.uuid = `${Date.now()}${Math.floor(Math.random() * 1e7)}`
 		const baseEventName = `uni_action_sheet_${this.uuid}`
-		const readyEventName = `${baseEventName}_ready`
-		const optionsEventName = `${baseEventName}_options`
-		const cancelEventName = `${baseEventName}_cancel`
-		const selectorChangeEventName = `${baseEventName}_selector_change`
-		const multiSelectorChangeEventName = `${baseEventName}_multiSelector_change`
-		const timeChangeEventName = `${baseEventName}_time_change`
-		const columnChangeEventName = `${baseEventName}_column_change`
+		this.readyEventName = `${baseEventName}_ready`
+		this.optionsEventName = `${baseEventName}_options`
+		this.cancelEventName = `${baseEventName}_cancel`
+		this.selectorChangeEventName = `${baseEventName}_selector_change`
+		this.multiSelectorChangeEventName = `${baseEventName}_multiSelector_change`
+		this.timeChangeEventName = `${baseEventName}_time_change`
+		this.columnChangeEventName = `${baseEventName}_column_change`
 
 		this.addEventListener('click', () => {
 			// 禁用picker
 			if (this.disabledType) return
 			uni.openDialogPage({
-				url: `/uni_modules/uni-picker/pages/picker/picker?readyEventName=${readyEventName}&optionsEventName=${optionsEventName}&cancelEventName=${cancelEventName}&selectorChangeEventName=${selectorChangeEventName}&multiSelectorChangeEventName=${multiSelectorChangeEventName}&timeChangeEventName=${timeChangeEventName}&columnChangeEventName=${columnChangeEventName}`,
+				url: `/uni_modules/uni-picker/pages/picker/picker?readyEventName=${this.readyEventName}&optionsEventName=${this.optionsEventName}&cancelEventName=${this.cancelEventName}&selectorChangeEventName=${this.selectorChangeEventName}&multiSelectorChangeEventName=${this.multiSelectorChangeEventName}&timeChangeEventName=${this.timeChangeEventName}&columnChangeEventName=${this.columnChangeEventName}`,
 				success() { },
 				fail() {
-					uni.$off(readyEventName)
-					uni.$off(optionsEventName)
+					uni.$off(this.readyEventName)
+					uni.$off(this.optionsEventName)
 				}
 			})
 		})
 
 		// 监听页面加载
-		uni.$on(readyEventName, () => {
-			this.sendOptions(optionsEventName)
+		uni.$on(this.readyEventName, () => {
+			this.sendOptions(this.optionsEventName)
 		})
 
 		// 监听取消按钮
-		uni.$on(cancelEventName, () => {
+		uni.$on(this.cancelEventName, () => {
 			this.dispatchEvent(new UniPickerCancelEvent())
 		})
 
 		// 单列change触发
-		uni.$on(selectorChangeEventName, (value : number) => {
+		uni.$on(this.selectorChangeEventName, (value : number) => {
 			this._value = value
 			this.dispatchEvent(new UniPickerChangeEvent(value))
 		})
 
 		// 多列change触发
-		uni.$on(multiSelectorChangeEventName, (value : number[]) => {
+		uni.$on(this.multiSelectorChangeEventName, (value : number[]) => {
 			this._value = value
 			this.dispatchEvent(new UniPickerChangeEvent(value))
 		})
 
 		// 日期时间change触发
-		uni.$on(timeChangeEventName, (value : string) => {
+		uni.$on(this.timeChangeEventName, (value : string) => {
 			this._value = value
 			this.dispatchEvent(new UniPickerChangeEvent(value))
 		})
 
 		// 列滚动columnchange 触发
-		uni.$on(columnChangeEventName, (column : number, value : number) => {
+		uni.$on(this.columnChangeEventName, (column : number, value : number) => {
 			this.dispatchEvent(new UniPickerColumnChangeEvent(column, value))
 		})
 	}
@@ -157,7 +165,14 @@ export class UniPickerElement extends UniFormControlElement<any> implements UniC
 
 	connectedCallback() { }
 
-	disconnectedCallback() { }
+	disconnectedCallback() {
+		uni.$off(this.readyEventName, null)
+		uni.$off(this.cancelEventName,null)
+		uni.$off(this.selectorChangeEventName, null)
+		uni.$off(this.multiSelectorChangeEventName, null)
+		uni.$off(this.timeChangeEventName, null)
+		uni.$off(this.columnChangeEventName, null)
+	}
 
 	attributeChangedCallback(name : string) {
 		switch (name) {

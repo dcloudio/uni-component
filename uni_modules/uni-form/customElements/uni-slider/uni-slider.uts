@@ -20,19 +20,18 @@ export class UniSliderChangeEvent extends UniCustomEvent<UniSliderChangeEventDet
 export class UniSliderElement extends UniFormControlElement<number> implements UniCustomElement {
   static get observedAttributes() : Array<string> {
     return [
-      'disabled',
       'min',
       'max',
       'step',
       'value',
-      'showValue',
-      'activeBackgroundColor',
-      'backgroundColor',
-      'blockSize',
-      'foreColor',
-      'selectedColor',
-      'blockColor',
-      'activeColor',
+      'show-value',
+      'active-background-color',
+      'background-color',
+      'block-size',
+      'fore-color',
+      'selected-color',
+      'block-color',
+      'active-color',
       'color'
     ]
   }
@@ -45,9 +44,10 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
   private _touchDownX : number = 0
   private _touchDownY : number = 0
   private _activeStatus : number = 0
-  private readonly _uniResizeObserver : UniResizeObserver
+  private _uniResizeObserver! : UniResizeObserver
   // drawing
-  private readonly _drawingContext : DrawableContext
+  private _drawingContext! : DrawableContext
+
   // properties
   private _min : number = 0
   private _max : number = 100
@@ -63,7 +63,7 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
     this.style.setProperty('marginTop', '1px')
     this.style.setProperty('marginBottom', '1px')
 
-    this._drawingContext = this.getDrawableContext()
+    this._drawingContext = this.getDrawableContext()!
 
     this._updateSliderHeight()
 
@@ -84,9 +84,30 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
     )
   }
 
+  // form
+  override get name() : string {
+    return this.getAttributeValue('name', '')
+  }
+  override set name(value : string) {
+    this.setAttribute('name', value)
+  }
+
+  override get value() : number {
+    return this._value
+  }
+
+  override set value(value : number) {
+    this._value = value
+    this._onRender()
+  }
+
+  override reset() {
+    this.value = this._initialValue
+  }
+
   connectedCallback() {
     this.getBoundingClientRectAsync()?.then((_ : DOMRect) => {
-      // TODO 在 scroll 中可能不正常
+      // TODO 在 scroll 中概率不正常
       setTimeout(() => {
         this._onResize()
       }, 34)
@@ -98,50 +119,37 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
     this._uniResizeObserver.disconnect()
   }
 
-  attributeChangedCallback(name : string, oldValue : string, newValue : string) {
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'min':
-        this._min = Number(newValue)
+        this._min = newValue as number
         break;
       case 'max':
-        this._max = Number(newValue)
+        this._max = newValue as number
         break;
       case 'step':
-        this._step = Number(newValue)
+        this._step = newValue as number
         break;
       case 'value':
-        this._value = Number(newValue)
+        this._value = newValue as number
         if (!this._initialValueFlag) {
           this._initialValueFlag = true
           this._initialValue = this._value
         }
         break;
-      case 'blockSize':
+      case 'block-size':
         this._updateSliderHeight()
         break;
-      case 'showValue':
-        this._showValue = (newValue == 'true') ? true : false
+      case 'show-value':
+        this._showValue = (typeof newValue == 'string' || newValue == true) ? true : false
         break;
     }
 
-    if (name == 'blockSize' || name == 'showValue') {
+    if (name == 'block-size' || name == 'show-value') {
       this._onResize()
     } else {
       this._onRender()
     }
-  }
-
-  override reset() {
-    this.value = this._initialValue
-  }
-
-  override get value() : number {
-    return this._value
-  }
-
-  override set value(value : number) {
-    this._value = value
-    this._onRender()
   }
 
   private _onTouchStart(e : UniTouchEvent) {
@@ -275,7 +283,7 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
 
   private _onLayout() {
     this._sliderWidth = this.offsetWidth
-    this._sliderOffsetX = this.getBoundingClientRect()?.x + this.internalBlockSize / 2
+    this._sliderOffsetX = this.getBoundingClientRect().x + this.internalBlockSize / 2
     this._sliderTrackWidth = this._sliderWidth - this.internalBlockSize
     if (this.showValue) {
       this._sliderTrackWidth -= SLIDER_VALUE_WIDTH
@@ -283,7 +291,7 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
   }
 
   private _onRender() {
-    const drawContext = this._drawingContext
+    const drawContext = this._drawingContext!
 
     drawContext.reset()
 
@@ -405,8 +413,8 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
 
   get blockSize() : number {
     const value = this.getAttribute('blockSize')
-    if (value && value.length) {
-      return Number(value)
+    if (value != null && value!.length > 0) {
+      return parseInt(value!)
     }
     return SLIDER_BLOCK_SIZE_MAX_VALUE
   }
@@ -437,8 +445,8 @@ export class UniSliderElement extends UniFormControlElement<number> implements U
 
   private getAttributeValue(key : string, defaultValue : string) : string {
     const value = this.getAttribute(key)
-    if (value && value.length) {
-      return value
+    if (value != null && value!.length > 0) {
+      return value!
     }
     return defaultValue
   }

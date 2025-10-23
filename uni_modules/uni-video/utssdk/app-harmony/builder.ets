@@ -3,6 +3,10 @@ import { getRealPath } from "@dcloudio/uni-runtime-harmony";
 
 const formatVideoOptions = (options : VideoOptions) : VideoOptions => {
   options.src = getRealPath(options.src as string)
+  // TODO getRealPath 现在会返回一个绝对路径：/data/xxx
+  if (options.src?.startsWith('/')) {
+    options.src = 'file://' + options.src
+  }
   return options
 }
 

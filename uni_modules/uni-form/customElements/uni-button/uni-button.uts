@@ -1,5 +1,3 @@
-import { UniFormControl } from '../UniFormControl'
-
 type ButtonSize = 'default' | 'mini'
 type ButtonType = 'default' | 'primary' | 'warn'
 type FormType = 'submit' | 'reset'
@@ -7,7 +5,7 @@ type FormType = 'submit' | 'reset'
 
 export class UniButtonElement extends UniViewElementImpl implements UniCustomElement {
   static get observedAttributes() : Array<string> {
-    return ['disabled', 'size', 'type', 'plain', 'formType', 'openType']
+    return ['disabled', 'size', 'type', 'plain']
   }
 
   private borderView : UniElement
@@ -47,6 +45,7 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
     this.buttonText = buttonText
 
     this.addEventListener('click', () => {
+      "[weak self]"
       if (this.disabled) {
         // e.preventDefault()
         return
@@ -72,7 +71,7 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
     this.borderView.remove()
   }
 
-  attributeChangedCallback(name : string, oldValue : string, newValue : string) {
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'disabled':
         this.setTypeStyle(this.type as ButtonType)
@@ -91,11 +90,14 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
         }
         this.setTypeStyle(this.type as ButtonType)
         break;
+      case 'value':
+        this.updateInnerText(this)
+        break;
     }
   }
 
   override appendChild(child : UniElement) : void {
-    this.buttonText.setAttribute('value', child.getAttribute('value') ?? "")
+    this.updateInnerText(child)
   }
 
   override setAnyAttribute(key : string, value : Object) : void {
@@ -178,6 +180,10 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
       return value
     }
     return defaultValue
+  }
+
+  private updateInnerText(child : UniElement) {
+    this.buttonText.setAttribute('value', child.getAttribute('value') ?? "")
   }
 
   private setSizeStyle(size : ButtonSize) {
@@ -415,7 +421,7 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
     }
 
     if (formElement) {
-      const uniFormControl = formElement as any as UniFormControl
+      const uniFormControl = formElement as any as IUniForm
       if (formType == 'submit') {
         uniFormControl.submit()
       } else if (formType == 'reset') {

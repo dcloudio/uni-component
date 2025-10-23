@@ -43,7 +43,7 @@
 		"customElements": {
 			"app-android": false,
 			"app-ios": false,
-            "app-harmony": true
+      "app-harmony": true
 		},
 		"uni-ext-api": {
 			"uni": {}

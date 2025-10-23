@@ -2,7 +2,7 @@ type UniProgressActiveendEventDetail = {
   curPercent : number
 }
 
-// TODO Activeend 格式错误，因历史问题考虑修正为 ActiveEnd？
+// TODO Activeend 命名格式错误，因历史问题考虑修正为 ActiveEnd？
 export class UniProgressActiveendEvent extends UniCustomEvent<UniProgressActiveendEventDetail> {
   constructor(type : string, curPercent : number) {
     super(type, { curPercent } as UniProgressActiveendEventDetail)
@@ -14,21 +14,21 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
     return [
       'duration',
       'percent',
-      'showInfo',
+      'show-info',
       'active',
-      'activeMode',
-      'borderRadius',
-      'fontSize',
-      'strokeWidth',
-      'backgroundColor',
-      'activeColor',
+      'active-mode',
+      'border-radius',
+      'font-size',
+      'stroke-width',
+      'background-color',
+      'active-color',
       'color'
     ]
   }
 
-  private progressBar : UniElement
-  private progressBarValue : UniElement
-  private progressInfo : UniTextElement
+  private progressBar! : UniElement
+  private progressBarValue! : UniElement
+  private progressInfo! : UniTextElement
   private _showInfo = false
   private _percent = 0
   private _lastPercent = 0
@@ -44,21 +44,22 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
     const progressBarStyle = progressBar.style
     progressBarStyle.setProperty('flexGrow', '1')
     progressBarStyle.setProperty('flexDirection', 'row')
-    progressBarStyle.setProperty('background-color', this.backgroundColor)
-    progressBarStyle.setProperty('border-radius', this.borderRadiusToPixel)
+    progressBarStyle.setProperty('backgroundColor', this.backgroundColor)
+    progressBarStyle.setProperty('borderRadius', this.borderRadiusToPixel)
     progressBarStyle.setProperty('height', this.strokeWidthToPixel)
     progressBarStyle.setProperty('overflow', 'hidden')
 
     const progressBarValue = this.uniPage.createElement('view')
     const progressValueStyle = progressBarValue.style
-    progressValueStyle.setProperty('background-color', this.activeColor)
+    progressValueStyle.setProperty('backgroundColor', this.activeColor)
     progressBar.appendChild(progressBarValue)
 
     const progressInfo = this.uniPage.createElement('text') as UniTextElement
-    progressInfo.style.setProperty('fontSize', this.fontSizeToPixel)
-    progressInfo.style.setProperty('color', '#000000')
-    progressInfo.style.setProperty('marginLeft', '10px')
-    progressInfo.style.setProperty('textAlign', 'right')
+    const progressInfoStyle = progressInfo.style
+    progressInfoStyle.setProperty('fontSize', this.fontSizeToPixel)
+    progressInfoStyle.setProperty('color', '#000000')
+    progressInfoStyle.setProperty('marginLeft', '10px')
+    progressInfoStyle.setProperty('textAlign', 'right')
 
     this.progressBar = progressBar
     this.progressBarValue = progressBarValue
@@ -80,31 +81,33 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
     this.progressInfo.remove()
   }
 
-  attributeChangedCallback(name : string, oldValue : string, newValue : string) {
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'percent':
-        this._percent = Number(newValue)
+        this._percent = newValue as number
         this._animate()
         break;
-      case 'backgroundColor':
-        this.progressBar.style.setProperty('background-color', this.backgroundColor)
+      case 'background-color':
+        this.progressBar.style.setProperty('backgroundColor', this.backgroundColor)
         break;
-      case 'strokeWidth':
+      case 'stroke-width':
         this.progressBar.style.setProperty('height', this.strokeWidthToPixel)
         break;
-      case 'borderRadius':
-        this.progressBar.style.setProperty('border-radius', this.borderRadiusToPixel)
+      case 'border-radius':
+        this.progressBar.style.setProperty('borderRadius', this.borderRadiusToPixel)
         break;
-      case 'activeColor':
+      case 'active-color':
       case 'color':
-        this.progressBarValue.style.setProperty('background-color', this.activeColor)
+        this.progressBarValue.style.setProperty('backgroundColor', this.activeColor)
         break;
-      case 'fontSize':
+      case 'font-size':
         this.progressInfo.style.setProperty('fontSize', this.fontSizeToPixel)
         this.updateMinWidth()
         break;
-      case 'showInfo':
-        this.showInfo = (newValue == 'true') ? true : false
+      case 'show-info':
+        this.showInfo = (typeof newValue == 'string' || newValue == true) ? true : false
+        break;
+      default:
         break;
     }
   }
@@ -137,7 +140,7 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
   }
 
   get duration() : number {
-    return Number(this.getAttributeValue('duration', '30'))
+    return parseFloat(this.getAttributeValue('duration', '30'))
   }
 
   get percent() : number {
@@ -160,7 +163,7 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
   }
 
   get fontSize() : number {
-    return Number(this.getAttributeValue('fontSize', '12'))
+    return parseFloat(this.getAttributeValue('fontSize', '12'))
   }
 
   get fontSizeToPixel() : string {
@@ -168,7 +171,7 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
   }
 
   get borderRadius() : number {
-    return Number(this.getAttributeValue('borderRadius', '0'))
+    return parseFloat(this.getAttributeValue('borderRadius', '0'))
   }
 
   get borderRadiusToPixel() : string {
@@ -176,7 +179,7 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
   }
 
   get strokeWidth() : number {
-    return Number(this.getAttributeValue('strokeWidth', '3'))
+    return parseFloat(this.getAttributeValue('strokeWidth', '3'))
   }
 
   get strokeWidthToPixel() : string {
@@ -230,8 +233,8 @@ export class UniProgressElement extends UniViewElementImpl implements UniCustomE
 
   private getAttributeValue(key : string, defaultValue : string) : string {
     const value = this.getAttribute(key)
-    if (value && value.length) {
-      return value
+    if (value != null && value!.length > 0) {
+      return value!
     }
     return defaultValue
   }

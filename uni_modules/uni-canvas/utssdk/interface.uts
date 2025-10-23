@@ -72,48 +72,6 @@ export interface CanvasContext {
      *      "uniVer": "x",
      *      "unixVer": "x"
      *    }
-     *  },
-     *  "mp":{
-     *    "weixin": {
-     *      "hostVer": "√",
-     *      "uniVer": "√",
-     *      "unixVer": "4.41"
-     *    },
-     *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "baidu": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "toutiao": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "lark": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "qq": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "kuaishou": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    },
-     *    "jd": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
-     *    }
      *  }
      * }
      */
@@ -132,6 +90,11 @@ export interface CanvasContext {
      *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
+     *      },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
      *      }
      *  },
      *  "web": {
@@ -196,6 +159,11 @@ export interface CanvasContext {
      *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
+     *      },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
      *      }
      *  },
      *  "web": {
@@ -260,6 +228,11 @@ export interface CanvasContext {
      *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
+     *      },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
      *      }
      *  },
      *  "web": {
@@ -324,6 +297,11 @@ export interface CanvasContext {
      *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
+     *      },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
      *      }
      *  },
      *  "web": {
@@ -388,6 +366,11 @@ export interface CanvasContext {
      *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
+     *      },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
      *      }
      *  },
      *  "web": {
@@ -452,7 +435,12 @@ export interface CanvasContext {
      *       "osVer": "12.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
-     *     }
+     *     },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
+     *      }
      *   },
      *   "web": {
      *     "uniVer": "x",
@@ -516,7 +504,12 @@ export interface CanvasContext {
      *       "osVer": "12.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
-     *     }
+     *     },
+     *      "harmony": {
+     *        "osVer": "5.0.0",
+     *        "uniVer": "x",
+     *        "unixVer": "4.61"
+     *      }
      *   },
      *   "web": {
      *     "uniVer": "x",
@@ -908,7 +901,7 @@ export interface Uni {
     /**
      * 获取CanvasContext对象实例
      *
-     * @tutorial-uni-app-x https://doc.dcloud.net.cn/uni-app-x/api/createCanvasContextAsync.html
+     * @tutorial_uni_app_x https://doc.dcloud.net.cn/uni-app-x/api/createCanvasContextAsync.html
      * @uniPlatform {
      *  "app": {
      *    "android": {

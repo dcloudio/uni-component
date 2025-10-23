@@ -359,6 +359,10 @@ export class CameraInstance {
 	setFrameSize(size: string) {
 		this.cameraImpl?.setFrameSize(size)
 	}
+	
+	setPhotoResolution(resolution: string) {
+		this.cameraImpl?.setPhotoResolution(resolution)
+	}
 
 	setScanCode(on: boolean) {
 		if (on) {

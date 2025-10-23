@@ -1,14 +1,12 @@
-import { UniFormControl } from '../UniFormControl'
-
 type UniFormSubmitEventDetail = {
-  value: UTSJSONObject
+  value : UTSJSONObject
 }
 
 type UniFormResetEventDetail = {
 }
 
 export class UniFormSubmitEvent extends UniCustomEvent<UniFormSubmitEventDetail> {
-  constructor(value: UTSJSONObject) {
+  constructor(value : UTSJSONObject) {
     super('submit', { value } as UniFormSubmitEventDetail)
   }
 }
@@ -19,7 +17,7 @@ export class UniFormResetEvent extends UniCustomEvent<UniFormResetEventDetail> {
   }
 }
 
-export class UniFormElement extends UniViewElementImpl implements UniFormControl {
+export class UniFormElement extends UniViewElementImpl implements UniCustomElement, IUniForm {
   static get observedAttributes() : Array<string> {
     return ['disabled']
   }
@@ -28,7 +26,11 @@ export class UniFormElement extends UniViewElementImpl implements UniFormControl
     super()
   }
 
-  get disabled(): boolean {
+  // TODO 鸿蒙Bug 当所有属性可选时必须实现一个
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
+  }
+
+  get disabled() : boolean {
     return this.getAttribute('disabled') == 'true' ? true : false
   }
 
@@ -38,9 +40,7 @@ export class UniFormElement extends UniViewElementImpl implements UniFormControl
     }
 
     const formData = {}
-    let controls: UniFormControlElement<unknown>[] = []
-    this.findFormControls(this, controls)
-    controls.forEach((control: UniFormControlElement<unknown>) => {
+    this.findFormControls(this).forEach((control : UniFormControl<unknown>) => {
       formData[control.name] = control.value
     })
 
@@ -52,28 +52,27 @@ export class UniFormElement extends UniViewElementImpl implements UniFormControl
       return
     }
 
-    let controls: UniFormControlElement<unknown>[] = []
-    this.findFormControls(this, controls)
-    controls.forEach((control: UniFormControlElement<unknown>) => {
+    this.findFormControls(this).forEach((control : UniFormControl<unknown>) => {
       control.reset()
     })
 
     this.dispatchEvent(new UniFormResetEvent())
   }
 
-  private findFormControls(el: UniElement, controls: UniFormControlElement<unknown>[]) {
-    if (!el.children.length) {
-      return
-    }
-    el.children.forEach((value: UniElement) => {
-      if (value instanceof UniFormControlElement) {
-        const control = value as UniFormControlElement<unknown>
+  private findFormControls(el : UniElement) : UniFormControl<unknown>[] {
+    const controls : UniFormControl<unknown>[] = []
+    el.children.forEach((item : UniElement) => {
+      if (item instanceof UniFormControlElement<unknown>) {
+        const control = item as UniFormControl<unknown>
         if (control.name.length > 0) {
           controls.push(control)
         }
       } else {
-        this.findFormControls(value, controls)
+        this.findFormControls(item).forEach((item : UniFormControl<unknown>) => {
+          controls.push(item)
+        })
       }
     })
+    return controls
   }
 }

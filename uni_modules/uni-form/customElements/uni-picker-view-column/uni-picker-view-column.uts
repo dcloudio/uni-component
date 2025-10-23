@@ -6,17 +6,17 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   }
 
   private status = 0
-  private scrollView: UniElement
-  private contentView: UniElement
-  private indicatorView: UniElement
-  private maskViewTop: UniElement
-  private maskViewBottom: UniElement
-  private _offsetY = 0
-  private _indicatorHeight = 0
+  private scrollView! : UniElement
+  private contentView! : UniElement
+  private indicatorView! : UniElement
+  private maskViewTop! : UniElement
+  private maskViewBottom! : UniElement
+  private _indicatorHeight = 50
   private _selectedIndex = 0
   private _initialValue = 0
   private _initialValueFlag = false
   private _skipScrollChangeEventOnce = false
+  private _isAdjusting = false
 
   constructor() {
     super()
@@ -40,7 +40,7 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     const indicatorView = this.uniPage.createElement('view')
     const indicatorStyle = indicatorView.style
     indicatorStyle.setProperty('position', 'absolute')
-    indicatorStyle.setProperty('box-sizing', 'content-box')
+    indicatorStyle.setProperty('boxSizing', 'content-box')
     indicatorStyle.setProperty('height', '50px')
     indicatorStyle.setProperty('left', '0px')
     indicatorStyle.setProperty('right', '0px')
@@ -48,32 +48,32 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     indicatorStyle.setProperty('bottom', '0px')
     indicatorStyle.setProperty('marginTop', 'auto')
     indicatorStyle.setProperty('marginBottom', 'auto')
-    indicatorStyle.setProperty('border-style', 'solid')
-    indicatorStyle.setProperty('border-left-width', '0px')
-    indicatorStyle.setProperty('border-top-width', '1px')
-    indicatorStyle.setProperty('border-right-width', '0px')
-    indicatorStyle.setProperty('border-bottom-width', '1px')
-    indicatorStyle.setProperty('border-color', '#e5e5e5')
+    indicatorStyle.setProperty('borderStyle', 'solid')
+    indicatorStyle.setProperty('borderLeftWidth', '0px')
+    indicatorStyle.setProperty('borderTopWidth', '1px')
+    indicatorStyle.setProperty('borderRightWidth', '0px')
+    indicatorStyle.setProperty('borderBottomWidth', '1px')
+    indicatorStyle.setProperty('borderColor', '#e5e5e5')
 
     const maskViewTop = this.uniPage.createElement('view')
     const maskViewTopStyle = maskViewTop.style
-    maskViewTopStyle.setProperty('pointer-events', 'none')
+    maskViewTopStyle.setProperty('pointerEvents', 'none')
     maskViewTopStyle.setProperty('position', 'absolute')
     maskViewTopStyle.setProperty('height', '40%')
     maskViewTopStyle.setProperty('left', '0px')
     maskViewTopStyle.setProperty('top', '0px')
     maskViewTopStyle.setProperty('right', '0px')
-    maskViewTopStyle.setProperty('background-image', 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
+    maskViewTopStyle.setProperty('backgroundImage', 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
 
     const maskViewBottom = this.uniPage.createElement('view')
     const maskViewBottomStyle = maskViewBottom.style
-    maskViewBottomStyle.setProperty('pointer-events', 'none')
+    maskViewBottomStyle.setProperty('pointerEvents', 'none')
     maskViewBottomStyle.setProperty('position', 'absolute')
     maskViewBottomStyle.setProperty('height', '40%')
     maskViewBottomStyle.setProperty('left', '0px')
     maskViewBottomStyle.setProperty('right', '0px')
     maskViewBottomStyle.setProperty('bottom', '0px')
-    maskViewBottomStyle.setProperty('background-image', 'linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
+    maskViewBottomStyle.setProperty('backgroundImage', 'linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
 
     this.scrollView = scrollView
     this.contentView = contentView
@@ -82,50 +82,66 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this.indicatorView = indicatorView
     this.maskViewBottom = maskViewBottom
 
-    scrollView.addEventListener('scrollend', (e: UniScrollEvent) => {
+    ;(scrollView as UniElementImpl).addEventListener('scrollend', (e : UniScrollEvent) => {
+      "[weak self]"
       if (this._indicatorHeight == 0) {
         return
       }
-      this._scrollTopSnap(e.detail.scrollTop)
+      this._scrollTopSnap(e.detail.scrollTop as number)
     })
-    this.addEventListener('touchstart', () => {
+    this.addEventListener('touchstart', (_ : UniTouchEvent) => {
+      "[weak self]"
       this._skipScrollChangeEventOnce = false
     })
 
-    // this.addEventListener('click', (e: UniPointerEvent) => {
-    //   const top = e.clientY - this._offsetY
-    //   const top1 = (this.offsetHeight - this._indicatorHeight) / 2
-    //   const top2 = top1 + this._indicatorHeight
-    //   if (top < top1) {
-    //     if (this.value > 0) {
-    //       this.value--
-    //     }
-    //   } else if (top > top2) {
-    //     if (this.value < this.contentView.children.length - 1) {
-    //       this.value++
-    //     }
-    //   }
-    // })
+    this.addEventListener('click', (e : UniPointerEvent) => {
+      "[weak self]"
+      const offsetY = this.getBoundingClientRect().top
+      const offsetTop = e.clientY - offsetY - maskViewTop.offsetHeight
+      const targetIndex = parseInt((scrollView.scrollTop + offsetTop) / this._indicatorHeight + '')
+
+      this._setIndex(targetIndex)
+      this._scrollTopIndex(this._selectedIndex)
+    })
+  }
+
+  override get value() : number {
+    return this._selectedIndex
+  }
+
+  override set value(value : number) {
+    this._setIndex(value)
+
+    this._skipScrollChangeEventOnce = true
+
+    if (this.isConnected) {
+      this._scrollTopIndex(value)
+    }
+  }
+
+  override reset() {
+    this.value = this._initialValue
   }
 
   connectedCallback() {
-    this.init()
-    this.getBoundingClientRectAsync()?.then((_: DOMRect) => {
+    this.initialize()
+    this.getBoundingClientRectAsync()?.then((_ : DOMRect) => {
       this._onLayout()
+      this.scrollView.setAnyAttribute('scroll-with-animation', true)
     })
   }
 
   disconnectedCallback() {
-    this.removeChild(this.maskViewTop)
-    this.removeChild(this.indicatorView)
-    this.removeChild(this.maskViewBottom)
-    this.removeChild(this.scrollView)
+    super.removeChild(this.maskViewTop)
+    super.removeChild(this.indicatorView)
+    super.removeChild(this.maskViewBottom)
+    super.removeChild(this.scrollView)
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'value':
-        const selectedIndex = Number(newValue)
+        const selectedIndex = newValue as number
         if (!this._initialValueFlag) {
           this._initialValueFlag = true
           this._initialValue = selectedIndex
@@ -135,8 +151,8 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     }
   }
 
-  override appendChild(child: UniElement): void {
-    this.init()
+  override appendChild(child : UniElement) : void {
+    this.initialize()
     if (this.status === 2) {
       return this.contentView.appendChild(child)
     } else {
@@ -144,11 +160,8 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     }
   }
 
-  override insertBefore(
-    child: UniElement,
-    anchor?: UniElement | null
-  ): UniElement | null {
-    this.init()
+  override insertBefore(child : UniElement, anchor ?: UniElement | null) : UniElement | null {
+    this.initialize()
     if (this.status === 2) {
       return this.contentView.insertBefore(child, anchor)
     } else {
@@ -156,35 +169,11 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     }
   }
 
-  override removeChild(child: UniElement): UniElement | null {
+  override removeChild(child : UniElement) : UniElement | null {
     return this.contentView.removeChild(child)
   }
 
-  override reset() {
-    this.value = this._initialValue
-  }
-
-  override get value(): number {
-    return this._selectedIndex
-  }
-
-  override set value(value: number) {
-    if (value == this._selectedIndex) {
-      return
-    }
-    this._selectedIndex = value
-    this._skipScrollChangeEventOnce = true
-
-    if (this.isConnected) {
-      this._scrollTopIndex(value)
-    }
-  }
-
-  get disabled(): boolean {
-    return this.getAttribute('disabled') == 'true' ? true : false
-  }
-
-  init() {
+  initialize() {
     // 与 Web 标准一致，不允许在 constructor 中添加 children
     if (this.status !== 0) {
       return
@@ -199,7 +188,15 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this.status = 2
   }
 
-  setIndicatorStyle(styles: Map<string, string>): void {
+  get disabled() : boolean {
+    return this.getAttribute('disabled') == 'true' ? true : false
+  }
+
+  resize() {
+    this._onLayout()
+  }
+
+  setIndicatorStyle(styles : Map<string, string>) : void {
     if (styles.size == 0) {
       return
     }
@@ -207,12 +204,12 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     styles.forEach((value, key) => {
       this.indicatorView.style.setProperty(key, value)
     })
-    this.getBoundingClientRectAsync()?.then((_: DOMRect) => {
+    this.getBoundingClientRectAsync()?.then((_ : DOMRect) => {
       this._onLayout()
     })
   }
 
-  setMaskTopStyle(styles: Map<string, string>): void {
+  setMaskTopStyle(styles : Map<string, string>) : void {
     if (styles.size == 0) {
       return
     }
@@ -223,7 +220,7 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this._onLayout()
   }
 
-  setMaskBottomStyle(styles: Map<string, string>): void {
+  setMaskBottomStyle(styles : Map<string, string>) : void {
     if (styles.size == 0) {
       return
     }
@@ -234,8 +231,16 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this._onLayout()
   }
 
-  resize() {
-    this._onLayout()
+  _setIndex(value: number) {
+    if (value < 0) {
+      value = 0
+    }
+
+    if (value == this._selectedIndex) {
+      return
+    }
+
+    this._selectedIndex = value
   }
 
   private _onLayout() {
@@ -253,24 +258,34 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this.contentView.style.setProperty('paddingBottom', contentPaddingPixel)
 
     this._indicatorHeight = indicatorHeight
-    this._offsetY = this.getBoundingClientRect().top
+    if (this._indicatorHeight <= 0) {
+      this._indicatorHeight = 50
+    }
 
     this._scrollTopIndex(this.value)
   }
 
-  private _getIndicatorClientHeight(): number {
+  private _getIndicatorClientHeight() : number {
     const borderTopWidth = this.indicatorView.style.getPropertyValue('borderTopWidth')
     const borderBottomWidth = this.indicatorView.style.getPropertyValue('borderBottomWidth')
-    const indicatorBorderTop = borderTopWidth.length ? parseFloat(borderTopWidth) : 0
-    const indicatorBorderBottom = borderBottomWidth.length ? parseFloat(borderBottomWidth) : 0
+    const indicatorBorderTop = borderTopWidth.length > 0 ? parseFloat(borderTopWidth) : 0
+    const indicatorBorderBottom = borderBottomWidth.length > 0 ? parseFloat(borderBottomWidth) : 0
     const indicatorClientHeight = this.indicatorView.offsetHeight - indicatorBorderTop - indicatorBorderBottom
     return indicatorClientHeight
   }
 
-  private _scrollTopSnap(y: number) {
-    const index = Math.round(y / this._indicatorHeight)
-    if (y % this._indicatorHeight != 0) {
-      this._scrollTopIndex(index)
+  private _scrollTopSnap(y : number) {
+    if (this._isAdjusting) return;
+
+    const index = Math.round(y / this._indicatorHeight);
+    const targetY = index * this._indicatorHeight;
+    const epsilon = 0.1;
+    if (Math.abs(y - targetY) > epsilon) {
+      this._isAdjusting = true;
+      this._scrollTopIndex(index);
+      setTimeout(() => {
+        this._isAdjusting = false;
+      }, 0);
     }
 
     const changed = this._selectedIndex != index
@@ -287,22 +302,22 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     }
   }
 
-  private _scrollTopIndex(index: number) {
-    this.scrollView.scrollTop = index * this._indicatorHeight
+  private _scrollTopIndex(index : number) {
+    this.scrollView.scrollTo(0, index * this._indicatorHeight)
   }
 
   private _dispatchUniPickerView() {
     let pickerView = this.parentElement
     let maxRecursiveDeep = 32
-    while (pickerView && maxRecursiveDeep > 0) {
+    while (pickerView != null && maxRecursiveDeep > 0) {
       maxRecursiveDeep--
       if (pickerView instanceof UniPickerViewElement) {
         break
       }
-      pickerView = pickerView.parentElement
+      pickerView = pickerView!.parentElement
     }
 
-    if (pickerView) {
+    if (pickerView != null) {
       (pickerView as UniPickerViewElement)._columnChange()
     }
   }

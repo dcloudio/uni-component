@@ -85,5 +85,5 @@ export class UniLabelElement extends UniViewElementImpl implements UniCustomElem
 
 	adoptedCallback() { }
 
-	attributeChangedCallback(name : string, oldValue : string, newValue : string) { }
+	attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) { }
 }

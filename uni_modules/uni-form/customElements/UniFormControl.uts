@@ -1,5 +1,0 @@
-
-export interface UniFormControl {
-  submit(): void;
-  reset(): void;
-}
