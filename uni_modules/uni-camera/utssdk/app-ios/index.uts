@@ -333,6 +333,9 @@ export class CameraInstance {
 		if (this.isReleased || this.isStopped) return;
 		this.cameraImpl?.setFrameSize(size = size)
 	}
+	
+	setPhotoResolution(resolution: string) {
+	}
 
 	setScanCode(on: boolean) {
 		if (this.isReleased || this.isStopped) return;

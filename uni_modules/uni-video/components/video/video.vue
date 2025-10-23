@@ -9,7 +9,7 @@
       @touchmove="useGestureReturn.onTouchmove"
     >
       <view class="uni-video-loading" v-if="props.showLoading && videoState.start && videoState.loading">
-        <loadingCircle style="margin: auto" :speed="16" :size="54" color="#d3d3d3"></loadingCircle>
+        <loading style="width: 54px; height: 54px;" color="#d3d3d3" />
       </view>
 
       <native-view class="native-view-video" @init="onInit"></native-view>
@@ -191,7 +191,6 @@
 </template>
 
 <script setup lang="ts">
-  import loadingCircle from '../loading-circle/loading-circle.uvue';
   import { formatTime } from './utils';
   import {
     UniVideoTimeUpdateEvent,
@@ -356,13 +355,88 @@
     inited.value = true
   }
 
-  uni.$on(`__UNIVIDEO_ON_TIME_UPDATE_${eventSeed}`, (time: number) => {
+  // 所有事件名和监听函数变量
+  const ON_TIME_UPDATE_EVENT_NAME = `__UNIVIDEO_ON_TIME_UPDATE_${eventSeed}`
+  const onTimeUpdate = (time: number) => {
     if (!videoState.pauseUpdatingCurrentTime) {
       videoState.currentTime = time;
     }
     emit('timeupdate', new UniVideoTimeUpdateEvent(rootRef.value!, time, videoState.duration));
     useDanmuReturn.updateDanmu();
-  });
+  }
+
+  const ON_PLAY_EVENT_NAME = `__UNIVIDEO_ON_PLAY_${eventSeed}`
+  const onPlay = () => {
+    videoState.loading = false;
+    videoState.start = true;
+    videoState.playing = true;
+    controlsState.controlsVisible = true;
+    emit('play', new UniVideoEvent(rootRef.value!, 'play'));
+  }
+
+  const ON_PAUSE_EVENT_NAME = `__UNIVIDEO_ON_PAUSE_${eventSeed}`
+  const onPause = () => {
+    videoState.loading = false;
+    videoState.playing = false;
+    controlsState.controlsVisible = true;
+    emit('pause', new UniVideoEvent(rootRef.value!, 'pause'));
+  }
+
+  const ON_ERROR_EVENT_NAME = `__UNIVIDEO_ON_ERROR_${eventSeed}`
+  const onError = () => {
+    videoState.playing = true;
+    controlsState.controlsVisible = true;
+    emit('error', new UniVideoErrorEvent(rootRef.value!));
+  }
+
+  const ON_ENDED_EVENT_NAME = `__UNIVIDEO_ON_ENDED_${eventSeed}`
+  const onEnded = () => {
+    videoState.loading = false;
+    videoState.playing = false;
+    controlsState.controlsVisible = true;
+    emit('ended', new UniVideoEvent(rootRef.value!, 'ended'));
+  }
+
+  const ON_PREPARED_EVENT_NAME = `__UNIVIDEO_ON_PREPARED_${eventSeed}`
+  const onPrepared = (duration: number) => {
+    videoState.prepared = true
+    videoState.loading = false;
+    videoState.duration = duration;
+    const initialTime = Number(props.initialTime) || 0;
+    if (initialTime > 0) {
+      useVideoReturn.seek(initialTime);
+    } else if (typeof props.poster === 'undefined' || props.poster.length === 0) {
+      video?.displayTheFirstFrame();
+    }
+  }
+
+  const ON_SEND_DANMU_EVENT_NAME = `__UNIVIDEO_SEND_DANMU_${eventSeed}`
+  const onSendDanmu = (res: UTSJSONObject) => {
+    useDanmuReturn.sendDanmu({
+      text: res['text'] as string | null,
+      color: res['color'] as string | null,
+      time: res['time'] as number | null
+    });
+  }
+
+  // 统一注册所有事件
+  uni.$on(ON_TIME_UPDATE_EVENT_NAME, onTimeUpdate);
+  uni.$on(ON_PLAY_EVENT_NAME, onPlay);
+  uni.$on(ON_PAUSE_EVENT_NAME, onPause);
+  uni.$on(ON_ERROR_EVENT_NAME, onError);
+  uni.$on(ON_ENDED_EVENT_NAME, onEnded);
+  uni.$on(ON_PREPARED_EVENT_NAME, onPrepared);
+  uni.$on(ON_SEND_DANMU_EVENT_NAME, onSendDanmu);
+
+  onBeforeUnmount(() => {
+    uni.$off(ON_TIME_UPDATE_EVENT_NAME, onTimeUpdate);
+    uni.$off(ON_PLAY_EVENT_NAME, onPlay);
+    uni.$off(ON_PAUSE_EVENT_NAME, onPause);
+    uni.$off(ON_ERROR_EVENT_NAME, onError);
+    uni.$off(ON_ENDED_EVENT_NAME, onEnded);
+    uni.$off(ON_PREPARED_EVENT_NAME, onPrepared);
+    uni.$off(ON_SEND_DANMU_EVENT_NAME, onSendDanmu);
+  })
 
   // #region useVolume
   interface UseVolumeReturn {
@@ -455,6 +529,7 @@
     pauseUpdatingCurrentTime: boolean;
     doubleClick: boolean;
     loading: boolean;
+    prepared: boolean
   }
   interface UseVideoReturn {
     state: VideoState;
@@ -479,7 +554,8 @@
       buffered: 0,
       muted,
       pauseUpdatingCurrentTime: false,
-      loading: true
+      loading: true,
+      prepared: false
     });
     watchEffect(() => {
       state.muted = props.muted === true;
@@ -534,39 +610,11 @@
         video && (video.loop = loop);
       }
     );
-    uni.$on(`__UNIVIDEO_ON_PLAY_${eventSeed}`, () => {
-      state.start = true;
-      state.playing = true;
-      controlsState.controlsVisible = true;
-      emit('play', new UniVideoEvent(rootRef.value!, 'play'));
-    });
-    uni.$on(`__UNIVIDEO_ON_PAUSE_${eventSeed}`, () => {
-      state.playing = false;
-      controlsState.controlsVisible = true;
-      emit('pause', new UniVideoEvent(rootRef.value!, 'pause'));
-    });
-    uni.$on(`__UNIVIDEO_ON_ERROR_${eventSeed}`, () => {
-      state.playing = true;
-      controlsState.controlsVisible = true;
-      emit('error', new UniVideoErrorEvent(rootRef.value!));
-    });
-    uni.$on(`__UNIVIDEO_ON_ENDED_${eventSeed}`, () => {
-      state.playing = false;
-      controlsState.controlsVisible = true;
-      emit('ended', new UniVideoEvent(rootRef.value!, 'ended'));
-    });
-    uni.$on(`__UNIVIDEO_ON_PREPARED_${eventSeed}`, (duration: number) => {
-      state.loading = false;
-      state.duration = duration;
-      const initialTime = Number(props.initialTime) || 0;
-      if (initialTime > 0) {
-        seek(initialTime);
-      } else if (typeof props.poster === 'undefined' || props.poster.length === 0) {
-        video?.displayTheFirstFrame();
-      }
-    });
 
     const play = () => {
+      if (!state.prepared) {
+        state.loading = true
+      }
       state.start = true;
       video?.play();
     };
@@ -623,7 +671,7 @@
   }
   function useFullscreen(): UseFullscreenReturn {
     const pages = getCurrentPages();
-    const page = pages[pages.length - 1];
+    let page = pages[pages.length - 1];
     const state: FullscreenState = reactive({
       fullscreen: false,
     });
@@ -641,6 +689,12 @@
       }
     }
     onBeforeUnmount(exitFullscreen);
+    onMounted(() => {
+      // fix: 修正在 dialogPage 中获取 page 错误
+      if (page !== rootRef.value.uniPage) {
+        page = rootRef.value.uniPage
+      }
+    })
     function fullscreenchange(event: UniEvent) {
       setTimeout(() => {
         containerRef.value?.getBoundingClientRectAsync()?.then((rect) => {
@@ -892,6 +946,7 @@
 
       // @ts-ignore
       const p = rootRef.value.uniPage.createElement('text');
+      const danmuContainer = danmuRef.value as UniElement
 
       (p as UniTextElement).setAnyAttribute('value', danmu.text);
 
@@ -905,7 +960,8 @@
       p.style.setProperty('bottom', `${Math.random() * 100}%`);
       p.style.setProperty('color', `${danmu.color}`);
 
-      (danmuRef.value as UniElement).appendChild(p);
+      danmuContainer.appendChild(p);
+      // #ifndef APP-HARMONY
       p.animate(
         [
           { left: '100%', transform: 'translateX(0%)' },
@@ -919,6 +975,26 @@
       setTimeout(function () {
         p.remove();
       }, 3000);
+      // #endif
+      // #ifdef APP-HARMONY
+      // TODO 鸿蒙 left 动画问题导致弹幕渲染出错
+      setTimeout(() => {
+        const textWidth = p.getBoundingClientRect().width
+        p.animate(
+          [
+            { transform: "translateX(0%)" },
+            { transform: `translateX(-${danmuContainer.getBoundingClientRect().width + textWidth}px)` },
+          ],
+          {
+            duration: 3000,
+            easing: 'linear'
+          },
+        )
+        setTimeout(function () {
+          p.remove();
+        }, 3000);
+      }, 100)
+      // #endif
     }
     function sendDanmu(danmu: Danmu) {
       danmuList.splice(danmuIndex.index + 1, 0, {
@@ -927,13 +1003,7 @@
         time: videoState.currentTime || 0
       });
     }
-    uni.$on(`__UNIVIDEO_SEND_DANMU_${eventSeed}`, (res: UTSJSONObject) => {
-      sendDanmu({
-        text: res['text'] as string | null,
-        color: res['color'] as string | null,
-        time: res['time'] as number | null
-      });
-    });
+  // 事件监听已统一在主作用域注册
     return {
       state,
       toggleDanmu,
@@ -1170,10 +1240,6 @@
     onMounted(() => {
       let stop: (() => void) | null = null;
       getContainerRect()
-      // 鸿蒙悬浮窗状态切换时触发
-      uni.$on(`__UNIVIDEO_ON_WINDOW_STATUS_CHANGE_${eventSeed}`, () => {
-        setTimeout(getContainerRect, 200)
-      })
       watchEffect(() => {
         if (props.enablePlayGesture) {
           const res = useDoubleClick(containerRef.value!, (event) => {
@@ -1189,6 +1255,15 @@
           stop?.();
         }
       });
+      // 鸿蒙悬浮窗状态切换时触发
+      const ON_WINDOW_STATUS_CHANGE_EVENT_NAME = `__UNIVIDEO_ON_WINDOW_STATUS_CHANGE_${eventSeed}`
+      const onWindowStatusChange = () => {
+        setTimeout(getContainerRect, 200)
+      }
+      uni.$on(ON_WINDOW_STATUS_CHANGE_EVENT_NAME, onWindowStatusChange)
+      onBeforeUnmount(() => {
+        uni.$off(ON_WINDOW_STATUS_CHANGE_EVENT_NAME, onWindowStatusChange)
+      })
     });
 
     function changeVolume(y: number) {
@@ -1368,14 +1443,15 @@
     z-index: 0;
   }
 
-  .uni-video-title-bar,
   .uni-video-fullscreen-bar {
-    padding: 0 20px;
+    height: 55px;
+    padding: 0 20px 10px;
   }
 
   .uni-video-title-bar {
     background-image: linear-gradient(to top, transparent, rgba(0, 0, 0, 0.5));
     top: 0;
+    padding: 0 20px;
   }
 
   .uni-video-bar.uni-video-bar-full {
@@ -1623,7 +1699,11 @@
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 10;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .uni-video-back-button-icon {

@@ -1,0 +1,69 @@
+import { UTSiOS } from "DCloudUTSFoundation";
+import { CGRect, CGFloat } from 'CoreFoundation';
+import { NSNumber } from 'Foundation';
+
+export class NativeLoading {
+	element : UniNativeViewElement;
+	spinnerView : SpinnerView | null = null;
+	color : string | null = null
+	strokeWidth : string | null = null
+	animationTimingFunction : string | null = null
+	width : string | null = null
+	height: string | null = null
+
+	constructor(element : UniNativeViewElement) {
+		//接收传递过来的UniNativeViewElement
+		this.element = element;
+		super.init()
+		this.bindView();
+	}
+
+	bindView() {
+		this.spinnerView = new SpinnerView(frame = CGRect.zero)
+		if (this.spinnerView != null) {
+			this.element.bindIOSView(this.spinnerView!)
+		}
+	}
+
+	updateStyle(width ?: string, height ?: string, color ?: string, strokeWidth ?: string, animationTimingFunction ?: string) {
+		this.width = width
+		this.height = height
+		this.color = color
+		this.strokeWidth = strokeWidth
+		this.animationTimingFunction = animationTimingFunction
+		this.updateUI()
+	}
+
+	updateUI() {
+		let color = UTSiOS.colorWithString(this.color ?? "black")
+		const width = this.parseNumber(this.width ?? "16px")
+		const height = this.parseNumber(this.height ?? "16px")
+		
+		const min = Math.min(NSNumber(width), NSNumber(height))
+		let strokeWidth = min.toDouble() * 0.0625
+		
+		if (this.strokeWidth != null && this.strokeWidth! == "bold") {
+			strokeWidth = min.toDouble() * 0.125
+		}
+		this.spinnerView?.setAppearance(strokeColor = color, lineWidth = CGFloat(strokeWidth), animationTimingFunction = this.animationTimingFunction)
+		this.spinnerView?.start()
+	}
+	
+	parseNumber(input : string) : Double {
+		if (input == "") {
+			return 16.0
+		}
+	    let lower = input.toLowerCase().trim()
+		
+	    if (lower.endsWith("rpx")) {
+	        return Double(lower.replace('rpx', ''))  ?? 16.0
+	    } else if (lower.endsWith("px")) {
+	        return Double(lower.replace('px', ''))  ?? 16.0
+	    }
+	    return Double(lower) ?? 16.0
+	}
+
+	destroy() {
+		UTSiOS.destroyInstance(this)
+	}
+}

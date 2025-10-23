@@ -10,7 +10,7 @@
 				<picker-view style="flex:1" @change="handleChange" :mask-top-style="maskTopStyle" :mask-bottom-style="maskBottomStyle" :indicatorStyle="indicatorStyle" :value="value">
 					<template v-if="mode == 'selector'">
 						<picker-view-column>
-							<template v-for="item in range" :key="selectorIdx">
+							<template v-for="(item,selectorIdx) in range" :key="selectorIdx">
 								<text class="uni-picker__view-item" :class="['view-item--'+theme]" v-if="rangeKey">{{item[rangeKey]}}</text>
 								<text class="uni-picker__view-item" :class="['view-item--'+theme]" v-else>{{item}}</text>
 							</template>

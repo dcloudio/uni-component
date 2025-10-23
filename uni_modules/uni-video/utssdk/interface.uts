@@ -112,7 +112,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -182,7 +182,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -253,7 +253,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -323,7 +323,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -394,7 +394,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -465,7 +465,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -536,7 +536,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -607,7 +607,7 @@ export interface VideoContext {
      *    "harmony": {
      *      "osVer": "3.0",
      *      "uniVer": "4.23",
-     *      "unixVer": "x"
+     *      "unixVer": "4.61"
      *    }
      *   },
     *  "mp": {
@@ -733,8 +733,8 @@ export interface Uni {
      * @uniVueVersion 2,3
      * @return {VideoContext} video组件上下文对象
      *
-     * @tutorial-uni-app https://uniapp.dcloud.net.cn/api/media/video-context.html#createvideocontext
-     * @tutorial-uni-app-x https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
+     * @tutorial_uni_app https://uniapp.dcloud.net.cn/api/media/video-context.html#createvideocontext
+     * @tutorial_uni_app_x https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
      * @tutorial https://doc.dcloud.net.cn/uni-app-x/api/create-video-context.html#createvideocontext
      * @tutorial_weixin https://developers.weixin.qq.com/miniprogram/dev/api/media/video/VideoContext.html
      */
@@ -770,7 +770,7 @@ export interface UniVideoEvent {
     /**
      * 事件发生时的时间戳
      */
-    timeStamp: Long
+    readonly timeStamp: Long
     // #endif
     // #ifdef APP-HARMONY
     /**
@@ -793,7 +793,7 @@ export interface UniVideoEvent {
  * 播放进度变化时触发
  */
 export interface UniVideoTimeUpdateEvent extends UniVideoEvent {
-    detail: UniVideoTimeUpdateEventDetail
+    readonly detail: UniVideoTimeUpdateEventDetail
 }
 
 export type UniVideoTimeUpdateEventDetail = {
@@ -812,7 +812,7 @@ export type UniVideoTimeUpdateEventDetail = {
  * 当视频进入和退出全屏是触发
  */
 export interface UniVideoFullScreenChangeEvent extends UniVideoEvent {
-    detail: UniVideoFullScreenChangeEventDetail
+    readonly detail: UniVideoFullScreenChangeEventDetail
 }
 
 export type UniVideoFullScreenDirection =
@@ -841,7 +841,7 @@ export type UniVideoFullScreenChangeEventDetail = {
  * 视频播放出错时触发
  */
 export interface UniVideoErrorEvent extends UniVideoEvent {
-    detail: VideoError
+    readonly detail: VideoError
 }
 
 /**
@@ -870,7 +870,7 @@ export interface VideoError extends IUniError {
  * 加载进度变化时触发
  */
 export interface UniVideoProgressEvent extends UniVideoEvent {
-    detail: UniVideoProgressEventDetail
+    readonly detail: UniVideoProgressEventDetail
 }
 
 export type UniVideoProgressEventDetail = {
@@ -885,7 +885,7 @@ export type UniVideoProgressEventDetail = {
  * 视频播放全屏播放时点击事件
  */
 export interface UniVideoFullScreenClickEvent extends UniVideoEvent {
-    detail: UniVideoFullScreenClickEventDetail
+    readonly detail: UniVideoFullScreenClickEventDetail
 }
 
 export type UniVideoFullScreenClickEventDetail = {
@@ -912,7 +912,7 @@ export type UniVideoFullScreenClickEventDetail = {
  * 切换播放控件显示隐藏时触发
  */
 export interface UniVideoControlsToggleEvent extends UniVideoEvent {
-    detail: UniVideoControlsToggleEventDetail
+    readonly detail: UniVideoControlsToggleEventDetail
 }
 
 export type UniVideoControlsToggleEventDetail = {

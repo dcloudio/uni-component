@@ -33,7 +33,7 @@
   "uni_modules": {
     "customElements":{
       "app-android": false,
-      "app-ios": false,
+      "app-ios": true,
       "app-harmony": true
     },
     "encrypt": [],

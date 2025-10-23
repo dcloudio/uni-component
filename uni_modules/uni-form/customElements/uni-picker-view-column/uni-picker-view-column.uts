@@ -11,11 +11,12 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   private indicatorView! : UniElement
   private maskViewTop! : UniElement
   private maskViewBottom! : UniElement
-  private _indicatorHeight = 0
+  private _indicatorHeight = 50
   private _selectedIndex = 0
   private _initialValue = 0
   private _initialValueFlag = false
   private _skipScrollChangeEventOnce = false
+  private _isAdjusting = false
 
   constructor() {
     super()
@@ -131,10 +132,10 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   }
 
   disconnectedCallback() {
-    this.removeChild(this.maskViewTop)
-    this.removeChild(this.indicatorView)
-    this.removeChild(this.maskViewBottom)
-    this.removeChild(this.scrollView)
+    super.removeChild(this.maskViewTop)
+    super.removeChild(this.indicatorView)
+    super.removeChild(this.maskViewBottom)
+    super.removeChild(this.scrollView)
   }
 
   attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
@@ -257,6 +258,9 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this.contentView.style.setProperty('paddingBottom', contentPaddingPixel)
 
     this._indicatorHeight = indicatorHeight
+    if (this._indicatorHeight <= 0) {
+      this._indicatorHeight = 50
+    }
 
     this._scrollTopIndex(this.value)
   }
@@ -271,9 +275,17 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   }
 
   private _scrollTopSnap(y : number) {
-    const index = Math.round(y / this._indicatorHeight)
-    if (y % this._indicatorHeight != 0) {
-      this._scrollTopIndex(index)
+    if (this._isAdjusting) return;
+
+    const index = Math.round(y / this._indicatorHeight);
+    const targetY = index * this._indicatorHeight;
+    const epsilon = 0.1;
+    if (Math.abs(y - targetY) > epsilon) {
+      this._isAdjusting = true;
+      this._scrollTopIndex(index);
+      setTimeout(() => {
+        this._isAdjusting = false;
+      }, 0);
     }
 
     const changed = this._selectedIndex != index

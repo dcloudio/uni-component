@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.media.MediaMetadataRetriever
 import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Size
 import android.view.Display
@@ -44,6 +46,12 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import java.lang.reflect.Field
+import kotlin.coroutines.CoroutineContext
 
 
 interface ICallBack {
@@ -64,19 +72,21 @@ class CameraImpl(private val activity: AppCompatActivity) {
     private var currentFlash = "auto"
     private var currentResolution = "medium"
     private var currentFrameSize = "medium"
+    private var currentPhotoResolution = "medium"
     private var processOnce = 0
     private var captureFrameStatus = false
     private var analysisStatus = false
 
     // 相机打开状态
     private var cameraOpen = false
-    
+
     // 帧回调状态
     private var isFrameCallbackActive = false
 
     fun getCameraPreviewView(resolution: String): View {
         currentResolution = resolution
         previewView = PreviewView(activity)
+        previewView?.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
         return previewView as PreviewView
     }
 
@@ -158,13 +168,13 @@ class CameraImpl(private val activity: AppCompatActivity) {
         var adjustedZoom = zoom
         val maxValue = camera?.cameraInfo?.zoomState?.value?.maxZoomRatio ?: 1.0f
         val minValue = 1.0f
-        
+
         adjustedZoom = when {
             adjustedZoom < minValue -> minValue
             adjustedZoom > maxValue -> maxValue
             else -> adjustedZoom
         }
-        
+
         camera?.cameraControl?.setZoomRatio(adjustedZoom)
     }
 
@@ -181,40 +191,53 @@ class CameraImpl(private val activity: AppCompatActivity) {
         cameraProvider?.bindToLifecycle(activity, cameraSelector, imageAnalysis)
     }
 
+    private var setupResolution = false
+    fun setPhotoResolution(resolution: String){
+        if (isRecording || setupResolution) return
+        currentPhotoResolution = resolution
+        setupResolution = true
+    }
+
     fun takePhoto(quality: String, selfieMirror: Boolean, success: ICallBack?, fail: ICallBack?) {
         if (imageCapture == null) {
             return
         }
-        imageCapture?.takePicture(ContextCompat.getMainExecutor(activity), object : ImageCapture.OnImageCapturedCallback() {
+
+        imageCapture?.takePicture(Executors.newSingleThreadExecutor(), object : ImageCapture.OnImageCapturedCallback() {
             override fun onCaptureSuccess(image: ImageProxy) {
                 super.onCaptureSuccess(image)
-                var bitmap = image.toBitmap()
-                
-                // 根据设备方向和相机方向调整图片
-                val rotation = image.imageInfo.rotationDegrees
-                if (rotation != 0) {
-                    val matrix = Matrix()
-                    matrix.postRotate(rotation.toFloat())
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-                }
-                
-                // 如果需要镜像处理（前置摄像头）
-                if (selfieMirror && cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
-                    bitmap = mirrorBitmap(bitmap)
-                }
-                
-                val file = getPicFile()
-                compressAndSaveBitmap(bitmap, getJpegQuality(quality), file)
-                image.close()
-                success?.callback("takephotosuccess", file.absolutePath)
+                    var bitmap = image.toBitmap()
+
+                    val rotation = image.imageInfo.rotationDegrees
+                    image.close()
+                    if (rotation != 0) {
+                        val matrix = Matrix()
+                        matrix.postRotate(rotation.toFloat())
+                        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+                    }
+
+                    if (selfieMirror && cameraSelector == CameraSelector.DEFAULT_FRONT_CAMERA) {
+                        bitmap = mirrorBitmap(bitmap)
+                    }
+
+                    val file = getPicFile()
+                    compressAndSaveBitmap(bitmap, getJpegQuality(quality), file)
+
+                    Handler(Looper.getMainLooper()).post {
+                        success?.callback("takephotosuccess", file.absolutePath)
+                    }
             }
 
             override fun onError(exception: ImageCaptureException) {
                 super.onError(exception)
-                fail?.callback("takephotofail", exception.message)
+                Handler(Looper.getMainLooper()).post {
+                    fail?.callback("takephotofail", exception.message)
+                }
             }
         })
     }
+
+
 
     private var initDoneCallBack: ICallBack? = null
     fun setInitDoneCallBack(callback: ICallBack) {
@@ -272,14 +295,14 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 it.removeObserver(cameraStateObserver)
             }
         }
-        
+
         // 停止所有活动的相机功能
         stopOnFrame()
         stopAnalysis()
         if (isRecording) {
             stopRecord()
         }
-        
+
         // 注意：不在这里调用unbindAll，而是在CameraManager中管理
         // cameraProvider?.unbindAll()
     }
@@ -292,13 +315,13 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 //打印当前调用堆栈
 //                Log.d("aaa", "startPreview: ${Thread.currentThread().stackTrace.joinToString("\n")}")
                 cameraProvider?.unbindAll()
-                
+
                 preview = buildPreview()
                 preview?.surfaceProvider = it.surfaceProvider
                 imageCapture = buildImageCapture()
                 imageAnalysis = buildImageAnalysis()
                 videoCapture = buildVideoCapture()
-                
+
                 val useCaseGroupBuilder = UseCaseGroup.Builder()
                 useCaseGroupBuilder.addUseCase(preview!!)
                 useCaseGroupBuilder.addUseCase(imageCapture!!)
@@ -306,21 +329,21 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 if (imageAnalysis != null) {
                     useCaseGroupBuilder.addUseCase(imageAnalysis!!)
                 }
-                
+
                 // 绑定用例到生命周期
                 camera = cameraProvider?.bindToLifecycle(activity, cameraSelector, useCaseGroupBuilder.build())
 
                 if (currentFlash == "torch") {
                     camera?.cameraControl?.enableTorch(true)
                 }
-                
+
                 camera?.cameraInfo?.cameraState?.let {
                     if (it.hasObservers()) {
                         it.removeObserver(cameraStateObserver)
                     }
                     it.observe(activity, cameraStateObserver)
                 }
-                
+
                 // 恢复帧回调状态
                 if (isFrameCallbackActive) {
                     startOnFrame()
@@ -385,10 +408,38 @@ class CameraImpl(private val activity: AppCompatActivity) {
 
 
     private fun buildImageCapture(): ImageCapture {
-        imageCapture = ImageCapture.Builder()
-            .setTargetRotation(getDisplayRotation())
-            .setJpegQuality(100)
+        val strategy = when (currentPhotoResolution) {
+            "low" -> {
+                ResolutionStrategy(Size(480, 480), ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER)
+            }
+
+            "medium" -> {
+                ResolutionStrategy(Size(720, 720), ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER)
+            }
+
+            "high" -> {
+                ResolutionStrategy(Size(1080, 1080), ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER)
+            }
+
+            else -> {
+                ResolutionStrategy(Size(720, 720), ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER)
+            }
+        }
+
+        val resolutionSelector = ResolutionSelector.Builder()
+            .setResolutionStrategy(strategy)
             .build()
+
+        imageCapture = if (currentPhotoResolution == "original") {
+            ImageCapture.Builder()
+                .setTargetRotation(getDisplayRotation())
+                .build()
+        }else {
+            ImageCapture.Builder()
+                .setResolutionSelector(resolutionSelector)
+                .setTargetRotation(getDisplayRotation())
+                .build()
+        }
         when (currentFlash) {
             "auto" -> {
                 imageCapture!!.flashMode = FLASH_MODE_AUTO
@@ -881,17 +932,17 @@ class CameraImpl(private val activity: AppCompatActivity) {
             if (isRecording) {
                 stopRecord()
             }
-            
+
             // 移除观察者
             camera?.cameraInfo?.cameraState?.let {
                 if (it.hasObservers()) {
                     it.removeObserver(cameraStateObserver)
                 }
             }
-            
+
             // 解绑所有用例
             cameraProvider?.unbindAll()
-            
+
             // 重置相机状态
             cameraOpen = false
             processOnce = 0
@@ -902,7 +953,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
 
     fun reset() {
         stopCamera()
-        
+
         // 重置所有状态变量
         previewView = null
         camera = null
@@ -915,7 +966,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
         analysisStatus = false
         isFrameCallbackActive = false
         processOnce = 0
-        
+
         // 清除回调引用
         initDoneCallBack = null
         stopCallBack = null

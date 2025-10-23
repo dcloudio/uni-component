@@ -25,12 +25,14 @@
 		devicePosition ?: "front" | "back",
 		flash ?: "auto" | "on" | "off" | "torch",
 		frameSize ?: "small" | "medium" | "large",
+		photoResolution ?: "low" | "medium" | "high" | "original"
 	}>(), {
 		mode: "normal",
 		resolution: "medium", // 一旦设定不能更改
 		devicePosition: "back",
 		flash: "auto",
-		frameSize: "medium"
+		frameSize: "medium",
+		photoResolution: "medium" // 一旦设定不能更改
 	})
 
 	let cameraInstance : CameraInstance | null = null
@@ -59,11 +61,17 @@
 		const frameSize = props.frameSize
 		cameraInstance?.setFrameSize(frameSize)
 	})
+	
+	watchEffect(() => {
+		const photoResolution = props.photoResolution
+		cameraInstance?.setPhotoResolution(photoResolution)
+	})
 
 	const setDefaultOptions = () => {
 		cameraInstance?.switchCamera(props.devicePosition)
 		cameraInstance?.setFlash(props.flash)
 		cameraInstance?.setFrameSize(props.frameSize)
+		cameraInstance?.setPhotoResolution(props.photoResolution)
 	}
 
 	const onObjectInit = (e : UniNativeViewInitEvent) => {

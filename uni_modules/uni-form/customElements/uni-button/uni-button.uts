@@ -90,11 +90,14 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
         }
         this.setTypeStyle(this.type as ButtonType)
         break;
+      case 'value':
+        this.updateInnerText(this)
+        break;
     }
   }
 
   override appendChild(child : UniElement) : void {
-    this.buttonText.setAttribute('value', child.getAttribute('value') ?? "")
+    this.updateInnerText(child)
   }
 
   override setAnyAttribute(key : string, value : Object) : void {
@@ -177,6 +180,10 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
       return value
     }
     return defaultValue
+  }
+
+  private updateInnerText(child : UniElement) {
+    this.buttonText.setAttribute('value', child.getAttribute('value') ?? "")
   }
 
   private setSizeStyle(size : ButtonSize) {

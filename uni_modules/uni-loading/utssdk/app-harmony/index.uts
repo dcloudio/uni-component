@@ -1,0 +1,67 @@
+import { BuilderNode } from "@kit.ArkUI";
+import { buildLoading } from "./builder.ets";
+
+type BorderWidth = 'normal' | 'bold'
+type AnimationTimingFunction = 'ease' | 'linear'
+
+const DEFAULT_COLOR = '#000000'
+const DEFAULT_BORDER_WIDTH = 'normal'
+const DEFAULT_ANIMATION_TIMING_FUNCTION = 'linear'
+
+export interface BuilderLoadingParams {
+  // 弧的颜色。支持透明度。默认值黑色。允许使用css修改，以方便通过css变量进行主题适配。css和属性配置冲突时以css为准。
+  color?: string
+  // 弧宽是否加粗。值域：normal|bold。normal为2px，bold为4px。允许使用css修改，以方便通过css变量进行主题适配。css和属性配置冲突时以css为准。
+  borderWidth?: BorderWidth
+  degrees?: number
+  animationTimingFunction?: AnimationTimingFunction
+}
+
+export class NativeLoading {
+  private params: BuilderLoadingParams
+  private harmonyBuilderNode: BuilderNode<[BuilderLoadingParams]> | null = null
+  constructor(
+    element: UniNativeViewElement,
+    params: BuilderLoadingParams = {
+      color: DEFAULT_COLOR,
+      borderWidth: DEFAULT_BORDER_WIDTH,
+      animationTimingFunction: DEFAULT_ANIMATION_TIMING_FUNCTION
+    }
+  ) {
+    this.params = params
+    element.bindHarmonyWrappedBuilder(wrapBuilder<[BuilderLoadingParams]>(buildLoading), this.params);
+    this.harmonyBuilderNode = element.getHarmonyBuilderNode()
+    // 绑定当前实例为自定义的controller，方便其他地方通过 element 获取使用
+    element.bindHarmonyController(this)
+  }
+
+  updateStyle(color: string = DEFAULT_COLOR, borderWidth: BorderWidth = DEFAULT_BORDER_WIDTH, animationTimingFunction: AnimationTimingFunction = DEFAULT_ANIMATION_TIMING_FUNCTION) {
+    if (color && color !== this.params.color) {
+      this.params.color = color
+    }
+    if (borderWidth && borderWidth !== this.params.borderWidth) {
+      this.params.borderWidth = borderWidth
+    }
+    if (animationTimingFunction && animationTimingFunction !== this.params.animationTimingFunction) {
+      this.params.animationTimingFunction = animationTimingFunction
+    }
+    this.updateParams()
+  }
+
+  updateDegrees(degrees: number) {
+    if (degrees !== this.params.degrees) {
+      this.params.degrees = degrees
+      this.updateParams()
+    }
+  }
+
+  private updateParams() {
+    this.harmonyBuilderNode?.update(this.params)
+  }
+
+  destroy() {
+    this.harmonyBuilderNode?.dispose()
+  }
+}
+
+export class UniLoadingElement extends UniViewElementImpl {}

@@ -31,6 +31,9 @@
     "npmurl": ""
   },
   "uni_modules": {
+    "dependencies": [
+      "uni-framework"
+    ],
     "customElements": {
       "app-android": false,
       "app-ios": false,

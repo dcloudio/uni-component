@@ -12,7 +12,7 @@ export class UniPickerViewChangeEvent extends UniCustomEvent<UniPickerViewChange
 
 export class UniPickerViewElement extends UniFormControlElement<number[]> implements UniCustomElement {
   static get observedAttributes() : Array<string> {
-    return ['value', 'indicator-style', 'mask-class', 'mask-top-style', 'mask-bottom-style']
+    return ['value', 'indicator-style', 'indicatorStyle', 'mask-class', 'mask-top-style', 'mask-bottom-style']
   }
 
   private _value = new Array<number>()
@@ -50,9 +50,13 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
 
   public override set value(value : number[]) {
     const controls : UniPickerViewColumnElement[] = this.findChildren(this)
-    const minIndex = Math.min(controls.length, value.length)
+    const minIndex = Math.min(controls.length as number, value.length as number)
     for (let i = 0; i < minIndex; i++) {
+      const changed = controls[i].value != value[i]
       controls[i].setAnyAttribute('value', value[i])
+      if (changed) {
+        this._columnChange()
+      }
     }
     this._value = value
   }
@@ -81,6 +85,7 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
         this.value = newValue as Array<number>
         break;
       case 'indicator-style':
+      case 'indicatorStyle': // TODO 鸿蒙有bug只能使用驼峰
         this._setIndicatorStyle(newValue)
         break;
       case 'mask-top-style':
@@ -121,6 +126,7 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
         (item as UniPickerViewColumnElement).setIndicatorStyle(styleMap)
       }
     })
+    styleMap.clear()
   }
 
   private _setMaskTopStyle(value : any) {
@@ -130,6 +136,7 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
         (item as UniPickerViewColumnElement).setMaskTopStyle(styleMap)
       }
     })
+    styleMap.clear()
   }
 
   private _setMaskBottomStyle(value : any) {
@@ -139,6 +146,7 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
         (item as UniPickerViewColumnElement).setMaskBottomStyle(styleMap)
       }
     })
+    styleMap.clear()
   }
 
   private _fixStyleToMap(value : any) : Map<string, string> {
@@ -160,6 +168,17 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
       }
       return styleMap
     }
+
+    // #ifdef APP-HARMONY
+    if (typeof value == 'object') {
+      const styleMap = new Map<string, string>()
+      const valueObject = value as object
+      Object.keys(valueObject).forEach((key : string) => {
+        styleMap.set(key, valueObject[key])
+      });
+      return styleMap
+    }
+    // #endif
 
     return new Map<string, string>()
   }

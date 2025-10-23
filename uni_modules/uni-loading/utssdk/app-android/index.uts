@@ -1,0 +1,98 @@
+import ProgressBar from 'android.widget.ProgressBar';
+import { Color,PorterDuff } from "android.graphics"
+import { AnimatedVectorDrawable } from "android.graphics.drawable"
+import { ContextCompat } from "androidx.core.content"
+import { R } from "io.dcloud.uts.uniLoading"
+
+
+export class NativeLoading {
+	$element : UniNativeViewElement;
+
+	constructor(element : UniNativeViewElement) {
+		//接收传递过来的UniNativeViewElement
+		this.$element = element;
+		this.bindView();
+	}
+
+	currentAnimatedVectorDrawable: AnimatedVectorDrawable|null = null
+	progressBarView : ProgressBar | null = null;
+	// 默认颜色
+	currentColor:Int = Color.BLACK
+	newColor:Int = Color.BLACK
+	// 样式
+	customFunc:string = 'linear'
+	customBorder:string = 'normal'
+	drawableId:Int = R.drawable.animated_ring_loading_normal_linear
+	
+	bindView() {
+		//UniNativeViewEvent 绑定 安卓原生view
+		this.progressBarView = new ProgressBar(this.$element.getAndroidActivity()!)
+		this.$element.bindAndroidView(this.progressBarView!);
+		this.updateUI()
+	}
+
+    loadAnimatedVectorDrawable(resourceId: Int) {
+        this.currentAnimatedVectorDrawable = ContextCompat.getDrawable(this.$element.getAndroidActivity()!, resourceId) as AnimatedVectorDrawable
+		this.progressBarView!.indeterminateDrawable = this.currentAnimatedVectorDrawable
+    }
+	
+	updateStyle(color:string|null,border:string|null,func:string|null) {
+		if(color != null){
+			this.newColor = UTSAndroid.convertToNativeColor(color,Color.BLACK)
+		}
+		/**
+		 * ease / linear
+		 */
+		if("ease" == func){
+			this.customFunc = "ease"
+		}else{
+			this.customFunc = "linear"
+		}
+		/**
+		 * bold / normal
+		 */
+		if("bold" == border){
+			this.customBorder = "bold"
+		}else{
+			this.customBorder = "normal"
+		}
+		this.updateUI()
+	}
+	
+	
+	@UTSAndroid.Suppress("DEPRECATION")
+	updateUI(){
+		/**
+		 * 默认值
+		 */
+		let newDrawableId = this.drawableId
+		if("bold" == this.customBorder){
+			if("ease" == this.customFunc){
+				newDrawableId = R.drawable.animated_ring_loading_bold_ease
+			}else{
+				newDrawableId = R.drawable.animated_ring_loading_bold_linear
+			}
+		}else{
+			// normal
+			if("ease" == this.customFunc){
+				newDrawableId = R.drawable.animated_ring_loading_normal_ease
+			}else{
+				newDrawableId = R.drawable.animated_ring_loading_normal_linear
+			}
+		}
+		
+		this.drawableId = newDrawableId
+		/**
+		 * 避免重复更新资源
+		 */
+		this.loadAnimatedVectorDrawable(this.drawableId)
+		this.currentColor = this.newColor
+		let mutatedDrawable = this.currentAnimatedVectorDrawable!.mutate() as AnimatedVectorDrawable
+		mutatedDrawable.setColorFilter(this.currentColor, PorterDuff.Mode.SRC_IN)
+	}
+
+	destroy(){
+		//数据回收
+		this.progressBarView = null
+	}
+}

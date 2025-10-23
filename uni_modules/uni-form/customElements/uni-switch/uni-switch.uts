@@ -12,6 +12,7 @@ export class UniSwitchElement extends UniFormControlElement<boolean> implements 
   static get observedAttributes() : Array<string> {
     return [
       'checked',
+      'disabled',
       'value',
       'background-color',
       'active-background-color',
@@ -99,12 +100,15 @@ export class UniSwitchElement extends UniFormControlElement<boolean> implements 
         }
         this.checked = value
         break;
+      case 'disabled':
       case 'background-color':
       case 'active-background-color':
       case 'fore-color':
       case 'active-fore-color':
       case 'color':
-        this.updateCheckStatusColor()
+        if (this.isConnected) {
+          this.updateCheckStatusColor()
+        }
         break;
     }
   }
@@ -154,6 +158,12 @@ export class UniSwitchElement extends UniFormControlElement<boolean> implements 
   }
 
   updateCheckStatusColor() {
+    if (this.disabled) {
+      this.style.setProperty('opacity', '0.7')
+    } else {
+      this.style.setProperty('opacity', '1')
+    }
+
     if (this.checked) {
       // track
       this.style.setProperty('backgroundColor', this.activeBackgroundColor)
