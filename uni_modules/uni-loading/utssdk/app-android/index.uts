@@ -1,9 +1,21 @@
 import ProgressBar from 'android.widget.ProgressBar';
-import { Color,PorterDuff } from "android.graphics"
-import { AnimatedVectorDrawable } from "android.graphics.drawable"
+
+import { Color, PorterDuff } from "android.graphics"
+import { AnimatedVectorDrawable, Animatable } from "android.graphics.drawable"
 import { ContextCompat } from "androidx.core.content"
 import { R } from "io.dcloud.uts.uniLoading"
+import LinearLayout from 'android.widget.LinearLayout';
+import PageNode from "io.dcloud.uniapp.dom.node.PageNode";
+import INodeData from "io.dcloud.uniapp.interfaces.INodeData";
 
+
+export class UniLoadingElement extends UniViewElementImpl {
+
+	constructor(data : INodeData, pageNode : PageNode) {
+		super(data, pageNode);
+	}
+
+}
 
 export class NativeLoading {
 	$element : UniNativeViewElement;
@@ -14,85 +26,103 @@ export class NativeLoading {
 		this.bindView();
 	}
 
-	currentAnimatedVectorDrawable: AnimatedVectorDrawable|null = null
-	progressBarView : ProgressBar | null = null;
+	currentAnimatedVectorDrawable : AnimatedVectorDrawable | null = null
+
 	// 默认颜色
-	currentColor:Int = Color.BLACK
-	newColor:Int = Color.BLACK
+	newColor : Int = Color.BLACK
 	// 样式
-	customFunc:string = 'linear'
-	customBorder:string = 'normal'
-	drawableId:Int = R.drawable.animated_ring_loading_normal_linear
-	
+	customBorder : string = 'normal'
+	// 图像
+	drawableId : Int = R.drawable.animated_ring_loading_normal_linear
+
+	// 容器组件
+	pbContainer : LinearLayout | null = null;
+	// 动画组件
+	progressBarView : ProgressBar | null = null;
+	mPaused : boolean = false
+
+	layoutParams : LinearLayout.LayoutParams = new LinearLayout.LayoutParams(
+		LinearLayout.LayoutParams.MATCH_PARENT,
+		LinearLayout.LayoutParams.MATCH_PARENT
+	)
+
 	bindView() {
 		//UniNativeViewEvent 绑定 安卓原生view
+		this.pbContainer = new LinearLayout(this.$element.getAndroidActivity()!)
 		this.progressBarView = new ProgressBar(this.$element.getAndroidActivity()!)
-		this.$element.bindAndroidView(this.progressBarView!);
-		this.updateUI()
+		this.pbContainer!.addView(this.progressBarView, this.layoutParams)
+		this.$element.bindAndroidView(this.pbContainer!);
 	}
 
-    loadAnimatedVectorDrawable(resourceId: Int) {
-        this.currentAnimatedVectorDrawable = ContextCompat.getDrawable(this.$element.getAndroidActivity()!, resourceId) as AnimatedVectorDrawable
-		this.progressBarView!.indeterminateDrawable = this.currentAnimatedVectorDrawable
-    }
-	
-	updateStyle(color:string|null,border:string|null,func:string|null) {
-		if(color != null){
-			this.newColor = UTSAndroid.convertToNativeColor(color,Color.BLACK)
+	updatePaused(paused : boolean) {
+		if (this.progressBarView == null) {
+			return
+		}
+		if (this.progressBarView!.getIndeterminateDrawable() == null) {
+			return
+		}
+
+		let mutatedDrawable = this.progressBarView!.getIndeterminateDrawable()! as Animatable
+		if (paused) {
+			// android 以stop 替代 pause
+			mutatedDrawable.stop()
+		} else {
+			mutatedDrawable.start()
+		}
+		this.mPaused = paused
+	}
+
+	updateStyle(color : string | null, border : string | null) {
+		if (color != null) {
+			this.newColor = UTSAndroid.convertToNativeColor(color, Color.BLACK)
+		} else {
+			this.newColor = Color.BLACK
 		}
 		/**
-		 * ease / linear
+		 * thick / medium 
+		 * 忽略大小写
 		 */
-		if("ease" == func){
-			this.customFunc = "ease"
-		}else{
-			this.customFunc = "linear"
-		}
-		/**
-		 * bold / normal
-		 */
-		if("bold" == border){
+		if ("thick".equals(border, true)) {
 			this.customBorder = "bold"
-		}else{
+		} else {
 			this.customBorder = "normal"
 		}
 		this.updateUI()
 	}
-	
-	
+
+
 	@UTSAndroid.Suppress("DEPRECATION")
-	updateUI(){
+	updateUI() {
 		/**
 		 * 默认值
 		 */
 		let newDrawableId = this.drawableId
-		if("bold" == this.customBorder){
-			if("ease" == this.customFunc){
-				newDrawableId = R.drawable.animated_ring_loading_bold_ease
-			}else{
-				newDrawableId = R.drawable.animated_ring_loading_bold_linear
-			}
-		}else{
+		if ("bold" == this.customBorder) {
+			newDrawableId = R.drawable.animated_ring_loading_bold_linear
+		} else {
 			// normal
-			if("ease" == this.customFunc){
-				newDrawableId = R.drawable.animated_ring_loading_normal_ease
-			}else{
-				newDrawableId = R.drawable.animated_ring_loading_normal_linear
-			}
+			newDrawableId = R.drawable.animated_ring_loading_normal_linear
 		}
-		
-		this.drawableId = newDrawableId
-		/**
-		 * 避免重复更新资源
-		 */
-		this.loadAnimatedVectorDrawable(this.drawableId)
-		this.currentColor = this.newColor
-		let mutatedDrawable = this.currentAnimatedVectorDrawable!.mutate() as AnimatedVectorDrawable
-		mutatedDrawable.setColorFilter(this.currentColor, PorterDuff.Mode.SRC_IN)
+
+		this.progressBarView!.setIndeterminate(true)
+		this.currentAnimatedVectorDrawable = ContextCompat.getDrawable(this.$element.getAndroidActivity()!, newDrawableId)!.mutate() as AnimatedVectorDrawable
+
+		if (this.currentAnimatedVectorDrawable!.bounds == null || this.currentAnimatedVectorDrawable!.bounds!.width() < 1 || this.currentAnimatedVectorDrawable!.bounds!.height() < 1) {
+			// view 被分离回收的情况下，会导致bounds 为 缺省值，此时用 progressbar 的宽高 兜底
+			this.currentAnimatedVectorDrawable!.setBounds(0, 0, this.progressBarView!.width, this.progressBarView!.height)
+		}
+		this.progressBarView!.setIndeterminateDrawable(this.currentAnimatedVectorDrawable)
+		this.currentAnimatedVectorDrawable!.setColorFilter(this.newColor, PorterDuff.Mode.SRC_IN)
+		this.currentAnimatedVectorDrawable!.start()
+		// 这里20ms延迟模拟的是Android原生的post操作
+		setTimeout(function () {
+			this.updatePaused(this.mPaused)
+		}, 20)
 	}
 
-	destroy(){
+	destroy() {
 		//数据回收
+		this.pbContainer = null
 		this.progressBarView = null
 	}
 }

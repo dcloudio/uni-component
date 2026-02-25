@@ -1,9 +1,9 @@
 <template>
 	<view class="uni-picker__container" :class="['uni-picker-theme--'+theme]">
-		<view class="uni-picer__mask" :class="{'picker__ani-show': show}" @click="close"></view>
+		<view class="uni-picker__mask" :class="{'picker__ani-show': show}" @click="close"></view>
 		<view class="uni-picker__inner-box" :class="[show?'picker__ani-box-show':'','inner-box--'+theme]">
 			<view class="uni-picker__header-btn" :class="['header-btn--'+theme]">
-				<text class="uni-picker__header-btn-cannel" :class="['header-btn-cannel--'+theme]" @click="close">{{ cancelText }}</text>
+				<text class="uni-picker__header-btn-cancel" :class="['header-btn-cannel--'+theme]" @click="close">{{ cancelText }}</text>
 				<text class="uni-picker__header-btn-ok" @click="confirm">{{ confirmText }}</text>
 			</view>
 			<view class="uni-picker__view">
@@ -181,12 +181,9 @@
 				if (data['multiSelectorValue'] != null) {
 					const multiSelectorValue = data['multiSelectorValue']
 					const len = this.range.length
-					let arr = Array.from({ length: len }, () => 0);
-					arr.forEach((_, index) => {
-						let val = multiSelectorValue[index] ?? 0
-						this.value.push(val)
-					})
-					this.prevMultiValue = this.value.slice()
+					const value = Array.from({ length: len }, (_, index) => multiSelectorValue[index] ?? 0)
+					this.value = value
+					this.prevMultiValue = value
 				}
 				if (data['timeValue'] != null) {
 					const time = data['timeValue']
@@ -783,10 +780,9 @@
 <style>
 	.uni-picker__container {
 		flex: 1;
-		border: 2px blue solid;
 	}
 
-	.uni-picer__mask {
+	.uni-picker__mask {
 		flex: 1;
 		background-color: rgba(0, 0, 0, .3);
 		opacity: 0;
@@ -817,14 +813,13 @@
 	}
 
 	.uni-picker__header-btn {
-		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		padding: 15px;
 		border-bottom: 1px #f7f7f7 solid;
 	}
 
-	.uni-picker__header-btn-cannel {
+	.uni-picker__header-btn-cancel {
 		font-size: 14px;
 		background-color: transparent;
 	}
@@ -866,7 +861,7 @@
 		background-color: #fff;
 	}
 
-	/* .uni-picker-theme--light .uni-picker__header-btn-cannel {
+	/* .uni-picker-theme--light .uni-picker__header-btn-cancel {
 		color: #000;
 	} */
 	.header-btn-cannel--light {
@@ -891,7 +886,7 @@
 		background-color: #2C2C2B;
 	}
 
-	/* .uni-picker-theme--dark .uni-picker__header-btn-cannel {
+	/* .uni-picker-theme--dark .uni-picker__header-btn-cancel {
 		color: #fff;
 	} */
 

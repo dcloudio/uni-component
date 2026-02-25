@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object CameraManager {
     private val TAG = "CameraManager"
-    private var cameraImpl: CameraImpl? = null
+    private var cameraImpl: WeakReference<CameraImpl>? = null
     private var currentOwner: WeakReference<Any>? = null
     
     // 使用ConcurrentHashMap为每个对象保存配置
@@ -43,12 +43,15 @@ object CameraManager {
         Log.d(TAG, "getCameraImpl: 对象=$id")
         
         // 创建新的相机实例
-        cameraImpl = CameraImpl(activity)
+        val newImpl = CameraImpl(activity)
+
+        // 使用弱引用来持有相机实例
+        this.cameraImpl = WeakReference(newImpl)
         
         // 更新当前拥有者
         currentOwner = WeakReference(owner)
         
-        return cameraImpl!!
+        return newImpl
     }
     
     /**
@@ -58,7 +61,7 @@ object CameraManager {
     fun setCurrentCameraImpl(owner: Any, impl: CameraImpl) {
         val id = getObjectId(owner)
         Log.d(TAG, "设置当前相机实例: 对象=$id")
-        cameraImpl = impl
+        this.cameraImpl = WeakReference(impl)
         currentOwner = WeakReference(owner)
     }
     
@@ -68,7 +71,7 @@ object CameraManager {
     fun saveConfig(owner: Any) {
         val id = getObjectId(owner)
         
-        cameraImpl?.let { camera ->
+        cameraImpl?.get()?.let { camera ->
             val config = CameraConfig(
                 cameraPosition = camera.getCurrentCameraPosition() ?: "back",
                 flashMode = camera.getCurrentFlashMode() ?: "off",
@@ -98,7 +101,7 @@ object CameraManager {
         
         Log.d(TAG, "恢复对象[$id]配置: 位置=${config.cameraPosition}, 闪光灯=${config.flashMode}, 缩放=${config.zoom}, 帧回调=${config.isFrameCallbackActive}, 分析=${config.isAnalysisActive}")
         
-        cameraImpl?.let { camera ->
+        cameraImpl?.get()?.let { camera ->
             // 恢复回调
             config.initDoneCallback?.let { camera.setInitDoneCallBack(it) }
             config.stopCallback?.let { camera.setStopCallBack(it) }

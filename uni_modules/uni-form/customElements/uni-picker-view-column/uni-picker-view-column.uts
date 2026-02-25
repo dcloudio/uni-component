@@ -1,5 +1,24 @@
 import { UniPickerViewElement } from '../uni-picker-view/uni-picker-view'
 
+export function camelize(str: string): string {
+    // 正则在跨端中表现不佳，改为循环处理
+    const parts = str.split('-')
+    // 如果没有连字符，直接返回
+    if (parts.length == 1) {
+      return str
+    }
+    
+    let result = parts[0]
+    for (let i = 1; i < parts.length; i++) {
+      const part = parts[i]
+      if (part.length > 0) {
+        // 首字母大写并拼接
+        result += part.charAt(0).toUpperCase() + part.slice(1)
+      }
+    }
+    return result
+}
+
 export class UniPickerViewColumnElement extends UniFormControlElement<number> implements UniCustomElement {
   static get observedAttributes() : Array<string> {
     return ['value']
@@ -17,6 +36,48 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   private _initialValueFlag = false
   private _skipScrollChangeEventOnce = false
   private _isAdjusting = false
+  private _lastMaskTopStyle = new Map<string, string>()
+  private _lastMaskBottomStyle = new Map<string, string>()
+  private _lastIndicatorStyle = new Map<string, string>()
+
+  private basicMaskTopStyle = new Map<string, string>([
+    ['pointerEvents', 'none'],
+    ['position', 'absolute'],
+    ['height', '40%'],
+    ['left', '0px'],
+    ['top', '0px'],
+    ['right', '0px'],
+    ['backgroundImage', 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))']
+  ])
+
+  private basicMaskBottomStyle = new Map<string, string>([
+    ['pointerEvents', 'none'],
+    ['position', 'absolute'],
+    ['height', '40%'],
+    ['left', '0px'],
+    ['right', '0px'],
+    ['bottom', '0px'],
+    ['backgroundImage', 'linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))']
+  ])
+
+  private basicIndicatorStyle = new Map<string, string>([
+    ['pointerEvents', 'none'],
+    ['boxSizing', 'content-box'],
+    ['height', '50px'],
+    ['left', '0px'],
+    ['right', '0px'],
+    ['top', '0px'],
+    ['bottom', '0px'],
+    ['marginTop', 'auto'],
+    ['marginBottom', 'auto'],
+    ['border', '1px solid #e5e5e5'], // 适当冗余
+    ['borderStyle', 'solid'],
+    ['borderLeftWidth', '0px'],
+    ['borderTopWidth', '1px'],
+    ['borderRightWidth', '0px'],
+    ['borderBottomWidth', '1px'],
+    ['borderColor', '#e5e5e5']
+  ])
 
   constructor() {
     super()
@@ -39,41 +100,25 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
 
     const indicatorView = this.uniPage.createElement('view')
     const indicatorStyle = indicatorView.style
-    indicatorStyle.setProperty('position', 'absolute')
-    indicatorStyle.setProperty('boxSizing', 'content-box')
-    indicatorStyle.setProperty('height', '50px')
-    indicatorStyle.setProperty('left', '0px')
-    indicatorStyle.setProperty('right', '0px')
-    indicatorStyle.setProperty('top', '0px')
-    indicatorStyle.setProperty('bottom', '0px')
-    indicatorStyle.setProperty('marginTop', 'auto')
-    indicatorStyle.setProperty('marginBottom', 'auto')
-    indicatorStyle.setProperty('borderStyle', 'solid')
-    indicatorStyle.setProperty('borderLeftWidth', '0px')
-    indicatorStyle.setProperty('borderTopWidth', '1px')
-    indicatorStyle.setProperty('borderRightWidth', '0px')
-    indicatorStyle.setProperty('borderBottomWidth', '1px')
-    indicatorStyle.setProperty('borderColor', '#e5e5e5')
+    // initIndicatorStyle
+    this.basicIndicatorStyle.forEach((value, key) => {
+      indicatorStyle.setProperty(key, value)
+    })
 
     const maskViewTop = this.uniPage.createElement('view')
     const maskViewTopStyle = maskViewTop.style
-    maskViewTopStyle.setProperty('pointerEvents', 'none')
-    maskViewTopStyle.setProperty('position', 'absolute')
-    maskViewTopStyle.setProperty('height', '40%')
-    maskViewTopStyle.setProperty('left', '0px')
-    maskViewTopStyle.setProperty('top', '0px')
-    maskViewTopStyle.setProperty('right', '0px')
-    maskViewTopStyle.setProperty('backgroundImage', 'linear-gradient(to bottom, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
+
+    // initMaskViewTopStyle
+    this.basicMaskTopStyle.forEach((value, key) => {
+      maskViewTopStyle.setProperty(key, value)
+    })
 
     const maskViewBottom = this.uniPage.createElement('view')
     const maskViewBottomStyle = maskViewBottom.style
-    maskViewBottomStyle.setProperty('pointerEvents', 'none')
-    maskViewBottomStyle.setProperty('position', 'absolute')
-    maskViewBottomStyle.setProperty('height', '40%')
-    maskViewBottomStyle.setProperty('left', '0px')
-    maskViewBottomStyle.setProperty('right', '0px')
-    maskViewBottomStyle.setProperty('bottom', '0px')
-    maskViewBottomStyle.setProperty('backgroundImage', 'linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.6))')
+    // initMaskViewBottomStyle
+    this.basicMaskBottomStyle.forEach((value, key) => {
+      maskViewBottomStyle.setProperty(key, value)
+    })
 
     this.scrollView = scrollView
     this.contentView = contentView
@@ -196,13 +241,37 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
     this._onLayout()
   }
 
-  setIndicatorStyle(styles : Map<string, string>) : void {
-    if (styles.size == 0) {
-      return
+  private diffStyle(styles : Map<string, string>, lastStyles : Map<string, string>, basicStyles : Map<string, string>) : Map<string, string> {
+    const diffedStyles = new Map<string, string>()
+    if (lastStyles.size > 0) {
+      // 识别移除样式，removeProperty 展示效果不对，兼容驼峰属性命名
+      lastStyles.forEach((value, key) => {
+        if (!styles.has(key)) {
+          if (basicStyles.has(key)) {
+            diffedStyles.set(key, basicStyles.get(key) as string)
+          } else if (basicStyles.has(camelize(key))) {
+            diffedStyles.set(key, basicStyles.get(camelize(key)) as string)
+          } else {
+            diffedStyles.set(key, '')
+          }
+        }
+      })
     }
 
     styles.forEach((value, key) => {
+      diffedStyles.set(key, value)
+    })
+    return diffedStyles
+  }
+
+  setIndicatorStyle(styles : Map<string, string>) : void {
+    const diffedStyles = this.diffStyle(styles, this._lastIndicatorStyle, this.basicIndicatorStyle);
+    this._lastIndicatorStyle.clear()
+    diffedStyles.forEach((value, key) => {
       this.indicatorView.style.setProperty(key, value)
+      if (value != '') {
+        this._lastIndicatorStyle.set(key, value)
+      }
     })
     this.getBoundingClientRectAsync()?.then((_ : DOMRect) => {
       this._onLayout()
@@ -210,28 +279,32 @@ export class UniPickerViewColumnElement extends UniFormControlElement<number> im
   }
 
   setMaskTopStyle(styles : Map<string, string>) : void {
-    if (styles.size == 0) {
-      return
-    }
-
-    styles.forEach((value, key) => {
+    const diffedStyles = this.diffStyle(styles, this._lastMaskTopStyle, this.basicMaskTopStyle)
+    this._lastMaskTopStyle.clear()
+    diffedStyles.forEach((value, key) => {
       this.maskViewTop.style.setProperty(key, value)
+      // 置空视为属性移除，无需缓存
+      if (value != '') {
+        this._lastMaskTopStyle.set(key, value)
+      }
     })
     this._onLayout()
   }
 
   setMaskBottomStyle(styles : Map<string, string>) : void {
-    if (styles.size == 0) {
-      return
-    }
-
-    styles.forEach((value, key) => {
+    const diffedStyles = this.diffStyle(styles, this._lastMaskBottomStyle, this.basicMaskBottomStyle)
+    this._lastMaskBottomStyle.clear()
+    diffedStyles.forEach((value, key) => {
       this.maskViewBottom.style.setProperty(key, value)
+      // 置空视为属性移除，无需缓存
+      if (value != '') {
+        this._lastMaskBottomStyle.set(key, value)
+      }
     })
     this._onLayout()
   }
 
-  _setIndex(value: number) {
+  _setIndex(value : number) {
     if (value < 0) {
       value = 0
     }

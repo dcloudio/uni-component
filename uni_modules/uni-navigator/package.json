@@ -39,6 +39,13 @@
       "app-ios": false,
       "app-harmony": true
     },
+    "components": {
+      "app-android": "dom2",
+      "app-harmony": "dom2",
+      "app-ios": "dom2",
+      "web": "dom2",
+      "mp-weixin": "dom2"
+    },
     "encrypt": [],
     "platforms": {
       "cloud": {

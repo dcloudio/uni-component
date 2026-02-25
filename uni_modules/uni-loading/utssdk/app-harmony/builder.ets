@@ -1,39 +1,27 @@
-import { AnimatorOptions, AnimatorResult, SimpleAnimatorOptions } from '@kit.ArkUI'
-import { formatColorSync } from '@dcloudio/uni-app-x-runtime'
-
 @Component
 struct CanvasCircle {
-  lineWidthBase: number = 16
-  @Prop @Watch('draw') duration: number = 1333
-  @Prop @Watch('draw') easing: string = 'linear'
-  @Prop @Watch('draw') color: string = '#000000'
-  @Prop @Watch('draw') lineWidthTimes: number = 1
-  @Prop @Watch('draw') degrees: number = 270
   private settings: RenderingContextSettings = new RenderingContextSettings(true)
   private context: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings)
-  private backAnimator: AnimatorResult | undefined = undefined
+  private uiContext: UIContext | undefined = undefined;
+  lineWidthBase: number = 16
+  @Prop duration: number = 1333
+  @Prop easing: string = 'linear'
+  @Prop @Watch('draw') color: string | number = 0x000000
+  @Prop @Watch('draw') coefficient: number = 1
+  @Prop @Watch('draw') degrees: number = 270
+  @Prop @Watch('pauseAnimate') paused: boolean = false
   @State rotate_: number = 0
-  @State animationOptions: AnimatorOptions = {
+  private animateParam: AnimateParam = {
     duration: this.duration,
-    easing: this.easing,
-    delay: 0,
-    fill: 'forwards',
-    direction: 'normal',
-    iterations: -1,
-    begin: 0,
-    end: 360
+    curve: this.easing,
+    iterations: -1
   }
 
   draw() {
-    this.animationOptions.easing = this.easing
-    try {
-      this.backAnimator?.reset(this.animationOptions)
-    } catch (error) {}
-
     const canvasWidth = this.context.width
     const canvasHeight = this.context.height
     const realSize = Math.min(canvasWidth, canvasHeight)
-    const realLineWidth = (realSize / this.lineWidthBase) * this.lineWidthTimes
+    const realLineWidth = (realSize / this.lineWidthBase) * this.coefficient
 
     const angleDegrees = this.degrees
 
@@ -62,37 +50,52 @@ struct CanvasCircle {
     this.context.stroke();
   }
 
-  create() {
-    this.backAnimator = this.getUIContext()?.createAnimator(this.animationOptions)
-    this.backAnimator.onFrame = (value: number) => {
-      this.rotate_ = value
-    }
-    this.backAnimator.play()
+  play() {
+    animateToImmediately(this.animateParam, () => {
+      this.rotate_ = 360;
+    })
   }
 
-  aboutToDisappear() {
-    this.backAnimator?.finish();
-    this.backAnimator = undefined;
+  pause() {
+    animateToImmediately({ duration: 0 }, () => {
+      this.rotate_ = 0;
+    })
+  }
+
+  pauseAnimate() {
+    if (this.paused) {
+      this.pause()
+    } else {
+      this.play()
+    }
   }
 
   build() {
     Canvas(this.context)
-      .width('100%')
-      .height('100%')
       .rotate({
         angle: this.rotate_
+      })
+      .width('100%')
+      .height('100%')
+      .onAppear(() => {
+        this.uiContext = this.getUIContext();
+        if (!this.uiContext) {
+          return;
+        }
       })
       .onReady(() => {
         this.draw()
         setTimeout(() => {
-          this.create()
+          if (this.rotate_ === 0 && !this.paused) {
+            this.play()
+          }
         }, 0)
       })
   }
 }
 
-// 计算粗细的倍数 (最小边 / 16 * lineWidthTimes)
-function getLineWidthTimes(borderWidth: string | undefined) {
+// 计算粗细的倍数 (最小边 / 16 * coefficient)
+function getLineCoefficient(borderWidth: string | undefined) {
   if (borderWidth == null) {
     return 1
   }
@@ -117,10 +120,11 @@ export function buildLoading(params: ESObject) {
   Flex({ alignItems: ItemAlign.Center, justifyContent: FlexAlign.Center }) {
     CanvasCircle({
       degrees: params.degrees ?? 270,
-      color: formatColorSync(params.color) as string,
-      lineWidthTimes: getLineWidthTimes(params.borderWidth),
+      color: params.color as number | string, //formatColorSync(params.color) as string,
+      coefficient: getLineCoefficient(params.borderWidth),
       duration: params.duration ?? 1333,
-      easing: params.animationTimingFunction
+      easing: params.animationTimingFunction,
+      paused: params.paused
     })
   }
   .width('100%')

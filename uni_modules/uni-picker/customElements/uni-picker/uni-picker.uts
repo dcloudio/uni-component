@@ -187,6 +187,12 @@ export class UniPickerElement extends UniFormControlElement<any> implements UniC
 
 				if (this.modeType == 'multiSelector') {
 					value = this.multiSelectorValue
+
+					uni.$emit(this.optionsEventName, {
+						range: this.rangeType,
+						rangeKey: this.rangeKeyType,
+						multiSelectorValue: this.multiSelectorValue
+					})
 				}
 
 				if (this.modeType == 'time') {
@@ -359,7 +365,7 @@ export class UniPickerElement extends UniFormControlElement<any> implements UniC
 			: ['2099', '12', '31']; // 结束默认日期
 
 		// 空值直接返回默认
-		if (!dateStr) return defaultDate;
+		if (dateStr == null || dateStr.length == 0) return defaultDate;
 
 		// 分割日期字符串
 		const parts = dateStr.split('-');

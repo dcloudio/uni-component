@@ -11,6 +11,8 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
   private borderView : UniElement
   private buttonText : UniTextElementImpl
 
+  private disableView : UniElement | null = null
+
   constructor() {
     super()
 
@@ -44,10 +46,11 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
     this.borderView = borderView
     this.buttonText = buttonText
 
-    this.addEventListener('click', () => {
+    this.addEventListener('click', (e: UniPointerEvent) => {
       "[weak self]"
       if (this.disabled) {
-        // e.preventDefault()
+        // TODO 暂不支持同级监听拦截
+        e.stopPropagation()
         return
       }
       this.checkFormAndSubmitOrReset()
@@ -64,17 +67,30 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
     this.setTypeStyle(this.type as ButtonType)
     // TODO
     this.style.setProperty('color', this.getForegroundColor(this.type as ButtonType))
+
+    if (this.disabled) {
+      this.appendDisabledView()
+    }
   }
 
   disconnectedCallback() {
     this.buttonText.remove()
     this.borderView.remove()
+    this.removeDisabledView()
   }
 
   attributeChangedCallback(name : string, oldValue : any | null, newValue : any | null) {
     switch (name) {
       case 'disabled':
         this.setTypeStyle(this.type as ButtonType)
+        if (this.isConnected) {
+          const disabledValue = (typeof newValue == 'string' || newValue == true) ? true : false
+          if (disabledValue) {
+            this.appendDisabledView()
+          } else {
+            this.removeDisabledView()
+          }
+        }
         break;
       case 'size':
         this.setSizeStyle(newValue as ButtonSize)
@@ -156,6 +172,30 @@ export class UniButtonElement extends UniViewElementImpl implements UniCustomEle
           break;
       }
     })
+  }
+
+  // TODO 因不支持同级监听拦截, 暂时通过子覆盖方式拦截
+  private appendDisabledView() {
+    if (this.disableView == null) {
+      this.disableView = this.uniPage.createElement('view')
+      const disableViewStyle = this.disableView!.style
+      disableViewStyle.setProperty('position', 'absolute')
+      disableViewStyle.setProperty('left', '0')
+      disableViewStyle.setProperty('top', '0')
+      disableViewStyle.setProperty('width', '100%')
+      disableViewStyle.setProperty('height', '100%')
+      this.disableView!.addEventListener('click', (e: UniPointerEvent) => {
+        "[weak self]"
+        e.stopPropagation()
+      })
+    }
+    super.appendChild(this.disableView!)
+  }
+
+  private removeDisabledView() {
+    if (this.disableView != null) {
+      this.disableView.remove()
+    }
   }
 
   get disabled() : boolean {

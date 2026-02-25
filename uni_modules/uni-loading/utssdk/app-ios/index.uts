@@ -1,6 +1,5 @@
 import { UTSiOS } from "DCloudUTSFoundation";
 import { CGRect, CGFloat } from 'CoreFoundation';
-import { NSNumber } from 'Foundation';
 
 export class NativeLoading {
 	element : UniNativeViewElement;
@@ -8,14 +7,13 @@ export class NativeLoading {
 	color : string | null = null
 	strokeWidth : string | null = null
 	animationTimingFunction : string | null = null
-	width : string | null = null
-	height: string | null = null
 
 	constructor(element : UniNativeViewElement) {
 		//接收传递过来的UniNativeViewElement
 		this.element = element;
 		super.init()
 		this.bindView();
+		(this.element.parentElement as UniLoadingElement).setLoadingView(this.spinnerView);
 	}
 
 	bindView() {
@@ -24,46 +22,56 @@ export class NativeLoading {
 			this.element.bindIOSView(this.spinnerView!)
 		}
 	}
+	
+	
+	updateIosSpinner(iosSpinner : boolean) {
+		const iosSpinnerValue: boolean = iosSpinner ?? false
+		this.spinnerView?.updateIosSpinnerProp(iosSpinnerValue)
+	}
+	
+	updatePaused(paused : boolean) {
+		const pausedValue: boolean = paused ?? false
+		this.spinnerView?.updatePausedProp(pausedValue)
+	}
 
-	updateStyle(width ?: string, height ?: string, color ?: string, strokeWidth ?: string, animationTimingFunction ?: string) {
-		this.width = width
-		this.height = height
+	updateStyle(color ?: string, strokeWidth ?: string, animationTimingFunction ?: string) {
 		this.color = color
 		this.strokeWidth = strokeWidth
 		this.animationTimingFunction = animationTimingFunction
+
 		this.updateUI()
 	}
 
 	updateUI() {
 		let color = UTSiOS.colorWithString(this.color ?? "black")
-		const width = this.parseNumber(this.width ?? "16px")
-		const height = this.parseNumber(this.height ?? "16px")
-		
-		const min = Math.min(NSNumber(width), NSNumber(height))
-		let strokeWidth = min.toDouble() * 0.0625
-		
-		if (this.strokeWidth != null && this.strokeWidth! == "bold") {
-			strokeWidth = min.toDouble() * 0.125
+
+		if (this.strokeWidth == null ) {
+			this.strokeWidth = "medium"
 		}
-		this.spinnerView?.setAppearance(strokeColor = color, lineWidth = CGFloat(strokeWidth), animationTimingFunction = this.animationTimingFunction)
-		this.spinnerView?.start()
-	}
-	
-	parseNumber(input : string) : Double {
-		if (input == "") {
-			return 16.0
-		}
-	    let lower = input.toLowerCase().trim()
 		
-	    if (lower.endsWith("rpx")) {
-	        return Double(lower.replace('rpx', ''))  ?? 16.0
-	    } else if (lower.endsWith("px")) {
-	        return Double(lower.replace('px', ''))  ?? 16.0
-	    }
-	    return Double(lower) ?? 16.0
+		this.spinnerView?.setAppearance(strokeColor = color, strokeWidth = this.strokeWidth!, animationTimingFunction = this.animationTimingFunction)
 	}
 
 	destroy() {
 		UTSiOS.destroyInstance(this)
+	}
+}
+
+export class UniLoadingElement extends UniElementImpl {
+
+	private nativeView : SpinnerView | null = null;
+
+	@UTSiOS.keyword("fileprivate")
+	setLoadingView(nativeView : SpinnerView | null) {
+		this.nativeView = nativeView
+	}
+
+	override getIOSView() : UIView | null {
+		const nativeElement = this.firstChild as UniNativeViewElement
+		if (nativeElement == null) {
+			return null
+		} else {
+			return nativeElement.getIOSView()
+		}
 	}
 }

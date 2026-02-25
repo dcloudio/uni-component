@@ -22,11 +22,11 @@
 		</data>
 		<key>Modules/DCUniVideo.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		qnAcwGOKAiEYrQtjPDFu+SYmvFs=
+		zsytbSPyQc0muy+1xE7hoUWgZcA=
 		</data>
 		<key>Modules/DCUniVideo.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		Oyw3Md65e68pWHqj1TclL63NvJI=
+		kFYC5ikQppczq3NKeFolXXBwqeY=
 		</data>
 		<key>Modules/DCUniVideo.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
@@ -42,7 +42,7 @@
 		</data>
 		<key>Modules/DCUniVideo.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		3otTpqdngJKi3E4PFSF5f1GzxUU=
+		L6XdCTkG5iCT4q0zAa6YFwUJbig=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -76,14 +76,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			nur64YnsXc8s1j1ylRyEF3NxpIrA0s4KXkeYxJfaTjI=
+			Pk0Pi7oBxyieKsyVjA3/O/dTd8bGjGc4xDnfrt5dqz8=
 			</data>
 		</dict>
 		<key>Modules/DCUniVideo.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			gpjJ1pnxvyB2rsJwYPyFmb8bV6EK/BZkcMK9fMaGZl8=
+			D0ZHvUvVI0DWl6zBPxyPXJPPyVU5HfRvkhm1WYPx6XE=
 			</data>
 		</dict>
 		<key>Modules/DCUniVideo.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
@@ -111,7 +111,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Y6LQGQ2T1UBzkWvseEpMujgKltp95JoM3/BgXkI3YRI=
+			9voA5TUxFOYtl/HtVfAj/DWQZfPOXbML2Tu1MOT/nEI=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

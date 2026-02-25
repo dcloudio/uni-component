@@ -39,7 +39,8 @@
 		"components": {
 		  "app-android": true,
 		  "app-ios": true,
-		  "web": true
+		  "web": true,
+      "mp-weixin": true
 		},
 		"dependencies": [
 			"uni-framework"

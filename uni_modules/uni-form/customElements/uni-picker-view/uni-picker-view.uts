@@ -49,6 +49,20 @@ export class UniPickerViewElement extends UniFormControlElement<number[]> implem
   }
 
   public override set value(value : number[]) {
+    // 如果新值和旧值完全相同，直接返回，避免重复设置。鸿蒙中表现为重置数据触发两次 set value
+    if (this._value.length == value.length) {
+      let isSame = true
+      for (let i = 0; i < value.length; i++) {
+        if (this._value[i] !== value[i]) {
+          isSame = false
+          break
+        }
+      }
+      if (isSame) {
+        return
+      }
+    }
+    
     const controls : UniPickerViewColumnElement[] = this.findChildren(this)
     const minIndex = Math.min(controls.length as number, value.length as number)
     for (let i = 0; i < minIndex; i++) {

@@ -38,12 +38,13 @@
 		],
 		"pages": {
 			"app-android": false,
-			"app-ios": false
+			"app-ios": false,
+            "app-harmony": "dom1"
 		},
 		"customElements": {
 			"app-android": false,
 			"app-ios": false,
-      "app-harmony": true
+            "app-harmony": true
 		},
 		"uni-ext-api": {
 			"uni": {}

@@ -83,6 +83,11 @@ class CameraImpl(private val activity: AppCompatActivity) {
     // 帧回调状态
     private var isFrameCallbackActive = false
 
+    // 复用的帧数据缓冲区，避免每帧都分配新内存导致 OOM
+    private var reusableRgbaArray: ByteArray? = null
+    private var lastFrameWidth = 0
+    private var lastFrameHeight = 0
+
     fun getCameraPreviewView(resolution: String): View {
         currentResolution = resolution
         previewView = PreviewView(activity)
@@ -517,6 +522,10 @@ class CameraImpl(private val activity: AppCompatActivity) {
         captureFrameStatus = false
         isFrameCallbackActive = false
         unRegisterAnalyzer()
+        // 释放复用的缓冲区
+        reusableRgbaArray = null
+        lastFrameWidth = 0
+        lastFrameHeight = 0
     }
 
     private fun registerAnalyzer(cameraOriginalFrameCallback: ICallBack? = null) {
@@ -525,11 +534,33 @@ class CameraImpl(private val activity: AppCompatActivity) {
         }
         imageAnalysis?.clearAnalyzer()
         imageAnalysis?.setAnalyzer(Executors.newSingleThreadExecutor()) { imageProxy ->
+            // 先检查状态，避免已停止后继续处理
+            if (!captureFrameStatus && !analysisStatus) {
+                imageProxy.close()
+                return@setAnalyzer
+            }
+
             if (captureFrameStatus) {
                 cameraFrameCallback?.let {
-                    val rgba = convertYUVToRGBA(imageProxy)
-                    val byteBuffer = byteArrayToByteBuffer(rgba)
-                    it.callback("frame", mapOf("width" to imageProxy.width, "height" to imageProxy.height, "buffer" to byteBuffer))
+                    val width = imageProxy.width
+                    val height = imageProxy.height
+                    val requiredSize = width * height * 4
+
+                    // 复用缓冲区：只有尺寸变化时才重新分配
+                    if (reusableRgbaArray == null || lastFrameWidth != width || lastFrameHeight != height) {
+                        reusableRgbaArray = ByteArray(requiredSize)
+                        lastFrameWidth = width
+                        lastFrameHeight = height
+                    }
+
+                    // 获取局部引用，防止在使用过程中被其他线程置空
+                    val rgbaArray = reusableRgbaArray ?: return@let
+
+                    convertYUVToRGBAReusable(imageProxy, rgbaArray)
+
+                    // wrap() 零拷贝包装，只创建轻量包装器对象
+                    val byteBuffer = ByteBuffer.wrap(rgbaArray)
+                    it.callback("frame", mapOf("width" to width, "height" to height, "buffer" to byteBuffer))
                 }
                 if (!analysisStatus) {
                     imageProxy.close()
@@ -573,7 +604,10 @@ class CameraImpl(private val activity: AppCompatActivity) {
     }
 
 
-    private fun convertYUVToRGBA(image: ImageProxy): ByteArray {
+    /**
+     * 将 YUV 数据转换为 RGBA，写入到传入的复用缓冲区中
+     */
+    private fun convertYUVToRGBAReusable(image: ImageProxy, rgba: ByteArray) {
         val width = image.width
         val height = image.height
 
@@ -584,8 +618,6 @@ class CameraImpl(private val activity: AppCompatActivity) {
         val yRowStride = image.planes[0].rowStride
         val uvRowStride = image.planes[1].rowStride
         val uvPixelStride = image.planes[1].pixelStride
-
-        val rgba = ByteArray(width * height * 4)
 
         // 优化1：使用整数运算替代浮点运算（提升约30%性能）
         val precalcFactor = 1 shl 16  // 用于定点数运算的缩放因子
@@ -630,7 +662,6 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 }
             }
         }
-        return rgba
     }
 
     private fun unRegisterAnalyzer() {
@@ -972,5 +1003,10 @@ class CameraImpl(private val activity: AppCompatActivity) {
         stopCallBack = null
         cameraFrameCallback = null
         analysisCallback = null
+
+        // 释放复用的缓冲区
+        reusableRgbaArray = null
+        lastFrameWidth = 0
+        lastFrameHeight = 0
     }
 }

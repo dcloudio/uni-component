@@ -476,8 +476,8 @@ open class CameraManager: NSObject, AVCaptureFileOutputRecordingDelegate, UIGest
      Stops running capture session but all setup devices, inputs and outputs stay for further reuse.
      */
     open func stopCaptureSession() {
-        if let session = captureSession, session.isRunning {
-            sessionQueue.async {
+        sessionQueue.sync {
+            if let session = captureSession, session.isRunning {
                 session.stopRunning()
             }
         }
