@@ -192,7 +192,22 @@ export class UniCanvasRenderingContext2D implements CanvasRenderingContext2D {
   }
 
   measureText(text : string) : TextMetrics {
-    return this._context.measureText(text)
+    const textMetrics: TextMetrics = this._context.measureText(text)
+    return {
+      width: vp2px(textMetrics.width),
+      height: vp2px(textMetrics.height),
+      actualBoundingBoxLeft: vp2px(textMetrics.actualBoundingBoxLeft),
+      actualBoundingBoxRight: vp2px(textMetrics.actualBoundingBoxRight),
+      fontBoundingBoxAscent: vp2px(textMetrics.fontBoundingBoxAscent),
+      fontBoundingBoxDescent: vp2px(textMetrics.fontBoundingBoxDescent),
+      actualBoundingBoxAscent: vp2px(textMetrics.actualBoundingBoxAscent),
+      actualBoundingBoxDescent: vp2px(textMetrics.actualBoundingBoxDescent),
+      emHeightAscent: vp2px(textMetrics.emHeightAscent),
+      emHeightDescent: vp2px(textMetrics.emHeightDescent),
+      hangingBaseline: vp2px(textMetrics.hangingBaseline),
+      alphabeticBaseline: vp2px(textMetrics.alphabeticBaseline),
+      ideographicBaseline: vp2px(textMetrics.ideographicBaseline)
+    };
   }
 
   moveTo(x : number, y : number) : void {

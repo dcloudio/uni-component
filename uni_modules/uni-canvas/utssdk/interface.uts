@@ -94,7 +94,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -163,7 +164,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -232,7 +234,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -301,7 +304,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -370,7 +374,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -439,7 +444,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *   },
      *   "web": {
@@ -508,7 +514,8 @@ export interface CanvasContext {
      *      "harmony": {
      *        "osVer": "5.0.0",
      *        "uniVer": "x",
-     *        "unixVer": "4.61"
+     *        "unixVer": "4.61",
+     *        "unixvVer": "5.0"
      *      }
      *   },
      *   "web": {
@@ -917,7 +924,8 @@ export interface Uni {
      *    "harmony": {
      *      "osVer": "5.0.0",
      *      "uniVer": "x",
-     *      "unixVer": "4.61"
+     *      "unixVer": "4.61",
+     *      "unixvVer": "5.0"
      *    }
      *  },
      *  "web": {

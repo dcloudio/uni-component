@@ -68,10 +68,13 @@
 	})
 
 	const setDefaultOptions = () => {
-		cameraInstance?.switchCamera(props.devicePosition)
 		cameraInstance?.setFlash(props.flash)
 		cameraInstance?.setFrameSize(props.frameSize)
 		cameraInstance?.setPhotoResolution(props.photoResolution)
+	}
+	
+	const setDefaultOptionsAfterInitDone = () => {
+		cameraInstance?.switchCamera(props.devicePosition)
 	}
 
 	const onObjectInit = (e : UniNativeViewInitEvent) => {
@@ -148,6 +151,7 @@
 		const detail : UniCameraInitDoneEventDetail = {
 			maxZoom: maxzoom
 		}
+		setDefaultOptionsAfterInitDone()
 		const event = new UniCameraInitDoneEvent("initdone", detail)
 		emit("initdone", event)
 		// 当实例化完成后才可以开启扫码模式, 不是扫描模式就不要设置，否则会stopAnalysis

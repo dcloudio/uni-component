@@ -106,7 +106,9 @@ export class UniSwitchElement extends UniFormControlElement<boolean> implements 
       case 'fore-color':
       case 'active-fore-color':
       case 'color':
-        this.updateCheckStatusColor()
+        if (this.isConnected) {
+          this.updateCheckStatusColor()
+        }
         break;
     }
   }
