@@ -25,7 +25,7 @@ export type UniWebviewContextLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -49,7 +49,7 @@ export type UniWebviewContextLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -74,7 +74,7 @@ export type UniWebviewContextLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -99,7 +99,7 @@ export type UniWebviewContextLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -128,7 +128,7 @@ export type UniWebViewElementLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -152,7 +152,7 @@ export type UniWebViewElementLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -177,7 +177,7 @@ export type UniWebViewElementLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -202,7 +202,7 @@ export type UniWebViewElementLoadDataOptions = {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -230,7 +230,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -254,7 +254,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -278,7 +278,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -302,7 +302,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -326,7 +326,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -350,7 +350,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.63",
 	 *      "unixVer": "4.63",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -374,7 +374,7 @@ export interface WebviewContext {
 	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.63",
-	 *      "unixvVer": "5.0"
+	 *      "unixVaporVer": "5.0"
 	 *    }
 	 *   }
 	 * }
@@ -422,7 +422,7 @@ export interface Uni {
 	 *       "osVer": "5.0.0",
 	 *       "uniVer": "4.61",
 	 *       "unixVer": "4.61",
-	 *       "unixvVer": "5.0"
+	 *       "unixVaporVer": "5.0"
 	 *     }
 	 *   }
 	 * }
@@ -448,7 +448,7 @@ export interface Uni {
 	 *       "osVer": "5.0.0",
 	 *       "uniVer": "4.61",
 	 *       "unixVer": "4.61",
-	 *       "unixvVer": "5.0"
+	 *       "unixVaporVer": "5.0"
 	 *     }
 	 *   }
 	 * }

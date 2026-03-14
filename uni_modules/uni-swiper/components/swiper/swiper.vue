@@ -63,7 +63,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -73,7 +73,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -83,7 +83,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -93,7 +93,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -103,7 +103,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -113,7 +113,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -123,7 +123,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -133,7 +133,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -143,7 +143,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -153,7 +153,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -164,7 +164,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -174,7 +174,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -185,7 +185,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -196,7 +196,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -207,7 +207,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -218,7 +218,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -229,7 +229,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
@@ -239,7 +239,7 @@ type UniSwiperProps = {
 	* @uniPlatform {
 		"app": {
 			"harmony": {
-				"unixvVer": "5.0"
+				"unixVaporVer": "5.0"
 			}
 		}
 	}
