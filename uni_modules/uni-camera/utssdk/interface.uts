@@ -79,7 +79,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -103,7 +102,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -127,7 +125,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -154,7 +151,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -178,7 +174,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -202,7 +197,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -228,7 +222,6 @@ export interface CameraContextCameraFrameListener {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -252,7 +245,6 @@ export interface CameraContextCameraFrameListener {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -279,7 +271,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -303,7 +294,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -327,7 +317,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -353,7 +342,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -378,7 +366,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -403,7 +390,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -427,7 +413,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -455,7 +440,6 @@ export type CameraContextTakePhotoResult = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -483,7 +467,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -508,7 +491,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -533,7 +515,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -557,7 +538,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -581,7 +561,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -608,7 +587,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -632,7 +610,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -660,7 +637,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -684,7 +660,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -708,7 +683,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -733,7 +707,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -757,7 +730,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -781,7 +753,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -809,7 +780,6 @@ export type CameraContextStopRecordResult = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -834,7 +804,6 @@ export type CameraContextStopRecordResult = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -862,7 +831,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -887,7 +855,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -911,7 +878,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -935,7 +901,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -962,7 +927,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -1017,7 +981,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -1041,7 +1004,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -1065,7 +1027,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -1089,7 +1050,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
@@ -1204,7 +1164,6 @@ export interface Uni {
 	 *       "unixVer": "4.61"
 	 *     },
    *     "harmony": {
-	 *       "osVer": "x",
 	 *       "uniVer": "x",
 	 *       "unixVer": "x"
 	 *     }
