@@ -12,7 +12,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -22,7 +21,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
 	 *      "unixVaporVer": "5.0"
@@ -36,7 +34,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -46,7 +43,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
 	 *      "unixVaporVer": "5.0"
@@ -61,7 +57,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -71,7 +66,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
 	 *      "unixVaporVer": "5.0"
@@ -86,7 +80,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -96,7 +89,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.71",
 	 *      "unixVaporVer": "5.0"
@@ -115,7 +107,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -125,7 +116,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
 	 *      "unixVaporVer": "5.0"
@@ -139,7 +129,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -149,7 +138,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
 	 *      "unixVaporVer": "5.0"
@@ -164,7 +152,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -174,7 +161,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
 	 *      "unixVaporVer": "5.0"
@@ -189,7 +175,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -199,7 +184,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.65",
 	 *      "unixVer": "4.65",
 	 *      "unixVaporVer": "5.0"
@@ -217,7 +201,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -227,7 +210,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
 	 *      "unixVaporVer": "5.0"
@@ -241,7 +223,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -251,7 +232,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
 	 *      "unixVaporVer": "5.0"
@@ -265,7 +245,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -275,7 +254,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
 	 *      "unixVaporVer": "5.0"
@@ -289,7 +267,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -299,7 +276,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
 	 *      "unixVaporVer": "5.0"
@@ -313,7 +289,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -323,7 +298,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.61",
 	 *      "unixVer": "4.61",
 	 *      "unixVaporVer": "5.0"
@@ -337,7 +311,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.63"
 	 *     },
@@ -347,7 +320,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.63"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.63",
 	 *      "unixVer": "4.63",
 	 *      "unixVaporVer": "5.0"
@@ -361,7 +333,6 @@ export interface WebviewContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -371,7 +342,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *    "harmony": {
-	 *      "osVer": "5.0.0",
 	 *      "uniVer": "4.71",
 	 *      "unixVer": "4.63",
 	 *      "unixVaporVer": "5.0"
@@ -409,7 +379,6 @@ export interface Uni {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -419,7 +388,6 @@ export interface Uni {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *     "harmony": {
-	 *       "osVer": "5.0.0",
 	 *       "uniVer": "4.61",
 	 *       "unixVer": "4.61",
 	 *       "unixVaporVer": "5.0"
@@ -435,7 +403,6 @@ export interface Uni {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "5.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "3.9.0"
 	 *     },
@@ -445,7 +412,6 @@ export interface Uni {
 	 *       "unixVer": "4.11"
 	 *     },
 	 *     "harmony": {
-	 *       "osVer": "5.0.0",
 	 *       "uniVer": "4.61",
 	 *       "unixVer": "4.61",
 	 *       "unixVaporVer": "5.0"

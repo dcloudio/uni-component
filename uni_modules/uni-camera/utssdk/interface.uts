@@ -69,7 +69,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -92,7 +91,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -115,7 +113,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -141,7 +138,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -164,7 +160,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -187,7 +182,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -212,7 +206,6 @@ export interface CameraContextCameraFrameListener {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -235,7 +228,6 @@ export interface CameraContextCameraFrameListener {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -261,7 +253,6 @@ export type CameraContextOnCameraFrame = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -284,7 +275,6 @@ export type CameraContextOnCameraFrame = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -307,7 +297,6 @@ export type CameraContextOnCameraFrame = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -332,7 +321,6 @@ export type CameraContextSetZoomOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -356,7 +344,6 @@ export type CameraContextSetZoomOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -380,7 +367,6 @@ export type CameraContextSetZoomOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -403,7 +389,6 @@ export type CameraContextSetZoomOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -430,7 +415,6 @@ export type CameraContextTakePhotoResult = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -457,7 +441,6 @@ export type CameraContextTakePhotoOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -481,7 +464,6 @@ export type CameraContextTakePhotoOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -505,7 +487,6 @@ export type CameraContextTakePhotoOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -528,7 +509,6 @@ export type CameraContextTakePhotoOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -551,7 +531,6 @@ export type CameraContextTakePhotoOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -577,7 +556,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -600,7 +578,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -627,7 +604,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -650,7 +626,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -673,7 +648,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -697,7 +671,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -720,7 +693,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -743,7 +715,6 @@ export type CameraContextStartRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -770,7 +741,6 @@ export type CameraContextStopRecordResult = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -794,7 +764,6 @@ export type CameraContextStopRecordResult = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -821,7 +790,6 @@ export type CameraContextStopRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -845,7 +813,6 @@ export type CameraContextStopRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -868,7 +835,6 @@ export type CameraContextStopRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -891,7 +857,6 @@ export type CameraContextStopRecordOptions = {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -917,7 +882,6 @@ export interface CameraContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -971,7 +935,6 @@ export interface CameraContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -994,7 +957,6 @@ export interface CameraContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -1017,7 +979,6 @@ export interface CameraContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -1040,7 +1001,6 @@ export interface CameraContext {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -1154,7 +1114,6 @@ export interface Uni {
 	 * @uniPlatform {
 	 *   "app": {
 	 *     "android": {
-	 *       "osVer": "4.4",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },

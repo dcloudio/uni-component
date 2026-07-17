@@ -21,7 +21,6 @@ export type RequestFullScreenOptions = {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -100,7 +99,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -110,7 +108,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -171,7 +168,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -181,7 +177,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -243,7 +238,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -253,7 +247,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -314,7 +307,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -324,7 +316,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -386,7 +377,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -396,7 +386,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -458,7 +447,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -468,7 +456,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -530,7 +517,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -540,7 +526,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -602,7 +587,6 @@ export interface VideoContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "3.9.0"
      *     },
@@ -612,7 +596,6 @@ export interface VideoContext {
      *       "unixVer": "4.11"
      *     },
      *    "harmony": {
-     *      "osVer": "3.0",
      *      "uniVer": "4.23",
      *      "unixVer": "4.61",
      *      "unixVaporVer": "5.0"
@@ -676,7 +659,6 @@ export interface Uni {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "4.4",
      *       "uniVer": "√",
      *       "unixVer": "√"
      *     },
@@ -686,7 +668,6 @@ export interface Uni {
      *       "unixVer": "4.11"
      *     },
      *     "harmony": {
-     *       "osVer": "5.0.0",
      *       "uniVer": "4.23",
      *       "unixVer": "4.61",
      *       "unixVaporVer": "5.0"
