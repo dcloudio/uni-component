@@ -73,7 +73,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -95,7 +94,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -117,7 +115,6 @@ export type CameraContextCameraFrameListenerStartOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -142,7 +139,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -164,7 +160,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -186,7 +181,6 @@ export type CameraContextCameraFrameListenerStopOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -210,7 +204,6 @@ export interface CameraContextCameraFrameListener {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -232,7 +225,6 @@ export interface CameraContextCameraFrameListener {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -257,7 +249,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -279,7 +270,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -301,7 +291,6 @@ export type CameraContextOnCameraFrame = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -325,7 +314,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -348,7 +336,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -371,7 +358,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -393,7 +379,6 @@ export type CameraContextSetZoomOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -419,7 +404,6 @@ export type CameraContextTakePhotoResult = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -445,7 +429,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -468,7 +451,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -491,7 +473,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -513,7 +494,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -535,7 +515,6 @@ export type CameraContextTakePhotoOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -560,7 +539,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -582,7 +560,6 @@ export type CameraContextStartRecordTimeoutResult = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -608,7 +585,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -630,7 +606,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -652,7 +627,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -675,7 +649,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -697,7 +670,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -719,7 +691,6 @@ export type CameraContextStartRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -745,7 +716,6 @@ export type CameraContextStopRecordResult = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -768,7 +738,6 @@ export type CameraContextStopRecordResult = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -794,7 +763,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -817,7 +785,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -839,7 +806,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -861,7 +827,6 @@ export type CameraContextStopRecordOptions = {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -886,7 +851,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -939,7 +903,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -961,7 +924,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -983,7 +945,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -1005,7 +966,6 @@ export interface CameraContext {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },
@@ -1118,7 +1078,6 @@ export interface Uni {
 	 *       "unixVer": "4.61"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.61"
 	 *     },

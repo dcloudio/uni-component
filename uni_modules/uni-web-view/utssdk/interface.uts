@@ -16,7 +16,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -38,7 +37,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -61,7 +59,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -84,7 +81,6 @@ export type UniWebviewContextLoadDataOptions = {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -111,7 +107,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -133,7 +128,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -156,7 +150,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -179,7 +172,6 @@ export type UniWebViewElementLoadDataOptions = {
 	 *       "unixVer": "4.65"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.65"
 	 *     },
@@ -205,7 +197,6 @@ export interface WebviewContext {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -227,7 +218,6 @@ export interface WebviewContext {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -249,7 +239,6 @@ export interface WebviewContext {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -271,7 +260,6 @@ export interface WebviewContext {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -293,7 +281,6 @@ export interface WebviewContext {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -315,7 +302,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.63"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.63"
 	 *     },
@@ -337,7 +323,6 @@ export interface WebviewContext {
 	 *       "unixVer": "4.71"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.71"
 	 *     },
@@ -383,7 +368,6 @@ export interface Uni {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
@@ -407,7 +391,6 @@ export interface Uni {
 	 *       "unixVer": "3.9.0"
 	 *     },
 	 *     "ios": {
-	 *       "osVer": "12.0",
 	 *       "uniVer": "x",
 	 *       "unixVer": "4.11"
 	 *     },
