@@ -1,0 +1,26 @@
+{
+	"deploymentTarget": "12.0",
+	"simulatorArchitectures": [
+		"x86_64"
+	],
+	"dependencies-pods": [{
+			"name": "Tencent-MapSDK",
+			"version": "5.7.0"
+		},
+		{
+			"name": "Tencent-MapVisualPlugin",
+			"version": "3.1.0"
+		},
+		{
+			"name": "Tencent-MapFoundation",
+			"version": ">=3.3.0"
+		},
+		{
+			"name": "Tencent-MapUtils",
+			"version": "1.2.3"
+		}
+	],
+	"thirdSDKs": [
+		"tencent-location"
+	]
+}

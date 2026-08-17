@@ -1,0 +1,965 @@
+import { BuilderNode } from "@kit.ArkUI"
+import { bundleManager } from '@kit.AbilityKit';
+import { AsyncCallback } from '@ohos.base'
+// @ts-ignore
+import { AuthService } from '@tencentmap/base'
+// @ts-ignore
+import { MapController, MapOptions, Marker as TencentMarker, LatLng, MarkerOptions, ImageEntity, LocationInfo, PositionAnchor, Point, InfoWindow, InfoWindowInfo, Align, MapRect, MarkerMoveAlongOptions, Line, LineType, LineOptions, NormalLineExtraParam, DottedLineExtraParam, Segment, Polygon as TencentPolygon, PolygonOptions, Circle as TencentCircle, CircleOptions, CustomTileOverlay, OnRegionChangeListener, MapEvent, MapPoi } from '@tencentmap/map'
+import { buildTencentMap, ExistMarkerInfo } from './builder.ets'
+import { MapContextFailImpl, getErrcode } from '../unierror';
+import { Circle, Control, CreateMapContext, LocationObject, MapContext, MapContextAddGroundOverlayOptions, MapContextAddMarkersOptions, MapContextGetCenterLocationOptions, MapContextGetRegionOptions, MapContextGetRegionResult, MapContextGetScaleOptions, MapContextGetScaleResult, MapContextIncludePointsOptions, MapContextMoveAlongOptions, MapContextMoveToLocationOptions, MapContextRemoveGroundOverlayOptions, MapContextRemoveMarkersOptions, MapContextTranslateMarkerOptions, MapContextUpdateGroundOverlayOptions, Marker, Polygon, Polyline } from "../interface";
+export {
+	Marker, Polyline, LocationObject, Polygon, Control, ControlPosition, Circle,
+	MapMarkerCallout, MapMarkerLabel, Anchor, Bounds, CreateMapContext, MapContextGetCenterLocationOptions,
+	MapContextMoveToLocationOptions, MapContextTranslateMarkerOptions, MapContextIncludePointsOptions,
+	MapContextGetRegionResult, MapContextGetRegionOptions, MapContextGetScaleResult,
+	MapContextGetScaleOptions, MapContextAddGroundOverlayOptions, MapContextAddMarkersOptions,
+	MapContextMoveAlongOptions, MapContextRemoveGroundOverlayOptions, MapContextRemoveMarkersOptions,
+	MapContextUpdateGroundOverlayOptions, MapContext, MapContextFail, MapErrorCode
+} from "../interface";
+
+interface TencentMapOptions {
+	mapOptions : MapOptions
+	onReady : AsyncCallback<MapController>
+	existMarkerInfoList : ExistMarkerInfo[]
+}
+
+export interface ExistMarker {
+	id : number
+	marker : TencentMarker
+	uniMarker : Marker
+}
+
+interface OnScaleChangeListener {
+	onScaleChange : (scale : number) => void;
+}
+
+// 定义 Vue 组件传递的事件处理函数接口
+interface MapEventHandlers {
+	onMapTapCallback : (event : UniNativeViewEvent) => void
+	onMapPoiTap : (event : UniNativeViewEvent) => void
+	onMapLoadedCallback : (event : UniNativeViewEvent) => void
+	onMapMarkerTap : (event : UniNativeViewEvent) => void
+	onMapRegionChange : (event : UniNativeViewEvent) => void
+}
+
+export function getEntryMetadata() : bundleManager.Metadata[] {
+	const flags =
+		bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_HAP_MODULE |
+		bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_METADATA
+	const bundleInfo = bundleManager.getBundleInfoForSelfSync(flags)
+	return bundleInfo.hapModulesInfo.find(
+		module => module.type === bundleManager.ModuleType.ENTRY,
+	)!.metadata
+}
+
+function getMapConfig() {
+	const metadata = getEntryMetadata().find(
+		data => data.name === "TENCENT_MAP_KEY",
+	)
+	const qqMapKey = metadata?.value
+	return qqMapKey
+}
+
+const isHighAccuracy = true;
+const highAccuracyExpireTime = 1500;
+
+export interface IUniMapElement extends UniElement {
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void;
+	addMarkers(options : MapContextAddMarkersOptions) : void;
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void;
+	getScale(options : MapContextGetScaleOptions) : void;
+	moveToLocation(options : MapContextMoveToLocationOptions) : void;
+	moveAlong(options : MapContextMoveAlongOptions) : void;
+	translateMarker(options : MapContextTranslateMarkerOptions) : void;
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void;
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void;
+	getRegion(options : MapContextGetRegionOptions) : void;
+	includePoints(options : MapContextIncludePointsOptions) : void;
+}
+
+export class UniMapElement extends UniViewElementImpl implements IUniMapElement {
+	override tagName : string = 'map'
+	override nodeName : string = 'map'
+	private tencentMap : TencentMap | null = null
+
+	setMap(tencentMap : TencentMap) {
+		this.tencentMap = tencentMap
+	}
+
+	getMap() {
+		return this.tencentMap
+	}
+
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			const res : LocationObject | null = tencentMap.getCenterLocation()
+			if (res == null) {
+				const err = new MapContextFailImpl(getErrcode(500001))
+				options.fail?.(err);
+				options.complete?.(err);
+			} else {
+				options.success?.(res);
+				options.complete?.(res);
+			}
+		}
+	}
+
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			const result : boolean = tencentMap.setMarkers(options.markers, options.clear)
+			if (result == false) {
+				const err = new MapContextFailImpl(getErrcode(500012))
+				options.fail?.(err);
+				options.complete?.(err);
+			} else {
+				const res = {
+					errMsg: 'addMarkers:ok'
+				};
+				options.success?.(res);
+				options.complete?.(res);
+			}
+		}
+	}
+
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			const result : boolean = tencentMap.removeMarkers(options.markerIds)
+			if (result == false) {
+				const err = new MapContextFailImpl(getErrcode(500012))
+				options.fail?.(err);
+				options.complete?.(err);
+			} else {
+				const res = {
+					errMsg: 'removeMarkers:ok'
+				};
+				options.success?.(res);
+				options.complete?.(res);
+			}
+		}
+	}
+
+	getScale(options : MapContextGetScaleOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			const scale : number = tencentMap.getScale()
+			if (scale == -1) {
+				const err = new MapContextFailImpl(getErrcode(500012))
+				options.fail?.(err);
+				options.complete?.(err);
+			} else {
+				const res : MapContextGetScaleResult = {
+					scale
+				}
+				options.success?.(res);
+				options.complete?.(res);
+			}
+		}
+	}
+
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			if (options.latitude == null || options.longitude == null) {
+				// @ts-ignore
+				uni.getLocation({
+					type: 'gcj02',
+					highAccuracyExpireTime: highAccuracyExpireTime,
+					isHighAccuracy: isHighAccuracy,
+					success: (res) => {
+						options.latitude = res.latitude as number
+						options.longitude = res.longitude as number
+						this.moveToLocation(options)
+					},
+					fail: () => {
+						const err = new MapContextFailImpl(getErrcode(500002))
+						options.fail?.(err);
+						options.complete?.(err);
+					}
+				})
+			} else {
+				tencentMap.setCenter(options.latitude, options.longitude, true)
+				const res = {
+					errMsg: 'moveToLocation:ok'
+				};
+				if (options.success != null) options.success(res);
+				if (options.complete != null) options.complete(res);
+			}
+		}
+	}
+
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			tencentMap.setIncludePoints(options.points)
+			const res = {
+				"errMsg": "includePoints:ok"
+			}
+			options.success?.(res)
+			options.complete?.(res)
+		}
+	}
+
+	getRegion(options : MapContextGetRegionOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			const region : MapRect | null = tencentMap.getRegion()
+			if (region != null) {
+				const southwest = {
+					latitude: region.bottom,
+					longitude: region.left
+				} as LocationObject
+				const northeast = {
+					latitude: region.top,
+					longitude: region.right
+				} as LocationObject
+				const result : MapContextGetRegionResult = { southwest, northeast }
+				options.success?.(result)
+				options.complete?.(result)
+			} else {
+				const err = new MapContextFailImpl(getErrcode(500012))
+				options.fail?.(err);
+				options.complete?.(err);
+			}
+		}
+	}
+
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			tencentMap.moveAlong(options);
+		}
+	}
+
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		const tencentMap = this.getMap()
+		if (tencentMap != null) {
+			tencentMap.translateMarker(options);
+		}
+	}
+	// TODO
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		console.warn('addGroundOverlay is not implemented');
+		// const tencentMap = this.getMap()
+		// if (tencentMap != null) {
+		// 	const customTileOverlay = {
+		// 		cacheName: options.id,
+		// 		getTileUrl: (x : number, y : number, zoom : number) : string => {
+		// 			// @ts-ignore
+		// 			return UTSHarmony.convert2AbsFullPath(options.src);
+		// 		},
+		// 		visible: options.visible != null ? options : false,
+		// 		zIndex: options.zIndex != null ? options.zIndex : 0,
+		// 		opacity: options.opacity != null ? options.opacity : 1,
+		// 	} as CustomTileOverlay;
+		// 	tencentMap.addTileOverlay(customTileOverlay);
+		// 	const res = {
+		// 		"errMsg": "addGroundOverlay:ok"
+		// 	}
+		// 	options.success?.(res)
+		// 	options.complete?.(res)
+		// }
+	}
+	// TODO
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		console.warn('updateGroundOverlay is not implemented');
+	}
+	// TODO
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		console.warn('removeGroundOverlay is not implemented');
+	}
+}
+
+class MapContextImpl implements MapContext {
+	constructor(private mapElement : UniMapElement) { }
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		this.mapElement.getCenterLocation(options)
+	}
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		this.mapElement.addMarkers(options)
+	}
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		this.mapElement.removeMarkers(options)
+	}
+	getScale(options : MapContextGetScaleOptions) : void {
+		this.mapElement.getScale(options)
+	}
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		this.mapElement.moveToLocation(options)
+	}
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		this.mapElement.moveAlong(options)
+	}
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		this.mapElement.translateMarker(options)
+	}
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		this.mapElement.addGroundOverlay(options)
+	}
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		this.mapElement.updateGroundOverlay(options)
+	}
+	getRegion(options : MapContextGetRegionOptions) : void {
+		this.mapElement.getRegion(options)
+	}
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		this.mapElement.includePoints(options)
+	}
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		this.mapElement.removeGroundOverlay(options)
+	}
+}
+// @ts-ignore
+export const createMapContext : CreateMapContext = function (mapId : string, component ?: ComponentPublicInstance | null) : MapContext | null {
+	let mapElement : UniMapElement | null = null;
+	if (component == null) {
+		// @ts-ignore
+		const pages = getCurrentPages();
+		if (pages.length > 0) {
+			mapElement = pages[pages.length - 1].$vm!.$el?.parentElement?.querySelector('#' + mapId) as UniMapElement | null;
+		}
+	} else {
+		mapElement = component.$el?.parentElement?.querySelector('#' + mapId) as UniMapElement | null;
+	}
+	if (mapElement == null) return null;
+	return new MapContextImpl(mapElement!);
+}
+
+export class TencentMap {
+	private mapController : MapController | null = null
+	private params : TencentMapOptions = {
+		mapOptions: {},
+		onReady: (err, controller) => {
+			if (!err) {
+				this.mapController = controller
+				this.mapController.addOnRegionChangeListener(this.regionChangeListener);
+				this.mapController.addOnScaleChangeListener(this.scaleChangeListener);
+				this.mapController.addMapClickListener(this.mapClickListener);
+				this.mapController.addPoiClickListener(this.poiClickListener);
+				this.mapOnReady();
+				this.dispatchMapUpdated();
+			}
+		},
+		existMarkerInfoList: [] as ExistMarkerInfo[]
+	}
+	private existMarkerList = [] as ExistMarker[];
+
+	private lines = [] as Line[];
+
+	private polygons = [] as TencentPolygon[];
+
+	private circles = [] as TencentCircle[];
+
+	private builder : BuilderNode<[TencentMapOptions]> | null = null
+
+	private $element : UniNativeViewElement;
+
+	private mapOnReady : () => void;
+	
+	private eventHandlers : MapEventHandlers;
+
+	private regionChangeListener : OnRegionChangeListener = {
+		onRegionWillChangeAnimated: (animated : boolean, bGesture : boolean) => {
+			this.dispatChregionChangeEvent('begin', null)
+		},
+
+		onRegionDidChangeAnimated: (animated : boolean, bGesture : boolean) => {
+			this.dispatChregionChangeEvent('end', bGesture ? 'drag' : null)
+		}
+	}
+
+	private scaleChangeListener : OnScaleChangeListener = {
+		onScaleChange: (scale : number) => {
+			this.dispatChregionChangeEvent('end', 'scale')
+		}
+	}
+
+	private mapClickListener = (evt : MapEvent) => {
+		const position = evt.position as LatLng
+		const point = evt.point as Point
+		const type = evt.type as string
+		const windowInfo = uni.getWindowInfo() as GetWindowInfoResult;
+		const x = Math.round(point.x);
+		const y = Math.round(point.y);
+		const detail = {
+			latitude: position.lat,
+			longitude: position.lng,
+			x,
+			y,
+			screenX: x + windowInfo.safeArea.left,
+			screenY: y + windowInfo.screenTop,
+		} as UTSJSONObject
+		const event = new UniNativeViewEvent(type, detail)
+		this.eventHandlers.onMapTapCallback(event)
+	}
+
+	private poiClickListener = (evt : MapPoi) => {
+		if (this.mapController != null) {
+			const position = evt.position as LatLng
+			const name = evt.name as string
+			const point : Point = this.mapController.geoToScreen(position.lat, position.lng);
+			const windowInfo = uni.getWindowInfo() as GetWindowInfoResult;
+			const x = Math.round(point.x);
+			const y = Math.round(point.y);
+			const detail = {
+				latitude: position.lat,
+				longitude: position.lng,
+				name,
+				x,
+				y,
+				screenX: x + windowInfo.safeArea.left,
+				screenY: y + windowInfo.screenTop
+			} as UTSJSONObject
+			const event = new UniNativeViewEvent("poitap", detail)
+			this.eventHandlers.onMapPoiTap(event)
+		}
+	}
+
+	constructor(element : UniNativeViewElement, onReady : () => void, eventHandlers : MapEventHandlers) {
+		this.$element = element;
+		this.mapOnReady = onReady;
+		this.eventHandlers = eventHandlers;
+		(this.$element.parentElement as UniMapElement).setMap(this)
+		this.start(element,);
+	}
+
+	start(el : UniNativeViewElement) : void {
+		const mapKey = getMapConfig()
+		AuthService.getInstance().setKey(mapKey)
+		this.builder = el.bindHarmonyWrappedBuilder(wrapBuilder<[TencentMapOptions]>(buildTencentMap), this.params)
+	}
+
+	destroy() : void {
+		this.mapController?.removeOnRegionChangeListener(this.regionChangeListener);
+		this.mapController?.removeOnScaleChangeListener(this.scaleChangeListener);
+		this.mapController?.removeMapClickListener(this.mapClickListener);
+		this.mapController?.removePoiClickListener(this.poiClickListener);
+	}
+
+	dispatchMapUpdated() : void {
+		const detail = {
+
+		} as UTSJSONObject
+		const event = new UniNativeViewEvent("updated", detail)
+		this.eventHandlers.onMapLoadedCallback(event)
+	}
+
+	dispatchMarkerTapEvent(markerId : number) : void {
+		const detail = {
+			markerId
+		} as UTSJSONObject
+		const event = new UniNativeViewEvent("markertap", detail)
+		this.eventHandlers.onMapMarkerTap(event)
+	}
+
+	dispatChregionChangeEvent(type : string, causedBy : string | null) : void {
+		let rotate = 0;
+		let skew = 0;
+		if (this.mapController != null) {
+			rotate = this.mapController.getRotate() as number;
+			skew = this.mapController.getSkew() as number;
+		}
+		const detail = {
+			causedBy,
+			rotate,
+			skew
+		} as UTSJSONObject
+		const event = new UniNativeViewEvent(type, detail)
+		this.eventHandlers.onMapRegionChange(event)
+	}
+
+	setCenter(latitude : number, longitude : number, animate ?: boolean) : void {
+		this.mapController?.setCenter(latitude, longitude, animate)
+	}
+
+	getScale() : number {
+		if (this.mapController != null) {
+			return this.mapController.getScaleLevel()
+		}
+		return -1
+	}
+
+	setScale(scale : number, animate ?: boolean) : void {
+		this.mapController?.setScaleLevel(scale, animate)
+	}
+
+	setMinScale(scale : number) : void {
+		this.mapController?.setMinScaleLevel(scale)
+	}
+
+	setMaxScale(scale : number) : void {
+		this.mapController?.setMaxScaleLevel(scale)
+	}
+
+	enable3D(enable : boolean) : void {
+		this.mapController?.setBuildingEffect3D(enable)
+		this.mapController?.setBuildingEnable(enable)
+	}
+
+	showCompass(enable : boolean) : void {
+		this.mapController?.setCompassVisible(enable)
+		if (enable) {
+			this.mapController?.setCompassPosition(PositionAnchor.TopLeft, { x: 20, y: 20 } as Point);
+		}
+	}
+
+	enableZoom(enable : boolean) : void {
+		this.mapController?.setDoubleTapByOneFingerGestureEnable(enable);
+		this.mapController?.setSingleTapByTwoFingersGestureEnable(enable);
+		this.mapController?.setPinchGestureEnable(enable);
+	}
+
+	enableScroll(enable : boolean) : void {
+		this.mapController?.setMoveGestureEnable(enable)
+	}
+
+	enableRotate(enable : boolean) : void {
+		this.mapController?.setRotatedGestureEnable(enable)
+	}
+
+	setRotate(angle : number) : void {
+		this.mapController?.setRotate(angle)
+	}
+
+	setSkew(skew : number) : void {
+		this.mapController?.setSkew(skew)
+	}
+
+	setEnableOverlooking(enable : boolean) : void {
+		this.mapController?.setSkewGestureEnable(enable)
+	}
+
+	setEnableTraffic(enable : boolean) : void {
+		this.mapController?.setTrafficEnable(enable)
+	}
+
+	setEnablePoi(enable : boolean) : void {
+		this.mapController?.setAnnotationEnable(enable)
+	}
+
+	setEnableBuilding(enable : boolean) : void {
+		this.mapController?.setBuildingEnable(enable)
+	}
+
+	setShowLocation(enable : boolean) : void {
+		if (enable) {
+			// @ts-ignore
+			uni.getLocation({
+				type: 'gcj02',
+				highAccuracyExpireTime: highAccuracyExpireTime,
+				isHighAccuracy: isHighAccuracy,
+				success: (res) => {
+					const lat = res.latitude as number;
+					const lng = res.longitude as number;
+					const locationInfo : LocationInfo = {
+						position: {
+							lat,
+							lng
+						} as LatLng,
+						course: 0,
+						accuracy: 0
+					}
+					this.mapController?.setLocation(locationInfo, true, 1500)
+				}
+			})
+		}
+		this.mapController?.setLocationMarkerEnable(enable)
+	}
+
+	setEnableIndoorMap(enable : boolean) : void {
+		this.mapController?.setIndoorEnabled(enable)
+	}
+
+	setTheme(theme : string) : void {
+		this.mapController?.setStyle(Number(theme))
+	}
+
+	setEnableSatellite(enable : boolean) : void {
+		this.mapController?.setSatelliteEnabled(enable)
+	}
+
+	setIncludePoints(points : LocationObject[], animate : boolean = true) : void {
+		const latLngs = points.map((item) : LatLng => {
+			return {
+				lat: item.latitude,
+				lng: item.longitude
+			} as LatLng
+		});
+		this.mapController?.moveCamera(latLngs, 20, animate)
+	}
+
+	getRegion() : MapRect | null {
+		const bounds = this.mapController?.getVisibleMapRect()
+		if (bounds != null) {
+			return bounds as MapRect;
+		}
+		return null;
+	}
+
+	getCenterLocation() : LocationObject | null {
+		if (this.mapController != null) {
+			const data = this.mapController.getCenter()
+			return {
+				latitude: data.lat,
+				longitude: data.lng
+			} as LocationObject
+		}
+		return null;
+	}
+
+	setMarkers(markers : Marker[], clear : boolean = true) : boolean {
+		if (this.mapController != null) {
+			if (clear) {
+				const ids = this.existMarkerList.map((item : ExistMarker) => item.id);
+				this.removeMarkers(ids);
+			}
+			this.params.existMarkerInfoList = [] as ExistMarkerInfo[];
+			for (let i = 0; i < markers.length; i++) {
+				let item : Marker = markers[i];
+				const id = item.id;
+				const position = new LatLng(item.latitude, item.longitude);
+				let iconType = 1;
+				let uri = item.iconPath;
+				if (uri != null) {
+					if (uri.startsWith('http')) {
+						iconType = 3;
+					} else {
+						// @ts-ignore
+						uri = UTSHarmony.convert2AbsFullPath(uri);
+					}
+				}
+				const markerOptions : MarkerOptions = {
+					position,
+					icon: {
+						uri,
+						type: iconType
+					} as ImageEntity,
+					alpha: 1,
+					rotate: 0,
+					scaleX: 1,
+					scaleY: 1,
+					anchorX: item?.anchor?.x,
+					anchorY: item?.anchor?.y,
+					avoidMarker: true
+				};
+				const pixelRatio = uni.getWindowInfo().pixelRatio as number;
+				if (item.width) markerOptions.width = item.width * pixelRatio;
+				if (item.height) markerOptions.height = item.height * pixelRatio;
+				if (item.alpha) markerOptions.alpha = item.alpha;
+				if (item.rotate) markerOptions.rotate = item.rotate;
+				const marker = new TencentMarker(markerOptions)
+				const infoWindowInfo : InfoWindowInfo = new InfoWindowInfo();
+				marker.infoWindowList = [
+					{
+						componentId: "info_window_" + i,
+						infoWindowInfo: infoWindowInfo,
+						offsetX: 0,
+						offsetY: -20,
+						align: Align.Top
+					} as InfoWindow
+				] as InfoWindow[]
+				const callout = item.callout;
+				if (callout != null && callout.content != null && marker != null && marker.infoWindowList != null) {
+					this.params.existMarkerInfoList.push({
+						id: marker.infoWindowList[0].componentId,
+						text: callout.content,
+						infoWindowInfo: marker.infoWindowList[0].infoWindowInfo
+					} as ExistMarkerInfo);
+				}
+
+				marker.setOnClickListener(() => {
+					this.dispatchMarkerTapEvent(id)
+				})
+
+				this.existMarkerList.push({ id, marker, uniMarker: item } as ExistMarker)
+				// this.builder?.update(this.params)
+				this.mapController?.addMarker(marker)
+			}
+			return true;
+		}
+		return false;
+	}
+
+	removeMarkers(markerIds : number[]) : boolean {
+		if (this.mapController != null) {
+			for (let i = 0; i < markerIds.length; i++) {
+				const id = markerIds[i];
+				const index = this.existMarkerList.findIndex((item) => item.id === id)
+				if (index !== -1) {
+					const item = this.existMarkerList[index];
+					this.mapController.removeMarker(item.marker)
+					this.existMarkerList.splice(index, 1)
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		if (this.mapController != null) {
+			const markerId = options.markerId as number;
+			const markerInfo = this.existMarkerList.find((item : ExistMarker) : boolean => item.id === markerId);
+			if (markerInfo != null) {
+				const marker : TencentMarker = markerInfo.marker;
+				const duration = options.duration != null ? options.duration as number : 1000;
+				const autoRotation = options.autoRotate != null ? options.autoRotate as boolean : false;
+				const paths : LatLng[] = [
+					new LatLng(marker.options.position.lat, marker.options.position.lng),
+					new LatLng(options.destination.latitude, options.destination.longitude),
+				];
+				this.mapController.moveAlong(marker, {
+					paths,
+					duration,
+					distanceDelta: 0,
+					autoRotation,
+					endCallback: () => {
+						const res = {
+							errMsg: 'translateMarker:ok'
+						};
+						setTimeout(() => {
+							options.success?.(res);
+							options.complete?.(res);
+						}, 0);
+					}
+				} as MarkerMoveAlongOptions)
+			}
+		}
+	}
+
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		if (this.mapController != null) {
+			const markerId = options.markerId as number;
+			const markerInfo = this.existMarkerList.find((item : ExistMarker) : boolean => item.id === markerId);
+			if (markerInfo != null) {
+				const marker : TencentMarker = markerInfo.marker;
+				const duration = options.duration != null ? options.duration as number : 1000;
+				const paths : LatLng[] = options.path.map((item : LocationObject) : LatLng => {
+					return new LatLng(item.latitude, item.longitude)
+				});
+				paths.unshift(new LatLng(marker.options.position.lat, marker.options.position.lng));
+				this.mapController.moveAlong(marker, {
+					paths,
+					duration,
+					distanceDelta: 0,
+					autoRotation: true,
+					endCallback: () => {
+						const res = {
+							errMsg: 'moveAlong:ok'
+						};
+						setTimeout(() => {
+							options.success?.(res);
+							options.complete?.(res);
+						}, 0);
+					}
+				} as MarkerMoveAlongOptions)
+			}
+		}
+	}
+
+	addTileOverlay(customTileOverlay : CustomTileOverlay) : void {
+		this.mapController?.addTileOverlay(customTileOverlay)
+	}
+
+	setPolyline(polylines : Array<Polyline>) : void {
+		for (let i = 0; i < this.lines.length; i++) {
+			let line = this.lines[i];
+			this.removeLine(line);
+		}
+		this.lines = [] as Line[];
+		const pixelRatio = uni.getWindowInfo().pixelRatio as number;
+		for (let i = 0; i < polylines.length; i++) {
+			let item : Polyline = polylines[i];
+			const points : Array<LatLng> = []
+			item.points.forEach((point : LocationObject) => {
+				const latlng : LatLng = new LatLng(point.latitude, point.longitude);
+				points.push(latlng)
+			})
+			let lineType = LineType.NormalLine;
+			if (item.dottedLine != null && item.dottedLine == true) {
+				lineType = LineType.DottedLine;
+			}
+			const lineOptions : LineOptions = {
+				points,
+				lineType,
+				visible: true
+			}
+			if (item.colorList != null) {
+				lineType = LineType.NormalLine;
+			}
+			if (lineType == LineType.NormalLine) {
+				if (item.colorList != null) {
+					const segments : Segment[] = item.colorList.map((color : string, index : number) : Segment => {
+						const segment = {
+							color: color,
+							fromIndex: index,
+							toIndex: index
+						} as Segment;
+						if (item.borderColor) {
+							segment.borderColor = item.borderColor;
+						}
+						return segment;
+					})
+					lineOptions.param = {
+						segments
+					} as NormalLineExtraParam
+				} else {
+					const segment = {
+						color: item.color
+					} as Segment;
+					if (item.borderColor) {
+						segment.borderColor = item.borderColor;
+					}
+					lineOptions.param = {
+						segments: [segment] as Segment[]
+					} as NormalLineExtraParam
+				}
+			} else if (lineType == LineType.DottedLine) {
+				const dottedLineExtraParam : DottedLineExtraParam = {
+					color: item.color
+				} as DottedLineExtraParam;
+				if (item.borderColor != null) {
+					dottedLineExtraParam.borderColor = item.borderColor;
+				}
+				lineOptions.param = dottedLineExtraParam;
+			}
+			if (item.width != null) {
+				lineOptions.width = (item.width as number) * pixelRatio;
+			}
+			if (item.borderWidth != null) {
+				lineOptions.borderWidth = (item.borderWidth as number) * pixelRatio;
+			}
+			if (item.arrowLine != null && item.arrowLine == true) {
+				lineOptions.showArrow = true;
+			}
+			const line = new Line(lineOptions);
+			this.lines.push(line);
+			this.mapController?.addLine(line);
+		}
+	}
+
+	removeLine(line : Line) : void {
+		this.mapController?.removeLine(line);
+	}
+
+	setPolygon(polygons : Array<Polygon>) : void {
+		for (let i = 0; i < this.polygons.length; i++) {
+			let polygon = this.polygons[i];
+			this.removePolygon(polygon);
+		}
+		this.polygons = [] as TencentPolygon[];
+		const pixelRatio = uni.getWindowInfo().pixelRatio as number;
+		for (let i = 0; i < polygons.length; i++) {
+			let item : Polygon = polygons[i];
+			const points : Array<LatLng> = []
+			item.points.forEach((point : LocationObject) => {
+				const latlng : LatLng = new LatLng(point.latitude, point.longitude);
+				points.push(latlng)
+			})
+			const fillColor = item.fillColor != null ? item.fillColor : "#000000";
+
+			const polygonOptions = {
+				points,
+				fillColor
+			} as PolygonOptions
+			if (item.strokeWidth != null) {
+				polygonOptions.strokeWidth = (item.strokeWidth as number) * pixelRatio;
+			}
+			if (item.strokeColor != null) {
+				polygonOptions.strokeColor = item.strokeColor;
+			}
+			if (item.zIndex != null) {
+				polygonOptions.zIndex = item.zIndex as number;
+			}
+			const polygon = new TencentPolygon(polygonOptions);
+			this.polygons.push(polygon);
+			this.mapController?.addPolygon(polygon);
+		}
+	}
+
+	removePolygon(polygon : TencentPolygon) : void {
+		this.mapController?.removePolygon(polygon);
+	}
+
+	setCircle(circles : Array<Circle>) : void {
+		for (let i = 0; i < this.circles.length; i++) {
+			let circle = this.circles[i];
+			this.removeCircle(circle);
+		}
+		this.circles = [] as TencentCircle[];
+		const pixelRatio = uni.getWindowInfo().pixelRatio as number;
+		for (let i = 0; i < circles.length; i++) {
+			let item : Circle = circles[i];
+			const circleOptions = {
+				center: {
+					lat: item.latitude,
+					lng: item.longitude
+				} as LatLng,
+				radius: item.radius
+			} as CircleOptions
+			if (item.strokeWidth != null) {
+				circleOptions.strokeWidth = (item.strokeWidth as number) * pixelRatio;
+			}
+			if (item.fillColor != null) {
+				circleOptions.fillColor = item.fillColor;
+			}
+			if (item.color != null) {
+				circleOptions.strokeColor = item.color;
+			}
+			const circle = new TencentCircle(circleOptions);
+			this.circles.push(circle);
+			this.mapController?.addCircle(circle);
+		}
+	}
+
+	removeCircle(circle : TencentCircle) : void {
+		this.mapController?.removeCircle(circle);
+	}
+
+	setLayerStyle(styleId : string) : void {
+		const id = Number(styleId);
+		this.mapController?.setStyle(id);
+	}
+
+	// TODO 腾讯地图官方SDK未实现
+	setControl(controls : Array<Control>) : void {
+		console.warn('setControl is not implemented');
+		// for (let i = 0; i < this.controls.length; i++) {
+		// 	let contro = this.controls[i];
+		// 	this.removeControl(contro);
+		// }
+		// this.controls = [] as TencentCircle[];
+		// const pixelRatio = uni.getWindowInfo().pixelRatio as number;
+		// for (let i = 0; i < controls.length; i++) {
+		// 	let item : Control = controls[i];
+		// 	const circleOptions = {
+		// 		center: {
+		// 			lat: item.latitude,
+		// 			lng: item.longitude
+		// 		} as LatLng,
+		// 		radius: item.radius
+		// 	} as CircleOptions
+		// 	if (item.strokeWidth != null) {
+		// 		circleOptions.strokeWidth = (item.strokeWidth as number) * pixelRatio;
+		// 	}
+		// 	if (item.fillColor != null) {
+		// 		circleOptions.fillColor = item.fillColor;
+		// 	}
+		// 	if (item.color != null) {
+		// 		circleOptions.strokeColor = item.color;
+		// 	}
+		// 	const circle = new TencentCircle(circleOptions);
+		// 	this.controls.push(circle);
+		// 	this.mapController?.addCircle(circle);
+		// }
+	}
+
+	// TODO 腾讯地图官方SDK未实现
+	removeControl() : void {
+		console.warn('removeControl is not implemented');
+	}
+
+}

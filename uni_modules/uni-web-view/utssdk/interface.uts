@@ -6,6 +6,102 @@ export type WebViewStyles = {
 	progress : WebViewProgressStyles | boolean
 }
 
+// #ifdef APP-IOS
+export type UniWebViewContextLoadDataOptions = {
+	/**
+	 * 要加载的内容，编码后的字符串
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.71",
+	 *      "unixVer": "4.71",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	data : string,
+	/**
+	 * 页面的基础 URL
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.71",
+	 *      "unixVer": "4.71",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	baseURL ?: string | null,
+	/**
+	 * 加载的页面内容类型，默认值为 "text/html"
+	 * @defaultValue 'text/html'
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.71",
+	 *      "unixVer": "4.71",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	mimeType ?: string | null,
+	/**
+	 * 页面内容的编码类型，默认值为 "utf-8"
+	 * @defaultValue 'utf-8'
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "4.71"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.71",
+	 *      "unixVer": "4.71",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	encoding ?: string | null
+}
+
+// TODO: 以下写法 iOS 会被编译为typealias, 但编译后的swift源码没有别名相对应的uts逻辑代码（比如：UniWebviewContextLoadDataOptionsJSONObject）
+export type UniWebviewContextLoadDataOptions = UniWebViewContextLoadDataOptions
+
+// #endif
+
+// #ifndef APP-IOS
 export type UniWebviewContextLoadDataOptions = {
 	/**
 	 * 要加载的内容，编码后的字符串
@@ -95,7 +191,11 @@ export type UniWebviewContextLoadDataOptions = {
 	encoding ?: string | null
 }
 
+// TODO: 以下写法 iOS 会被编译为typealias, 但编译后的swift源码没有别名相对应的uts逻辑代码（比如：UniWebviewContextLoadDataOptionsJSONObject）
+// iOS 暂时先增加条件编译
 export type UniWebViewContextLoadDataOptions = UniWebviewContextLoadDataOptions
+
+// #endif
 
 export type UniWebViewElementLoadDataOptions = {
 	/**
@@ -186,7 +286,7 @@ export type UniWebViewElementLoadDataOptions = {
 	encoding ?: string | null
 }
 
-
+// #ifdef APP-IOS || APP-HARMONY || (APP-ANDROID && !VUE3-VAPOR)
 export interface WebviewContext {
 	/**
 	 * 前进到 web-view 组件网页加载历史的下一页，如果不存在下一页则没有任何效果
@@ -194,7 +294,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+   	 *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -215,7 +316,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+   	 *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -236,7 +338,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -257,7 +360,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -278,7 +382,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -299,7 +404,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "4.63"
+	 *       "unixVer": "4.63",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -320,7 +426,8 @@ export interface WebviewContext {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "4.71"
+	 *       "unixVer": "4.71",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
@@ -334,23 +441,171 @@ export interface WebviewContext {
 	 *   }
 	 * }
 	 */
-	// #ifdef APP-IOS
-	loadData(options : any) : void
-	// #endif
-
-	// #ifndef APP-IOS
 	loadData(options : UniWebViewContextLoadDataOptions) : void
-	// #endif
-
 }
+// #endif
 
 // #ifdef APP-IOS || APP-HARMONY
 export interface WebViewContext extends WebviewContext {
 
 }
 // #endif
-// #ifdef APP-ANDROID
+
+// #ifdef APP-ANDROID && !VUE3-VAPOR
 export type WebViewContext = WebviewContext
+// #endif
+
+// #ifdef APP-ANDROID && VUE3-VAPOR
+export interface WebViewContext {
+	/**
+	 * 前进到 web-view 组件网页加载历史的下一页，如果不存在下一页则没有任何效果
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.61",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	forward() : void
+	/**
+	 * 后退到 web-view 组件网页加载历史的上一页，如果不存在上一页则没有任何效果
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.61",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	back() : void
+	/**
+	 * 重新加载 web-view 组件当前页面
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.61",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	reload() : void
+	/**
+	 * 停止加载 web-view 组件当前网页，该方法不能阻止已经加载的 html 文档，但是能够阻止未完成的图片及延迟加载的资源
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.61",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	stop() : void
+	/**
+	 * 在网页中执行指定的js脚本，在 uvue 页面中可通过此方法向 web-view 组件加载的页面发送数据
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.61",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	evalJS(js : string) : void
+	/**
+	 * 获取webview内容高度
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.63",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	getContentHeight() : number
+	/**
+	 * 在 web-view 组件中加载页面内容
+	 * @uniPlatform {
+	 *   "app": {
+	 *     "android": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *     "ios": {
+	 *       "uniVer": "x",
+	 *       "unixVer": "5.0"
+	 *     },
+	 *    "harmony": {
+	 *      "uniVer": "4.71",
+	 *      "unixVer": "5.08",
+	 *      "unixVaporVer": "5.0"
+	 *    }
+	 *   }
+	 * }
+	 */
+	loadData(options : UniWebViewContextLoadDataOptions) : void
+}
+export type WebviewContext = WebViewContext
 // #endif
 
 export type CreateWebviewContext = (webviewId : string.WebviewIdString, component ?: ComponentPublicInstance | null) => WebviewContext | null;
@@ -365,15 +620,15 @@ export interface Uni {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "5.0"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "4.11"
+	 *       "unixVer": "5.0"
 	 *     },
 	 *     "harmony": {
 	 *       "uniVer": "4.61",
-	 *       "unixVer": "4.61",
+	 *       "unixVer": "5.08",
 	 *       "unixVaporVer": "5.0"
 	 *     }
 	 *   }
@@ -388,7 +643,8 @@ export interface Uni {
 	 *   "app": {
 	 *     "android": {
 	 *       "uniVer": "x",
-	 *       "unixVer": "3.9.0"
+	 *       "unixVer": "3.9.0",
+     *       "unixVaporVer": "x"
 	 *     },
 	 *     "ios": {
 	 *       "uniVer": "x",

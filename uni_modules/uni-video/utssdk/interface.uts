@@ -505,8 +505,8 @@ export interface VideoContext {
      */
     playbackRate(rate: number): void;
     /**
-     * @description 进入全屏
-     * @param {RequestFullScreenOptions} direction, 0|正常竖向, 90|屏幕逆时针90度, -90|屏幕顺时针90度
+     * 进入全屏
+     * @param direction 0|正常竖向, 90|屏幕逆时针90度, -90|屏幕顺时针90度
      * @uniPlatform {
      *   "app": {
      *     "android": {
@@ -721,6 +721,7 @@ export interface Uni {
     createVideoContext: CreateVideoContext
 }
 
+// #ifdef APP-HARMONY
 /**
  * 通用事件
  * 临时方案，规避组件Event接口无法直接继承UniEvent的问题
@@ -901,15 +902,4 @@ export type UniVideoControlsToggleEventDetail = {
      */
     show: boolean
 }
-
-export type VideoTimeUpdateEvent = UniVideoTimeUpdateEvent
-export type VideoTimeUpdateEventDetail = UniVideoTimeUpdateEventDetail
-export type VideoFullScreenChangeEvent = UniVideoFullScreenChangeEvent
-export type VideoFullScreenChangeEventDetail = UniVideoFullScreenChangeEventDetail
-export type VideoErrorEvent = UniVideoErrorEvent
-export type VideoProgressEvent = UniVideoProgressEvent
-export type VideoProgressEventDetail = UniVideoProgressEventDetail
-export type VideoFullScreenClickEvent = UniVideoFullScreenClickEvent
-export type VideoFullScreenClickEventDetail = UniVideoFullScreenClickEventDetail
-export type VideoControlsToggleEvent = UniVideoControlsToggleEvent
-export type VideoControlsToggleEventDetail = UniVideoControlsToggleEventDetail
+// #endif

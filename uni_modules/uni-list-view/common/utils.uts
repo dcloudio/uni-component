@@ -1,5 +1,5 @@
 let idCounter = 0;
-export function generateListViewId() {
+export function generateUniqueId() {
     idCounter += 1;
     return idCounter;
 }
@@ -7,4 +7,10 @@ export function generateListViewId() {
 const camelizeRE = /-(\w)/g
 export function camelize(str: string): string {
     return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''))
+}
+
+// enum?
+export const NATIVE_CHANNEL_ACTIONS = {
+    DESTROY_LIST: 0,
+    DESTROY_SECTION: 1
 }

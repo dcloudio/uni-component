@@ -1,0 +1,9 @@
+{
+	"dependencies": [
+		"com.tencent.map:tencent-map-vector-sdk:5.8.3",
+		"com.tencent.map:sdk-utilities:1.0.9",
+		"com.tencent.map.geolocation:TencentLocationSdk-openplatform:7.5.4.3",
+		"com.github.bumptech.glide:glide:4.9.0"
+	],
+	"minSdkVersion": "19"
+}

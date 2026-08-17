@@ -1,0 +1,1111 @@
+<template>
+	<!-- #ifndef VUE3_VAPOR -->
+	<uni-map-element ref="mapElem" class="uni-root">
+		<native-view ref="natvieElement" @init="onObjectInit" @updated="onMapLoadedCallback" @tapNative="onMapTapCallback"
+			@regionchange="onMapRegionChange" @markertap="onMapMarkerTap" @controltap="onMapControlTap"
+			@anchorpointtap="onMapAnchorPointTap" @poitap="onMapPoiTap" @callouttap="onCalloutTap" style="width: 100%;height: 100%;">
+		</native-view>
+	</uni-map-element>
+	<!-- #endif -->
+
+	<!-- #ifdef VUE3_VAPOR -->
+	<view ref="mapElem" class="uni-root">
+		<native-view ref="natvieElement" @init="onObjectInit" @updated="onMapLoadedCallback" @tapNative="onMapTapCallback"
+			@regionchange="onMapRegionChange" @markertap="onMapMarkerTap" @controltap="onMapControlTap"
+			@anchorpointtap="onMapAnchorPointTap" @poitap="onMapPoiTap" @callouttap="onCalloutTap" style="width: 100%;height: 100%;">
+		</native-view>
+	</view>
+	<!-- #endif -->
+</template>
+
+
+<script setup lang="uts">
+	/**
+	 * 地图
+	 * @uniPlatform {
+	   "app": {
+	     "android": {
+	       "uniVer": "√",
+	       "unixVer": "4.31",
+	       "unixVaporVer": "5.21"
+	     },
+	     "ios": {
+	       "uniVer": "√",
+	       "unixVer": "4.31",
+	       "unixVaporVer": "5.11"
+	     },
+	     "harmony": {
+	       "uniVer": "4.25",
+	       "unixVer": "4.61",
+	       "unixVaporVer": "5.0"
+	     }
+	   }
+	 }
+	 */
+	import { TencentMap, UniMapElement } from "@/uni_modules/uni-map-tencent";
+	import {
+		UniMapUpdatedEvent, UniMapTapEvent, UniMapRegionChangeEvent, UniMapMarkerTapEvent, UniMapControlTapEvent, UniMapAnchorPointTapEvent,
+		UniMapPoiTapEvent, UniMapUpdatedEventDetail, UniMapTapEventDetail, UniMapRegionChangeEventDetail, UniMapMarkerTapEventDetail,
+		UniMapControlTapEventDetail, UniMapAnchorPointTapEventDetail, UniMapPoiTapEventDetail, UniMapCalloutTapEventDetail, UniMapCalloutTapEvent
+	} from './global.uts';
+	import { Marker, Polyline, Polygon, Circle, Control, ControlPosition, LocationObject } from '@/uni_modules/uni-map-tencent';
+
+	const mapElem = ref<UniMapElement | null>(null)
+	const natvieElement = ref<IUniNativeElement | null>(null)
+
+	const props = withDefaults(defineProps<{
+		/**
+		 * 中心纬度
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		latitude ?: number,
+		/**
+		 * 中心经度
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		longitude ?: number,
+		/**
+		 * 缩放级别，web端取值范围为5-18 , app端取值范围为3-20
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		scale ?: number,
+		/**
+		 * 主题（satellite 或 normal）
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		theme ?: string,
+		/**
+		 * 最小缩放级别
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		minScale ?: number,
+		/**
+		 * 最大缩放级别
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		maxScale ?: number,
+		/**
+		 * 个性化地图（如实现地图暗黑模式）
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		layerStyle ?: string,
+		/**
+		 * 标记点
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		markers ?: Array<Marker> | null,
+		/**
+		 * 路线
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		polyline ?: Array<Polyline> | null,
+		/**
+		 * 圆
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		circles ?: Array<Circle> | null,
+		/**
+		 * 多边形
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		polygons ?: Array<Polygon> | null,
+		/**
+		 * 控件
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		controls ?: Array<Control> | null,
+		/**
+		 * 缩放视野以包含所有给定的坐标点
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		includePoints ?: Array<LocationObject> | null,
+		/**
+		 * 是否显示3D楼块
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enable3D ?: boolean,
+		/**
+		 * 是否显示指南针
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		showCompass ?: boolean,
+		/**
+		 * 是否支持缩放
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableZoom ?: boolean,
+		/**
+		 * 是否支持拖动
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableScroll ?: boolean,
+		/**
+		 * 是否支持旋转
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableRotate ?: boolean,
+		/**
+		 * 旋转角度(范围0-360)地图正北和设备 y 轴角度的夹角
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		rotate ?: number,
+		/**
+		 * 倾斜角度，范围 0 ~ 40 , 关于 z 轴的倾角
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		skew ?: number,
+		/**
+		 * 是否开启俯视（是否开启手势修改倾斜角度）
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableOverlooking ?: boolean,
+		/**
+		 * 是否开启卫星图
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableSatellite ?: boolean,
+		/**
+		 * 是否开启实时路况
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableTraffic ?: boolean,
+		/**
+		 * 是否展示 POI 点
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enablePoi ?: boolean,
+		/**
+		 * 是否展示建筑物
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		enableBuilding ?: boolean,
+		/**
+		 * 显示带有方向的当前定位点
+		 * @uniPlatform {
+		   "app": {
+		     "android": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.21"
+		     },
+		     "ios": {
+		       "uniVer": "√",
+		       "unixVer": "4.31",
+		       "unixVaporVer": "5.11"
+		     },
+		     "harmony": {
+		       "uniVer": "4.25",
+		       "unixVer": "4.61",
+		       "unixVaporVer": "5.0"
+		     }
+		   }
+		 }
+		 */
+		showLocation ?: boolean,
+		enableIndoorMap ?: boolean,
+	}>(), {
+		latitude: 0,
+		longitude: 0,
+		scale: 16,
+		theme: "normal",
+		minScale: 3,
+		maxScale: 20,
+		layerStyle: "1",
+		markers: null,
+		polyline: null,
+		circles: null,
+		polygons: null,
+		controls: null,
+		includePoints: null,
+		enable3D: false,
+		showCompass: false,
+		enableZoom: true,
+		enableScroll: true,
+		enableRotate: true,
+		rotate: 0,
+		skew: 0,
+		enableOverlooking: false,
+		enableSatellite: false,
+		enableTraffic: false,
+		enablePoi: true,
+		enableBuilding: false,
+		showLocation: false,
+		enableIndoorMap: false
+	})
+	let map : TencentMap | null = null
+
+	defineOptions({
+		name: "Map",
+		rootElement: {
+			name: 'uni-map-element',
+			class: UniMapElement
+		}
+	})
+
+
+
+	const emit = defineEmits(['updated', 'click', 'tap', 'regionchange', 'markertap', 'controltap', 'anchorpointtap', 'poitap', 'callouttap'])
+
+	watchEffect(() => {
+		const latitude = props.latitude
+		const longitude = props.longitude
+		map?.setCenter(latitude, longitude, true)
+	})
+
+	watchEffect(() => {
+		const scale = props.scale
+		map?.setScale(scale, true)
+	})
+
+	watchEffect(() => {
+		const theme = props.theme
+		map?.setTheme(theme)
+	})
+
+	watchEffect(() => {
+		const minScale = props.minScale
+		map?.setMinScale(minScale)
+	})
+
+	watchEffect(() => {
+		const maxScale = props.maxScale
+		map?.setMaxScale(maxScale)
+	})
+
+	watchEffect(() => {
+		const layerStyle = props.layerStyle
+		map?.setLayerStyle(layerStyle)
+	})
+
+	watchEffect(() => {
+		const markers = props.markers
+		if(markers == null){
+			map?.setMarkers([] as Marker[])
+		} else {
+			map?.setMarkers(markers!)
+		}
+	})
+
+	watchEffect(() => {
+		const polyline = props.polyline
+		if(polyline == null){
+            map?.setPolyline([] as Polyline[])
+        } else {
+            map?.setPolyline(polyline!)
+        }
+	})
+
+	watchEffect(() => {
+		const circles = props.circles
+		if(circles == null){
+		    map?.setCircle([] as Circle[])
+		} else {
+			map?.setCircle(circles!)
+		}
+	})
+
+	watchEffect(() => {
+		const polygons = props.polygons
+		if(polygons == null){
+		    map?.setPolygon([] as Polygon[])
+		} else {
+			map?.setPolygon(polygons!)
+		}
+	})
+
+	watchEffect(() => {
+		const controls = props.controls
+		if(controls == null){
+		    map?.setControl([] as Control[])
+		} else {
+			map?.setControl(controls!)
+		}
+	})
+
+	watchEffect(() => {
+		const includePoints = props.includePoints
+		map?.setIncludePoints(includePoints, true)
+	})
+
+	watchEffect(() => {
+		const enable3D = props.enable3D
+		map?.enable3D(enable3D)
+	})
+
+	watchEffect(() => {
+		const showCompass = props.showCompass
+		map?.showCompass(showCompass)
+	})
+
+	watchEffect(() => {
+		const enableZoom = props.enableZoom
+		map?.enableZoom(enableZoom)
+	})
+
+	watchEffect(() => {
+		const enableScroll = props.enableScroll
+		map?.enableScroll(enableScroll)
+	})
+
+	watchEffect(() => {
+		const enableRotate = props.enableRotate
+		map?.enableRotate(enableRotate)
+	})
+
+	watchEffect(() => {
+		const rotate = props.rotate
+		map?.setRotate(rotate, true)
+	})
+
+	watchEffect(() => {
+		const skew = props.skew
+		map?.setSkew(skew, true)
+	})
+
+	watchEffect(() => {
+		const enableOverlooking = props.enableOverlooking
+		map?.setEnableOverlooking(enableOverlooking)
+	})
+
+	watchEffect(() => {
+		const enableSatellite = props.enableSatellite
+		map?.setEnableSatellite(enableSatellite)
+	})
+
+	watchEffect(() => {
+		const enableTraffic = props.enableTraffic
+		map?.setEnableTraffic(enableTraffic)
+	})
+
+	watchEffect(() => {
+		const enablePoi = props.enablePoi
+		map?.setEnablePoi(enablePoi)
+	})
+
+	watchEffect(() => {
+		const enableBuilding = props.enableBuilding
+		map?.setEnableBuilding(enableBuilding)
+	})
+
+	watchEffect(() => {
+		const showLocation = props.showLocation
+		map?.setShowLocation(showLocation)
+	})
+
+	watchEffect(() => {
+		const enableIndoorMap = props.enableIndoorMap
+		map?.setEnableIndoorMap(enableIndoorMap)
+	})
+
+	const setDefaultOptions = () => {
+		map?.setCenter(props.latitude, props.longitude, false)
+		map?.setScale(props.scale, false)
+		map?.setTheme(props.theme)
+		map?.setMinScale(props.minScale)
+		map?.setMaxScale(props.maxScale)
+		map?.setLayerStyle(props.layerStyle)
+		map?.enable3D(props.enable3D)
+		map?.showCompass(props.showCompass)
+		map?.enableZoom(props.enableZoom)
+		map?.enableScroll(props.enableScroll)
+		map?.enableRotate(props.enableRotate)
+		map?.setRotate(props.rotate, false)
+		map?.setSkew(props.skew, false)
+		map?.setEnableOverlooking(props.enableOverlooking)
+		let satellite = props.theme == 'satellite'
+		map?.setEnableSatellite(satellite || props.enableSatellite)
+		map?.setEnableTraffic(props.enableTraffic)
+		map?.setEnablePoi(props.enablePoi)
+		map?.setEnableBuilding(props.enable3D || props.enableBuilding)
+		map?.setShowLocation(props.showLocation)
+		map?.setEnableIndoorMap(props.enableIndoorMap)
+		if(props.includePoints != null){
+			map?.setIncludePoints(props.includePoints, false)
+		}
+		const markers = props.markers
+		if(markers != null){
+			map?.setMarkers(markers!)
+		}
+		const polyline = props.polyline
+		if(polyline != null){
+			map?.setPolyline(polyline!)
+		}
+		const circles = props.circles
+		if(circles != null){
+			map?.setCircle(circles!)
+		}
+		const polygons = props.polygons
+		if(polygons != null){
+			map?.setPolygon(polygons!)
+		}
+		const controls = props.controls
+		if(controls != null){
+			map?.setControl(controls!)
+		}
+	}
+
+	const onMapLoadedCallback = (customEvent : UniNativeViewEvent) => {
+		const mapUpdatedEventDetail : UniMapUpdatedEventDetail = {}
+		const event = new UniMapUpdatedEvent(customEvent.type, mapUpdatedEventDetail)
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("updated", event)
+	}
+
+	function getDetailNumber(detail : any, key : string) : number | null {
+		// #ifdef APP-ANDROID
+		// #ifdef VUE3_VAPOR
+		return detail[key] as number | null
+		// #endif
+		// #ifndef VUE3_VAPOR
+		const jsonObject = detail as UTSJSONObject
+		return jsonObject.getNumber(key)
+		// #endif
+		// #endif
+		// #ifndef APP-ANDROID
+		return detail[key] as number | null
+		// #endif
+	}
+
+	function getDetailString(detail : any, key : string) : string | null {
+		// #ifdef APP-ANDROID
+		// #ifdef VUE3_VAPOR
+		return detail[key] as string | null
+		// #endif
+		// #ifndef VUE3_VAPOR
+		const jsonObject = detail as UTSJSONObject
+		return jsonObject.getString(key)
+		// #endif
+		// #endif
+		// #ifndef APP-ANDROID
+		return detail[key] as string | null
+		// #endif
+	}
+
+	const onMapTapCallback = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapTapEventDetail : UniMapTapEventDetail = {
+			latitude: getDetailNumber(detail, "latitude"),
+			longitude: getDetailNumber(detail, "longitude")
+		}
+		const eventX = getDetailNumber(detail, "x") ?? 0
+		const eventY = getDetailNumber(detail, "y") ?? 0
+		const domRect = natvieElement.value!.getBoundingClientRect()
+
+		const x = domRect.x + eventX
+		const y = domRect.y + eventY
+		const clientX = x
+		const clientY = y
+
+		const dx = getDetailNumber(detail, "dx") ?? 0
+		const dy = getDetailNumber(detail, "dy") ?? 0
+		const pageX = x + dx
+		const pageY = y + dy
+
+		const screenX = getDetailNumber(detail, "screenX") ?? 0
+		const screenY = getDetailNumber(detail, "screenY") ?? 0
+		const event = new UniMapTapEvent(customEvent.type, x, y, clientX, clientY, pageX, pageY, screenX, screenY)
+		event.detail = mapTapEventDetail
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("click", event)
+		emit("tap", event)
+	}
+
+	const onMapRegionChange = (customEvent : UniNativeViewEvent) => {
+		const content = customEvent.detail
+		const type = getDetailString(content, "type") ?? customEvent.type
+		const causedBy = content["causedBy"]
+		const mapRegionChangeEventDetail : UniMapRegionChangeEventDetail = {
+			skew: getDetailNumber(content, "skew"),
+			rotate: getDetailNumber(content, "rotate")
+		}
+		const event = new UniMapRegionChangeEvent(type, mapRegionChangeEventDetail)
+		if (causedBy != null) {
+			event.causedBy = causedBy as string | null
+		}
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("regionchange", event)
+	}
+	const onMapMarkerTap = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapMarkerTapEventDetail : UniMapMarkerTapEventDetail = {
+			markerId: getDetailNumber(detail, "markerId")
+		}
+
+		const eventX = getDetailNumber(detail, "x") ?? 0
+		const eventY = getDetailNumber(detail, "y") ?? 0
+		const domRect = natvieElement.value!.getBoundingClientRect()
+		const x = domRect.x + eventX
+		const y = domRect.y + eventY
+		const clientX = x
+		const clientY = y
+
+		const dx = getDetailNumber(detail, "dx") ?? 0
+		const dy = getDetailNumber(detail, "dy") ?? 0
+		const pageX = x + dx
+		const pageY = y + dy
+
+		const screenX = getDetailNumber(detail, "screenX") ?? 0
+		const screenY = getDetailNumber(detail, "screenY") ?? 0
+		const event = new UniMapMarkerTapEvent(customEvent.type, x, y, clientX, clientY, pageX, pageY, screenX, screenY)
+		event.detail = mapMarkerTapEventDetail
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("markertap", event)
+	}
+	const onMapControlTap = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapControlTapEventDetail : UniMapControlTapEventDetail = {
+			controlId: getDetailNumber(detail, "controlId")
+		}
+		const event = new UniMapControlTapEvent(customEvent.type, mapControlTapEventDetail)
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("controltap", event)
+	}
+	const onMapAnchorPointTap = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapAnchorPointTapEventDetail : UniMapAnchorPointTapEventDetail = {
+			latitude: getDetailNumber(detail, "latitude"),
+			longitude: getDetailNumber(detail, "longitude")
+		}
+
+		const eventX = getDetailNumber(detail, "x") ?? 0
+		const eventY = getDetailNumber(detail, "y") ?? 0
+		const domRect = natvieElement.value!.getBoundingClientRect()
+		const x = domRect.x + eventX
+		const y = domRect.y + eventY
+		const clientX = x
+		const clientY = y
+
+		const dx = getDetailNumber(detail, "dx") ?? 0
+		const dy = getDetailNumber(detail, "dy") ?? 0
+		const pageX = x + dx
+		const pageY = y + dy
+
+		const screenX = getDetailNumber(detail, "screenX") ?? 0
+		const screenY = getDetailNumber(detail, "screenY") ?? 0
+		const event = new UniMapAnchorPointTapEvent(customEvent.type, x, y, clientX, clientY, pageX, pageY, screenX, screenY)
+		event.detail = mapAnchorPointTapEventDetail
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("anchorpointtap", event)
+	}
+	const onMapPoiTap = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapPoiTapEventDetail : UniMapPoiTapEventDetail = {
+			latitude: getDetailNumber(detail, "latitude"),
+			longitude: getDetailNumber(detail, "longitude"),
+			name: getDetailString(detail, "name")
+		}
+
+		const eventX = getDetailNumber(detail, "x") ?? 0
+		const eventY = getDetailNumber(detail, "y") ?? 0
+		const domRect = natvieElement.value!.getBoundingClientRect()
+		const x = domRect.x + eventX
+		const y = domRect.y + eventY
+		const clientX = x
+		const clientY = y
+
+		const dx = getDetailNumber(detail, "dx") ?? 0
+		const dy = getDetailNumber(detail, "dy") ?? 0
+		const pageX = x + dx
+		const pageY = y + dy
+
+		const screenX = getDetailNumber(detail, "screenX") ?? 0
+		const screenY = getDetailNumber(detail, "screenY") ?? 0
+		const event = new UniMapPoiTapEvent(customEvent.type, x, y, clientX, clientY, pageX, pageY, screenX, screenY)
+		event.detail = mapPoiTapEventDetail
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("poitap", event)
+	}
+
+	const onCalloutTap = (customEvent : UniNativeViewEvent) => {
+		const detail = customEvent.detail
+		const mapCalloutTapEventDetail : UniMapCalloutTapEventDetail = {
+			markerId: getDetailNumber(detail, "markerId")
+		}
+		const event = new UniMapCalloutTapEvent(customEvent.type, mapCalloutTapEventDetail)
+		event.target = mapElem.value!
+		event.currentTarget = mapElem.value!
+		emit("callouttap", event)
+	}
+
+	const onObjectInit = (e : UniNativeViewInitEvent) => {
+		// #ifdef APP-HARMONY
+		const onReady = () : void => {
+			setDefaultOptions()
+		}
+		const emits = { onMapTapCallback, onMapPoiTap, onMapLoadedCallback, onMapMarkerTap, onMapRegionChange };
+		map = new TencentMap(e.detail.element, onReady, emits);
+		// #endif
+		// #ifndef APP-HARMONY
+		map = new TencentMap(e.detail.element);
+		setTimeout(() => {
+			setDefaultOptions()
+		}, 0);
+		// #endif
+	}
+
+	onUnmounted(() => {
+		map?.destroy()
+		map = null
+	})
+</script>
+
+<style>
+	.uni-root {}
+</style>

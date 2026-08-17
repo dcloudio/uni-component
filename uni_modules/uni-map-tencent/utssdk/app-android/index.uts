@@ -1,0 +1,831 @@
+import TencentMapInitializer from "com.tencent.tencentmap.mapsdk.maps.TencentMapInitializer"
+import TencentLocationManager from "com.tencent.map.geolocation.TencentLocationManager"
+import { Marker as BridgeMarker, Polyline as BridgePolyline, LocationObject as BridgeLatLng, Polygon as BridgePolygon, Circle as BridgeCircle, Control as BridgeControl, ControlPosition as BridgePosition, Bounds as BridgeBounds, CreateMapContext, MapContext, MapContextMoveToLocationOptions, MapContextIncludePointsOptions, MapContextRemoveGroundOverlayOptions, MapContextGetScaleOptions, MapContextGetRegionOptions, MapContextAddMarkersOptions, MapContextGetCenterLocationOptions, MapContextRemoveMarkersOptions, MapContextGetScaleResult, MapContextTranslateMarkerOptions, MapContextMoveAlongOptions, MapContextGetRegionResult, MapContextAddGroundOverlayOptions, MapContextUpdateGroundOverlayOptions } from "../interface";
+export {
+	Marker, Polyline, LocationObject, Polygon, Control, ControlPosition, Circle,
+	MapMarkerCallout, MapMarkerLabel, Anchor, Bounds, CreateMapContext, MapContextGetCenterLocationOptions,
+	MapContextMoveToLocationOptions, MapContextTranslateMarkerOptions, MapContextIncludePointsOptions,
+	MapContextGetRegionResult, MapContextGetRegionOptions, MapContextGetScaleResult,
+	MapContextGetScaleOptions, MapContextAddGroundOverlayOptions, MapContextAddMarkersOptions,
+	MapContextMoveAlongOptions, MapContextRemoveGroundOverlayOptions, MapContextRemoveMarkersOptions,
+	MapContextUpdateGroundOverlayOptions, MapContext, MapContextFail
+} from "../interface";
+import { MapContextFailImpl, getErrcode } from '../unierror';
+import { MarkerModel, CalloutModel } from "uts.sdk.modules.uniMapTencent.marker"
+import { Polyline } from "uts.sdk.modules.uniMapTencent.polyline"
+import { Polygon } from "uts.sdk.modules.uniMapTencent.polygon"
+import { Circle } from "uts.sdk.modules.uniMapTencent.circle"
+import { Control, Position } from "uts.sdk.modules.uniMapTencent.control";
+import { LatLng } from "uts.sdk.modules.uniMapTencent.latlng";
+import { Bounds, Ground } from "uts.sdk.modules.uniMapTencent.ground"
+import UniElement from "io.dcloud.uniapp.runtime.UniElement";
+// #ifdef UNI-APP-X && !VUE3-VAPOR
+import PageNode from "io.dcloud.uniapp.dom.node.PageNode"
+import INodeData from "io.dcloud.uniapp.interfaces.INodeData"
+// #endif
+import View from 'android.view.View';
+import WeakReference from 'java.lang.ref.WeakReference';
+
+
+export class UniMapElement
+	extends UniViewElementImpl
+// #ifdef UNI-APP-X && !VUE3-VAPOR
+	implements UniBuiltInComponent 
+// #endif
+{
+	private internalMap : IInternalMap | null = null;
+	
+// #ifdef UNI-APP-X && !VUE3-VAPOR
+	constructor(data : INodeData, pageNode : PageNode) {
+		super(data, pageNode);
+	}
+// #endif
+
+// #ifdef VUE3-VAPOR
+	constructor() {
+		super()
+	}
+// #endif
+
+	override tagName: string = 'MAP'
+	override nodeName: string = 'MAP'
+
+	setMap(map : IInternalMap) {
+		this.internalMap = map
+	}
+	
+	override getAndroidView<T extends View>(): T | null {
+		const nativeElement = this.firstChild as UniNativeViewElement
+		if (nativeElement == null){
+			return null
+		} else {
+			return nativeElement.getAndroidView() as T | null
+		}
+	}
+	
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		const points = options.path.map((bridgeLatlng : BridgeLatLng) : LatLng => {
+			return convertLatlng(bridgeLatlng)
+		})
+	
+		this.internalMap!.moveAlong(options.markerId.toInt(), points, options.duration?.toDouble(), new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "moveAlong:ok" })
+					options.complete?.({ "errMsg": "moveAlong:ok" })
+				} else {
+					const error = new MapContextFailImpl(getErrcode(500003))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	}
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		const latlng = new LatLng(options.destination.latitude.toDouble(), options.destination.longitude.toDouble())
+		this.internalMap!.translateMarker(options.markerId.toInt(), latlng, options.rotate?.toDouble(), options.moveWithRotate, options.duration?.toDouble(), new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "translateMarker:ok" })
+					options.complete?.({ "errMsg": "translateMarker:ok" })
+				} else {
+					const error = new MapContextFailImpl(getErrcode(500003))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	}
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		const southwest = options.bounds.southwest
+		const northeast = options.bounds.northeast
+		const bounds = new Bounds(convertLatlng(southwest), convertLatlng(northeast))
+		const ground = new Ground(options.id, UTSAndroid.convert2AbsFullPath(options.src), bounds)
+		this.internalMap!.addGroundOverlay(ground, new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "addGroundOverlay:ok" })
+					options.complete?.({ "errMsg": "addGroundOverlay:ok" })
+				} else {
+					let errCode = 500012
+					if (map["errMsg"] == "network image loading failed") {
+						errCode = 500006
+					}
+					const error = new MapContextFailImpl(getErrcode(errCode))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	}
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		const southwest = options.bounds.southwest
+		const northeast = options.bounds.northeast
+		const bounds = new Bounds(convertLatlng(southwest), convertLatlng(northeast))
+		const ground = new Ground(options.id, UTSAndroid.convert2AbsFullPath(options.src), bounds)
+		this.internalMap!.updateGroundOverlay(ground, new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "updateGroundOverlay:ok" })
+					options.complete?.({ "errMsg": "updateGroundOverlay:ok" })
+				} else {
+					let errCode = 500012
+					if (map["errMsg"] == "network image loading failed") {
+						errCode = 500006
+					}
+					const error = new MapContextFailImpl(getErrcode(errCode))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	}
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		this.internalMap!.removeGroundOverlay(options.id, new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "removeGroundOverlay:ok" })
+					options.complete?.({ "errMsg": "removeGroundOverlay:ok" })
+				} else {
+					let errCode = 500012
+					if (map["errMsg"] == "id not found") {
+						errCode = 500005
+					}
+					const error = new MapContextFailImpl(getErrcode(errCode))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	
+	}
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		const latlng = this.internalMap!.getCenterLocation()
+		if (latlng.latitude == 0.0.toDouble() || latlng.longitude == 0.0.toDouble()) {
+			const error = new MapContextFailImpl(getErrcode(500001))
+			options.fail?.(error)
+			options.complete?.(error)
+		} else {
+			const result = new BridgeLatLng(latlng.latitude, latlng.longitude)
+			options.success?.(result)
+			options.complete?.(result)
+		}
+	}
+	
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		const markerList : Array<MarkerModel> = [];
+		options.markers.forEach((value : BridgeMarker) => {
+			const markerModel = new MarkerModel(value.id.toInt(), value.latitude.toDouble(), value.longitude.toDouble(), UTSAndroid.convert2AbsFullPath(value.iconPath))
+			markerModel.title = value.title
+			markerModel.rotate = value.rotate?.toDouble() ?? 0.0.toDouble()
+			markerModel.alpha = value.alpha?.toFloat() ?? 1.0.toFloat()
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (value.width != null) {
+				markerModel.width = value.width!.toDouble() * density
+			}
+			if (value.height != null) {
+				markerModel.height = value.height!.toDouble() * density
+			}
+			markerModel.ariaLabel = value.ariaLabel
+			const anchor = new FloatArray(2)
+			anchor[0] = 0.5.toFloat()
+			anchor[1] = 1.0.toFloat()
+			if (value.anchor != null) {
+				anchor[0] = value.anchor!.x.toFloat()
+				anchor[1] = value.anchor!.y.toFloat()
+			}
+			markerModel.anchor = anchor
+			
+			const callout = value.callout
+			if(callout != null) {
+				const calloutModel = new CalloutModel()
+				calloutModel.content = callout.content
+				if (callout.color != null) {
+					const color = callout.color!
+					calloutModel.color = UTSAndroid.convertToNativeColor(color, 0)
+				}
+				if (callout.fontSize != null) {
+					calloutModel.fontSize = callout.fontSize!.toDouble() * density
+				}
+				if (callout.borderRadius != null) {
+					calloutModel.borderRadius = callout.borderRadius!.toDouble() * density
+				}
+				if (callout.borderWidth != null) {
+					calloutModel.borderWidth = callout.borderWidth!.toDouble() * density
+				}
+				if (callout.borderColor != null) {
+					const borderColor = callout.borderColor!
+					calloutModel.borderColor = UTSAndroid.convertToNativeColor(borderColor, 0)
+				}
+				if (callout.bgColor != null) {
+					const bgColor = callout.bgColor!
+					calloutModel.bgColor = UTSAndroid.convertToNativeColor(bgColor, 0)
+				}
+				if (callout.padding != null) {
+					calloutModel.padding = callout.padding!.toDouble() * density
+				}
+				const display = callout.display == "ALWAYS"
+				calloutModel.display = display
+				calloutModel.textAlign = callout.textAlign
+				
+				markerModel.callout = calloutModel
+			}
+			
+			markerList.push(markerModel)
+		})
+	
+		if (options.clear) {
+			this.internalMap!.setMarkers(markerList)
+		} else {
+			this.internalMap!.addMarkers(markerList)
+		}
+		options.success?.({ "errMsg": "addMarkers:ok" })
+		options.complete?.({ "errMsg": "addMarkers:ok" })
+	}
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		const ids = options.markerIds.map((value : number) : Int => {
+			return value.toInt()
+		})
+		this.internalMap!.removeMarkers(ids)
+		options.success?.({ "errMsg": "removeMarkers:ok" })
+		options.complete?.({ "errMsg": "removeMarkers:ok" })
+	}
+	getScale(options : MapContextGetScaleOptions) : void {
+		const scale = this.internalMap!.getScale()
+		const result : MapContextGetScaleResult = new MapContextGetScaleResult(scale!)
+		options.success?.(result)
+		options.complete?.(result)
+	}
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		let latlng : LatLng | null = null
+		if (options.latitude != null || options.longitude != null) {
+			latlng = new LatLng(options.latitude!.toDouble(), options.longitude!.toDouble())
+		}
+	
+		this.internalMap!.moveToLocation(latlng, new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, string>
+				if (map["type"] == "success") {
+					options.success?.({ "errMsg": "moveToLocation:ok" })
+					options.complete?.({ "errMsg": "moveToLocation:ok" })
+				} else {
+					const error = new MapContextFailImpl(getErrcode(500002))
+					options.fail?.(error)
+					options.complete?.(error)
+				}
+			}
+		}))
+	}
+	getRegion(options : MapContextGetRegionOptions) : void {
+		const bounds = this.internalMap!.getRegion()
+		const southwest = bounds.southwest
+		const northeast = bounds.northeast
+		const sw = new BridgeLatLng(southwest.latitude, southwest.longitude)
+		const ne = new BridgeLatLng(northeast.latitude, northeast.longitude)
+		const result : MapContextGetRegionResult = new MapContextGetRegionResult(sw, ne)
+		options.success?.(result)
+		options.complete?.(result)
+	}
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		const points = options.points.map((value : BridgeLatLng) : LatLng => {
+			return new LatLng(value.latitude.toDouble(), value.longitude.toDouble())
+		})
+		this.internalMap!.setIncludePoints(points)
+		options.success?.({ "errMsg": "includePoints:ok" })
+		options.complete?.({ "errMsg": "includePoints:ok" })
+	}
+	
+}
+
+export class UTSAcvitiyLifeCycleCallback extends UniActivityLifeCycleCallback {
+	internalMap = new TencentMapImpl();
+	constructor(map : TencentMapImpl) {
+		super()
+		this.internalMap = map;
+	}
+	override onStart(params : UniActivityParams) {
+		this.internalMap.onStart();
+	}
+	override onResume(params : UniActivityParams) {
+		this.internalMap.onResume();
+	}
+	override onPause(params : UniActivityParams) {
+		this.internalMap.onPause();
+	}
+	override onStop(params : UniActivityParams) {
+		this.internalMap.onStop();
+	}
+	override onDestroy(params : UniActivityParams) {
+		this.internalMap.onDestroy();
+	}
+}
+
+export class TencentMap {
+	$element : UniNativeViewElement;
+	internalMap = new TencentMapImpl();
+	acvitiyLifeCycleCallback : UTSAcvitiyLifeCycleCallback | null = null;
+
+	constructor(element : UniNativeViewElement) {
+		this.$element = element;
+		(this.$element.parentElement as UniMapElement).setMap(this.internalMap)
+		this.start();
+	}
+
+
+	start() {
+		// const context = UTSAndroid.getUniActivity()!!
+		TencentMapInitializer.setAgreePrivacy(true);
+		TencentLocationManager.setUserAgreePrivacy(true);
+		// TencentMapInitializer.start(context);
+		let mapView = this.internalMap.getMap(this.$element.getAndroidActivity()!!);
+		this.$element.bindAndroidView(mapView);
+		this.internalMap.onStart();
+		this.internalMap.onResume();
+		this.acvitiyLifeCycleCallback = new UTSAcvitiyLifeCycleCallback(this.internalMap);
+		const pages = getCurrentPages()
+		const page = pages[pages.length - 1]
+		UTSAndroid.onActivityCallback(this.acvitiyLifeCycleCallback!, page.route)
+
+		this.setOnMapLoadedCallback()
+		this.setOnMapClickCallback()
+		this.setOnMapMarkerTap()
+		this.setOnMapControlTap()
+		this.setOnMapAnchorPointTap()
+		this.setOnMapPoiTap()
+		this.setOnMapCalloutTap()
+		setTimeout(() => {
+			this.setOnMapRegionChange()
+		}, 500);
+	}
+
+	destroy() {
+		this.internalMap.onPause();
+		this.internalMap.onStop();
+		this.internalMap.onDestroy();
+		UTSAndroid.offActivityCallback(this.acvitiyLifeCycleCallback!)
+	}
+
+	setCenter(latitude : number, longitude : number, animate: boolean= true) {
+		this.internalMap.setCenter(latitude.toDouble(), longitude.toDouble(), animate);
+	}
+
+	setMinScale(zoom : number) {
+		this.internalMap.setMinScale(zoom.toInt());
+	}
+
+	setMaxScale(zoom : number) {
+		this.internalMap.setMaxScale(zoom.toInt());
+	}
+
+	setScale(zoom : number, animate: boolean= true) {
+		this.internalMap.setScale(zoom.toInt(), animate)
+	}
+
+	getScale() : number {
+		return this.internalMap.getScale()
+	}
+
+	setTheme(theme : string) {
+		this.internalMap.setTheme(theme);
+	}
+
+	setLayerStyle(id : string) {
+		this.internalMap.setLayerStyle(id);
+	}
+
+	setMarkers(markers : Array<BridgeMarker>) {
+		const markerList : Array<MarkerModel> = [];
+		markers.forEach((value : BridgeMarker) => {
+			const markerModel = new MarkerModel(value.id.toInt(), value.latitude.toDouble(), value.longitude.toDouble(), UTSAndroid.convert2AbsFullPath(value.iconPath))
+			markerModel.title = value.title
+			markerModel.rotate = value.rotate?.toDouble() ?? 0.0.toDouble()
+			markerModel.alpha = value.alpha?.toFloat() ?? 1.0.toFloat()
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (value.width != null) {
+				markerModel.width = value.width!.toDouble() * density
+			}
+			if (value.height != null) {
+				markerModel.height = value.height!.toDouble() * density
+			}
+			markerModel.ariaLabel = value.ariaLabel
+			const anchor = new FloatArray(2)
+			anchor[0] = 0.5.toFloat()
+			anchor[1] = 1.0.toFloat()
+			if (value.anchor != null) {
+				anchor[0] = value.anchor!.x.toFloat()
+				anchor[1] = value.anchor!.y.toFloat()
+			}
+			markerModel.anchor = anchor
+			
+			const callout = value.callout
+			if(callout != null) {
+				const calloutModel = new CalloutModel()
+				calloutModel.content = callout.content
+				if (callout.color != null) {
+					const color = callout.color!
+					calloutModel.color = UTSAndroid.convertToNativeColor(color, 0)
+				}
+				if (callout.fontSize != null) {
+					calloutModel.fontSize = callout.fontSize!.toDouble() * density
+				}
+				if (callout.borderRadius != null) {
+					calloutModel.borderRadius = callout.borderRadius!.toDouble() * density
+				}
+				if (callout.borderWidth != null) {
+					calloutModel.borderWidth = callout.borderWidth!.toDouble() * density
+				}
+				if (callout.borderColor != null) {
+					const borderColor = callout.borderColor!
+					calloutModel.borderColor = UTSAndroid.convertToNativeColor(borderColor, 0)
+				}
+				if (callout.bgColor != null) {
+					const bgColor = callout.bgColor!
+					calloutModel.bgColor = UTSAndroid.convertToNativeColor(bgColor, 0)
+				}
+				if (callout.padding != null) {
+					calloutModel.padding = callout.padding!.toDouble() * density
+				}
+				const display = callout.display == "ALWAYS"
+				calloutModel.display = display
+				calloutModel.textAlign = callout.textAlign
+				
+				markerModel.callout = calloutModel
+			}
+			markerList.push(markerModel)
+		})
+
+		this.internalMap.setMarkers(markerList)
+	}
+
+	setPolyline(polylines : Array<BridgePolyline>) {
+		const polylineList : Array<Polyline> = [];
+		polylines.forEach((value : BridgePolyline) => {
+			const latlngs : Array<uts.sdk.modules.uniMapTencent.latlng.LatLng> = []
+			const bridgeLatLngs = value.points
+			//转换latlng
+			bridgeLatLngs.forEach((value : BridgeLatLng) => {
+				const latlng = new uts.sdk.modules.uniMapTencent.latlng.LatLng(value.latitude.toDouble(), value.longitude.toDouble())
+				latlngs.push(latlng)
+			})
+			const polyline = new Polyline(latlngs)
+			if (value.color != null) {
+				const color = value.color!
+				polyline.color = UTSAndroid.convertToNativeColor(color, 0)
+			}
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (value.width != null) {
+				polyline.width = value.width!.toDouble() * density
+			}
+			polyline.dottedLine = value.dottedLine ?? false
+			polyline.arrowLine = value.arrowLine ?? false
+			if (value.arrowIconPath != null) {
+				polyline.arrowIconPath = UTSAndroid.convert2AbsFullPath(value.arrowIconPath!)
+			}
+			if (value.colorList != null) {
+				const convertedColorList : Array<Int> = []
+				const colorList = value.colorList!
+				colorList.forEach((colorStr : string) => {
+					convertedColorList.push(UTSAndroid.convertToNativeColor(colorStr, 0))
+				})
+				polyline.colorList = convertedColorList
+			}
+
+			polylineList.push(polyline)
+
+		})
+		this.internalMap.setPolyline(polylineList)
+	}
+
+	setCircle(circles : Array<BridgeCircle>) {
+		const circleList : Array<Circle> = [];
+		circles.forEach((value : BridgeCircle) => {
+			const circle = new Circle(value.latitude.toDouble(), value.longitude.toDouble(), value.radius.toDouble())
+			if (value.color != null) {
+				const color = value.color!
+				circle.color = UTSAndroid.convertToNativeColor(color, 0)
+			}
+			if (value.fillColor != null) {
+				const fillColor = value.fillColor!
+				circle.fillColor = UTSAndroid.convertToNativeColor(fillColor, 0)
+			}
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (value.strokeWidth != null) {
+				circle.strokeWidth = value.strokeWidth!.toDouble() * density
+			}
+			circleList.push(circle)
+
+		})
+		this.internalMap.setCircle(circleList)
+	}
+
+	setControl(controls : Array<BridgeControl>) {
+		const controlList : Array<Control> = [];
+		controls.forEach((value : BridgeControl) => {
+			const position = new Position()
+			const bridgePosition = value.position
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (bridgePosition.left != null) {
+				const left = bridgePosition.left!;
+				position.left = left.toDouble() * density
+			}
+			if (bridgePosition.top != null) {
+				const top = bridgePosition.top!
+				position.top = top.toDouble() * density
+			}
+			if (bridgePosition.width != null) {
+				const width = bridgePosition.width!
+				position.width = width.toDouble() * density
+			}
+			if (bridgePosition.height != null) {
+				const height = bridgePosition.height!
+				position.height = height.toDouble() * density
+			}
+
+			const control = new Control(position, UTSAndroid.convert2AbsFullPath(value.iconPath))
+			control.id = value.id?.toInt()
+			control.clickable = value.clickable
+			controlList.push(control)
+		})
+		this.internalMap.setControl(controlList)
+	}
+
+	setPolygon(polygons : Array<BridgePolygon>) {
+		const polygonList : Array<Polygon> = [];
+		polygons.forEach((value : BridgePolygon) => {
+			const latlngs : Array<uts.sdk.modules.uniMapTencent.latlng.LatLng> = []
+			const bridgeLatLngs = value.points
+			//转换latlng
+			bridgeLatLngs.forEach((value : BridgeLatLng) => {
+				const latlng = new uts.sdk.modules.uniMapTencent.latlng.LatLng(value.latitude.toDouble(), value.longitude.toDouble())
+				latlngs.push(latlng)
+			})
+			const polygon = new Polygon(latlngs)
+			const density = UTSAndroid.getAppContext()!.resources.displayMetrics.density
+			if (value.strokeWidth != null) {
+				polygon.strokeWidth = value.strokeWidth!.toDouble() * density
+			}
+			if (value.strokeColor != null) {
+				const strokeColor = value.strokeColor!
+				polygon.strokeColor = UTSAndroid.convertToNativeColor(strokeColor, 0)
+			}
+
+			if (value.fillColor != null) {
+				const fillColor = value.fillColor!
+				polygon.fillColor = UTSAndroid.convertToNativeColor(fillColor, 0)
+			}
+
+			polygon.zIndex = value.zIndex?.toDouble()
+			polygonList.push(polygon)
+
+		})
+		this.internalMap.setPolygon(polygonList)
+	}
+
+	setIncludePoints(points : Array<BridgeLatLng> | null, animate: boolean= true) {
+		const latlngs : Array<LatLng> = []
+		points?.forEach((value : BridgeLatLng) => {
+			latlngs.push(new LatLng(value.latitude.toDouble(), value.longitude.toDouble()))
+		})
+		this.internalMap.setIncludePoints(latlngs, animate)
+	}
+
+	enable3D(enable : boolean) {
+		this.internalMap.enable3D(enable);
+	}
+
+	showCompass(enable : boolean) {
+		this.internalMap.showCompass(enable);
+	}
+
+	enableZoom(enable : boolean) {
+		this.internalMap.enableZoom(enable);
+	}
+
+	enableScroll(enable : boolean) {
+		this.internalMap.enableScroll(enable);
+	}
+
+	enableRotate(enable : boolean) {
+		this.internalMap.enableRotate(enable);
+	}
+
+	setRotate(rotate : number, animate: boolean= true) {
+		this.internalMap.setRotate(rotate.toFloat(), animate);
+	}
+
+	setSkew(skew : number, animate: boolean= true) {
+		this.internalMap.setSkew(skew.toFloat(), animate);
+	}
+
+	setEnableOverlooking(enable : boolean) {
+		this.internalMap.setEnableOverlooking(enable);
+	}
+
+	setEnableSatellite(enable : boolean) {
+		this.internalMap.setEnableSatellite(enable);
+	}
+
+	setEnableTraffic(enable : boolean) {
+		this.internalMap.setEnableTraffic(enable);
+	}
+
+	setEnablePoi(enable : boolean) {
+		this.internalMap.setEnablePoi(enable);
+	}
+
+	setEnableBuilding(enable : boolean) {
+		this.internalMap.setEnableBuilding(enable);
+	}
+
+	setShowLocation(show : boolean) {
+		this.requestLocationPermission(() => {
+			this.internalMap.setShowLocation(show);
+		})
+	}
+
+	requestLocationPermission(callback : () => void) {
+		const context = UTSAndroid.getUniActivity()!
+		if (UTSAndroid.checkSystemPermissionGranted(context, ["android.permission.ACCESS_FINE_LOCATION"])) {
+			callback()
+		} else {
+			UTSAndroid.requestSystemPermission(context, ["android.permission.ACCESS_FINE_LOCATION"],
+				(allRight : boolean, _ : string[]) => {
+					if (allRight) {
+						callback()
+					}
+				},
+				(p0 : boolean, p1 : string[]) => {
+
+				})
+		}
+	}
+
+	setEnableIndoorMap(enable : boolean) {
+		this.internalMap.setEnableIndoorMap(enable);
+	}
+
+	setOnMapLoadedCallback() {
+		const element = this.$element
+		this.internalMap.setOnMapLoadedCallback(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const event = new UniNativeViewEvent(map["type"] as string, {} as UTSJSONObject)
+				element.dispatchEvent("updated", event)
+			}
+		}));
+	}
+
+	setOnMapClickCallback() {
+		const element = this.$element
+		this.internalMap.setOnMapClickCallback(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"] as LinkedHashMap<string, any>
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("tapNative", event)
+			}
+		}));
+	}
+
+	setOnMapRegionChange() {
+		const element = this.$element
+		this.internalMap.setOnMapRegionChange(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const jsonObject = new UTSJSONObject(detail)
+				jsonObject["type"] = map["type"]
+				jsonObject["causedBy"] = map["causedBy"]
+				const event = new UniNativeViewEvent(map["type"] as string, jsonObject)
+				element.dispatchEvent("regionchange", event)
+			}
+		}));
+	}
+
+	setOnMapMarkerTap() {
+		const element = this.$element
+		this.internalMap.setOnMarkerClick(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("markertap", event)
+			}
+		}));
+	}
+
+	setOnMapControlTap() {
+		const element = this.$element
+		this.internalMap.setControlTap(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("controltap", event)
+			}
+		}));
+	}
+
+	setOnMapAnchorPointTap() {
+		const element = this.$element
+		this.internalMap.setMyLocationClick(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("anchorpointtap", event)
+			}
+		}));
+	}
+	setOnMapPoiTap() {
+		const element = this.$element
+		this.internalMap.setPoiTapClick(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("poitap", event)
+			}
+		}));
+	}
+	setOnMapCalloutTap() {
+		const element = this.$element
+		this.internalMap.setOnCalloutClick(new (class implements ICallBack {
+			override callback(param : any | null) {
+				const map = param as LinkedHashMap<string, any>
+				const detail = map["detail"]
+				const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+				element.dispatchEvent("callouttap", event)
+			}
+		}));
+	}
+}
+
+export const createMapContext : CreateMapContext = function (mapId : string, component ?: ComponentPublicInstance | null) : MapContext | null {
+	let mapElement : UniMapElement | null = null;
+	if (component == null) {
+		const pages = getCurrentPages();
+		if (pages.length > 0) {
+			mapElement = pages[pages.length - 1].querySelector('#' + mapId) as UniMapElement | null;
+		}
+	} else {
+		mapElement = component.$el?.parentElement?.querySelector('#' + mapId) as UniMapElement | null;
+	}
+	if (mapElement == null) return null;
+	return new MapContextImpl(mapElement!);
+}
+
+/**
+ * 转换latlng
+ */
+function convertLatlng(bridgeLatlng : BridgeLatLng) : LatLng {
+	return new LatLng(bridgeLatlng.latitude.toDouble(), bridgeLatlng.longitude.toDouble())
+}
+
+class MapContextImpl implements MapContext {
+	private mapElement : WeakReference<UniMapElement>
+	constructor(mapElement : UniMapElement) {
+		this.mapElement = new WeakReference(mapElement)
+	}
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		this.mapElement.get()?.moveAlong(options)
+	}
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		this.mapElement.get()?.translateMarker(options)
+	}
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		this.mapElement.get()?.addGroundOverlay(options)
+	}
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		this.mapElement.get()?.updateGroundOverlay(options)
+	}
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		this.mapElement.get()?.removeGroundOverlay(options)
+	}
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		this.mapElement.get()?.getCenterLocation(options)
+	}
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		this.mapElement.get()?.addMarkers(options)
+	}
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		this.mapElement.get()?.removeMarkers(options)
+	}
+	getScale(options : MapContextGetScaleOptions) : void {
+		this.mapElement.get()?.getScale(options)
+	}
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		this.mapElement.get()?.moveToLocation(options)
+	}
+	getRegion(options : MapContextGetRegionOptions) : void {
+		this.mapElement.get()?.getRegion(options)
+	}
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		this.mapElement.get()?.includePoints(options)
+	}
+}

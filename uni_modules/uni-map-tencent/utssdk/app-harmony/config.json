@@ -1,0 +1,6 @@
+{
+    "dependencies": {
+        "@tencentmap/base": "2.1.1",
+        "@tencentmap/map": "2.1.2"
+    }
+}

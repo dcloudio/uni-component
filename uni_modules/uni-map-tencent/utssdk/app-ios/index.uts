@@ -1,0 +1,697 @@
+import { QMapServices } from "QMapKit" assert { type: "implementationOnly" };
+import { Circle, Control, CreateMapContext, LocationObject, MapContext, MapContextAddGroundOverlayOptions, MapContextAddMarkersOptions, MapContextGetCenterLocationOptions, MapContextGetRegionOptions, MapContextGetRegionResult, MapContextGetScaleOptions, MapContextGetScaleResult, MapContextIncludePointsOptions, MapContextMoveAlongOptions, MapContextMoveToLocationOptions, MapContextRemoveGroundOverlayOptions, MapContextRemoveMarkersOptions, MapContextTranslateMarkerOptions, MapContextUpdateGroundOverlayOptions, Marker, Polygon, Polyline } from "../interface";
+import { Bundle } from 'Foundation';
+import { JSExport } from "JavaScriptCore";
+export {
+	Marker, Polyline, LocationObject, Polygon, Control, ControlPosition, Circle,
+	MapMarkerCallout, MapMarkerLabel, Anchor, Bounds, CreateMapContext, MapContextGetCenterLocationOptions,
+	MapContextMoveToLocationOptions, MapContextTranslateMarkerOptions, MapContextIncludePointsOptions,
+	MapContextGetRegionResult, MapContextGetRegionOptions, MapContextGetScaleResult,
+	MapContextGetScaleOptions, MapContextAddGroundOverlayOptions, MapContextAddMarkersOptions,
+	MapContextMoveAlongOptions, MapContextRemoveGroundOverlayOptions, MapContextRemoveMarkersOptions,
+	MapContextUpdateGroundOverlayOptions, MapContext, MapContextFail
+} from "../interface";
+import { MapContextFailImpl, getErrcode } from '../unierror';
+
+export interface UniMapElement extends JSExport {
+	moveAlong(options : MapContextMoveAlongOptions) : void;
+	translateMarker(options : MapContextTranslateMarkerOptions) : void;
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void;
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void;
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void;
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void;
+	addMarkers(options : MapContextAddMarkersOptions) : void;
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void;
+	getScale(options : MapContextGetScaleOptions) : void;
+	moveToLocation(options : MapContextMoveToLocationOptions) : void;
+	getRegion(options : MapContextGetRegionOptions) : void;
+	includePoints(options : MapContextIncludePointsOptions) : void;
+}
+
+class UniMapElementImpl extends UniElementImpl implements UniMapElement {
+	private internalMap : IInternalMap | null = null
+
+	@UTSiOS.keyword("fileprivate")
+	setMap(internalMap : IInternalMap) {
+		this.internalMap = internalMap
+	}
+
+	override getIOSView() : UIView | null {
+		const nativeElement = this.firstChild as UniNativeViewElement
+		if (nativeElement == null) {
+			return null
+		} else {
+			return nativeElement.getIOSView()
+		}
+	}
+
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		const points = this.convertLatLngArray(options.path)
+		this.internalMap!.moveAlong(markerId = options.markerId.toInt(), path = points, duration = options.duration?.toDouble(), callback = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "moveAlong:ok" })
+				options.complete?.({ "errMsg": "moveAlong:ok" })
+			} else {
+				const error = new MapContextFailImpl(getErrcode(500003))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		const latlng = new DCLatLng(latitude = options.destination.latitude.toDouble(), longitude = options.destination.longitude.toDouble())
+		this.internalMap!.translateMarker(markerId = options.markerId.toInt(), destination = latlng, rotate = options.rotate?.toDouble(), moveWithRotate = options.moveWithRotate, duration = options.duration?.toDouble(), callback = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "translateMarker:ok" })
+				options.complete?.({ "errMsg": "translateMarker:ok" })
+			} else {
+				const error = new MapContextFailImpl(getErrcode(500003))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		const southwest = this.convertLatLng(options.bounds.southwest)
+		const northeast = this.convertLatLng(options.bounds.northeast)
+		const bounds = new DCBounds(southwest = southwest, northeast = northeast)
+		var src = ""
+		if (options.src.startsWith("http")) {
+			src = options.src
+		} else {
+			src = UTSiOS.convert2AbsFullPath(options.src)
+		}
+		const ground = new DCGroundOverlayModel(id = options.id, src = src, bounds = bounds)
+		this.internalMap!.addGroundOverlay(model = ground, callback = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "addGroundOverlay:ok" })
+				options.complete?.({ "errMsg": "addGroundOverlay:ok" })
+			} else {
+				let errCode = 500012
+				if (map["errMsg"] == "network image loading failed") {
+					errCode = 500006
+				}
+				const error = new MapContextFailImpl(getErrcode(errCode))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		const southwest = this.convertLatLng(options.bounds.southwest)
+		const northeast = this.convertLatLng(options.bounds.northeast)
+		const bounds = new DCBounds(southwest = southwest, northeast = northeast)
+		var src = ""
+		if (options.src.startsWith("http")) {
+			src = options.src
+		} else {
+			src = UTSiOS.convert2AbsFullPath(options.src)
+		}
+		const ground = new DCGroundOverlayModel(id = options.id, src = src, bounds = bounds)
+		this.internalMap!.updateGroundOverlay(model = ground, callback = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "updateGroundOverlay:ok" })
+				options.complete?.({ "errMsg": "updateGroundOverlay:ok" })
+			} else {
+				let errCode = 500012
+				if (map["errMsg"] == "network image loading failed") {
+					errCode = 500006
+				}
+				const error = new MapContextFailImpl(getErrcode(errCode))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		this.internalMap!.removeGroundOverlay(id = options.id, callback = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "removeGroundOverlay:ok" })
+				options.complete?.({ "errMsg": "removeGroundOverlay:ok" })
+			} else {
+				let errCode = 500012
+				if (map["errMsg"] == "id not found") {
+					errCode = 500005
+				}
+				const error = new MapContextFailImpl(getErrcode(errCode))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		const latlng = this.internalMap!.getCenterLocation()
+		if (latlng.latitude == 0.0 || latlng.longitude == 0.0) {
+			const error = new MapContextFailImpl(getErrcode(500001))
+			options.fail?.(error)
+			options.complete?.(error)
+		} else {
+			const result = { latitude: latlng.latitude, longitude: latlng.longitude } as LocationObject
+			options.success?.(result)
+			options.complete?.(result)
+		}
+	}
+
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		let markerModels = options.markers.map((marker) : DCMakerModel => {
+			let markerModel = new DCMakerModel(id = marker.id.toInt(), latitude = marker.latitude.toDouble(), longitude = marker.longitude.toDouble(), iconPath = marker.iconPath)
+			markerModel.title = marker.title
+			markerModel.rotate = marker.rotate?.toDouble() ?? 0.0
+			markerModel.alpha = marker.alpha?.toDouble() ?? 1.0
+			markerModel.width = marker.width?.toDouble()
+			markerModel.height = marker.height?.toDouble()
+			markerModel.ariaLabel = marker.ariaLabel
+			let anchor = [new Float(0.5), new Float(1.0)]
+			if (marker.anchor != null) {
+				anchor[0] = new Float(marker.anchor!.x)
+				anchor[1] = new Float(marker.anchor!.y)
+			}
+			markerModel.anchor = anchor
+
+			const callout = marker.callout
+			if (callout != null) {
+				const calloutModel = new DCMarkerCalloutModel()
+				calloutModel.content = callout!.content
+				if (callout!.color != null) {
+					const color = callout!.color!
+					calloutModel.color = UTSiOS.colorWithString(color)
+				}
+				if (callout!.fontSize != null) {
+					calloutModel.fontSize = callout!.fontSize!.toDouble()
+				}
+				if (callout!.borderRadius != null) {
+					calloutModel.borderRadius = callout!.borderRadius!.toDouble()
+				}
+				if (callout!.borderWidth != null) {
+					calloutModel.borderWidth = callout!.borderWidth!.toDouble()
+				}
+				if (callout!.borderColor != null) {
+					const borderColor = callout!.borderColor!
+					calloutModel.borderColor = UTSiOS.colorWithString(borderColor)
+				}
+				if (callout!.bgColor != null) {
+					const bgColor = callout!.bgColor!
+					calloutModel.bgColor = UTSiOS.colorWithString(bgColor)
+				}
+				if (callout!.padding != null) {
+					calloutModel.padding = callout!.padding!.toDouble()
+				}
+				const display = callout!.display == "ALWAYS"
+				calloutModel.display = display
+				calloutModel.textAlign = callout!.textAlign
+
+				markerModel.callout = calloutModel
+			}
+
+			return markerModel
+		})
+		if (options.clear) {
+			this.internalMap!.setMarkers(markerModels = markerModels)
+		} else {
+			this.internalMap!.addMarkers(markerModels = markerModels)
+		}
+		options.success?.({ "errMsg": "addMarkers:ok" })
+		options.complete?.({ "errMsg": "addMarkers:ok" })
+	}
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		const ids = options.markerIds.map((value : number) : Int => {
+			return value.toInt()
+		})
+		this.internalMap!.removeMarkers(ids = ids)
+		options.success?.({ "errMsg": "removeMarkers:ok" })
+		options.complete?.({ "errMsg": "removeMarkers:ok" })
+	}
+	getScale(options : MapContextGetScaleOptions) : void {
+		const scale = this.internalMap!.getScale()
+		const result : MapContextGetScaleResult = { scale: Number.from(scale) }
+		options.success?.(result)
+		options.complete?.(result)
+	}
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		let latlng : DCLatLng | null = null
+		if (options.latitude != null || options.longitude != null) {
+			latlng = new DCLatLng(latitude = options.latitude!.toDouble(), longitude = options.longitude!.toDouble())
+		}
+		this.internalMap!.moveToLocation(latLng = latlng, iCallBack = (param) : void => {
+			const map = param as Map<string, string>
+			if (map["type"] == "success") {
+				options.success?.({ "errMsg": "moveToLocation:ok" })
+				options.complete?.({ "errMsg": "moveToLocation:ok" })
+			} else {
+				const error = new MapContextFailImpl(getErrcode(500002))
+				options.fail?.(error)
+				options.complete?.(error)
+			}
+		})
+	}
+	getRegion(options : MapContextGetRegionOptions) : void {
+		const bounds = this.internalMap!.getRegion()
+		const southwest = bounds.southwest
+		const northeast = bounds.northeast
+		const sw = { latitude: southwest.latitude, longitude: southwest.longitude } as LocationObject
+		const ne = { latitude: northeast.latitude, longitude: northeast.longitude } as LocationObject
+		const result : MapContextGetRegionResult = { southwest: sw, northeast: ne }
+		options.success?.(result)
+		options.complete?.(result)
+	}
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		const points = this.convertLatLngArray(options.points)
+		this.internalMap!.setIncludePoints(points = points, animate = true)
+		options.success?.({ "errMsg": "includePoints:ok" })
+		options.complete?.({ "errMsg": "includePoints:ok" })
+	}
+
+	private convertLatLng(latLng : LocationObject) : DCLatLng {
+		return new DCLatLng(latitude = latLng.latitude.toDouble(), longitude = latLng.longitude.toDouble())
+	}
+
+	private convertLatLngArray(latLngArray : LocationObject[]) : DCLatLng[] {
+		return latLngArray.map((latLng) : DCLatLng => {
+			return this.convertLatLng(latLng)
+		})
+	}
+}
+
+export class TencentMap {
+	$element : UniNativeViewElement;
+	private internalMap = new TencentMapImpl();
+
+	constructor(element : UniNativeViewElement) {
+		this.$element = element;
+		super()
+		this.start();
+		(this.$element.parentElement as UniMapElementImpl).setMap(this.internalMap);
+	}
+
+	start() {
+		let appkey_ios : string | null = Bundle.main.object(forInfoDictionaryKey = "TencentLBSAPIKey") as string | null;
+		if (appkey_ios == null) {
+			return
+		}
+		QMapServices.shared().apiKey = appkey_ios!
+		QMapServices.shared().setPrivacyAgreement(true)
+		let mapView = this.internalMap.getMap();
+		this.$element.bindIOSView(mapView);
+		this.setOnMapLoadedCallback()
+		this.setOnMapClickCallback()
+		this.setOnMapMarkerTap()
+		this.setOnMapControlTap()
+		this.setOnMapAnchorPointTap()
+		this.setOnMapPoiTap()
+		this.setOnMapCalloutTap()
+		setTimeout(() => {
+			this.setOnMapRegionChange()
+		}, 500);
+	}
+
+	destroy() {
+		this.internalMap.destroy()
+	}
+
+	setCenter(latitude : number, longitude : number, animate : boolean = true) {
+		this.internalMap.setCenter(latitude = latitude.toDouble(), longitude = longitude.toDouble(), animate = animate);
+	}
+
+	setMinScale(zoom : number) {
+		this.internalMap.setMinScale(zoom = zoom.toInt());
+	}
+
+	setMaxScale(zoom : number) {
+		this.internalMap.setMaxScale(zoom = zoom.toInt());
+	}
+
+	setScale(zoom : number, animate : boolean = true) {
+		this.internalMap.setScale(zoom = zoom.toInt(), animate = animate)
+	}
+
+	getScale() : number {
+		return Number.from(this.internalMap.getScale())
+	}
+
+	setTheme(theme : string) {
+		this.internalMap.setTheme(theme = theme);
+	}
+
+	setLayerStyle(id : string) {
+		this.internalMap.setLayerStyle(id = id);
+	}
+
+	setMarkers(markers : Marker[]) {
+		let markerModels = markers.map((marker) : DCMakerModel => {
+			let markerModel = new DCMakerModel(id = marker.id.toInt(), latitude = marker.latitude.toDouble(), longitude = marker.longitude.toDouble(), iconPath = marker.iconPath)
+			markerModel.title = marker.title
+			markerModel.rotate = marker.rotate?.toDouble() ?? 0.0
+			markerModel.alpha = marker.alpha?.toDouble() ?? 1.0
+			markerModel.width = marker.width?.toDouble()
+			markerModel.height = marker.height?.toDouble()
+			markerModel.ariaLabel = marker.ariaLabel
+			let anchor = [new Float(0.5), new Float(1.0)]
+			if (marker.anchor != null) {
+				anchor[0] = new Float(marker.anchor!.x)
+				anchor[1] = new Float(marker.anchor!.y)
+			}
+			markerModel.anchor = anchor
+
+			const callout = marker.callout
+			if (callout != null) {
+				const calloutModel = new DCMarkerCalloutModel()
+				calloutModel.content = callout!.content
+				if (callout!.color != null) {
+					const color = callout!.color!
+					calloutModel.color = UTSiOS.colorWithString(color)
+				}
+				if (callout!.fontSize != null) {
+					calloutModel.fontSize = callout!.fontSize!.toDouble()
+				}
+				if (callout!.borderRadius != null) {
+					calloutModel.borderRadius = callout!.borderRadius!.toDouble()
+				}
+				if (callout!.borderWidth != null) {
+					calloutModel.borderWidth = callout!.borderWidth!.toDouble()
+				}
+				if (callout!.borderColor != null) {
+					const borderColor = callout!.borderColor!
+					calloutModel.borderColor = UTSiOS.colorWithString(borderColor)
+				}
+				if (callout!.bgColor != null) {
+					const bgColor = callout!.bgColor!
+					calloutModel.bgColor = UTSiOS.colorWithString(bgColor)
+				}
+				if (callout!.padding != null) {
+					calloutModel.padding = callout!.padding!.toDouble()
+				}
+				const display = callout!.display == "ALWAYS"
+				calloutModel.display = display
+				calloutModel.textAlign = callout!.textAlign
+			
+				markerModel.callout = calloutModel
+			}
+			
+			return markerModel
+		})
+		this.internalMap.setMarkers(markerModels = markerModels)
+	}
+
+	setPolyline(polylines : Polyline[]) {
+		let models = polylines.map((polyline) : DCPolylineModel => {
+			let points = this.convertLatLngArray(polyline.points)
+			let polylineModel = new DCPolylineModel(points = points)
+			if (polyline.color != null) {
+				const color = polyline.color!
+				polylineModel.color = UTSiOS.colorWithString(color)
+			}
+
+			if (polyline.width != null) {
+				polylineModel.width = polyline.width!.toDouble()
+			}
+
+			polylineModel.dottedLine = polyline.dottedLine ?? false
+			polylineModel.arrowLine = polyline.arrowLine ?? false
+			if (polyline.arrowIconPath != null) {
+				polylineModel.arrowIconPath = UTSiOS.convert2AbsFullPath(polyline.arrowIconPath!)
+			}
+
+			if (polyline.colorList != null) {
+				const convertedColorList : UIColor[] = []
+				const colorList = polyline.colorList!
+				colorList.forEach((colorStr : string) => {
+					convertedColorList.push(UTSiOS.colorWithString(colorStr))
+				})
+				polylineModel.colorList = convertedColorList
+			}
+			return polylineModel
+		})
+		this.internalMap.setPolyline(list = models)
+	}
+
+	setCircle(circles : Circle[]) {
+		let models = circles.map((circle) : DCCircleModel => {
+			let circleModel = new DCCircleModel(latitude = circle.latitude.toDouble(), longitude = circle.longitude.toDouble(), radius = circle.radius.toDouble())
+			if (circle.color != null) {
+				circleModel.color = UTSiOS.colorWithString(circle.color!)
+			}
+			if (circle.fillColor != null) {
+				circleModel.fillColor = UTSiOS.colorWithString(circle.fillColor!)
+			}
+			if (circle.strokeWidth != null) {
+				circleModel.strokeWidth = circle.strokeWidth!.toDouble()
+			}
+			return circleModel
+		})
+		this.internalMap.setCircle(list = models)
+	}
+
+	setControl(controls : Control[]) {
+		let models = controls.map((control) : DCControlModel => {
+			let position = new DCPosition()
+			position.left = control.position.left?.toDouble()
+			position.top = control.position.top?.toDouble()
+			position.width = control.position.width?.toDouble()
+			position.height = control.position.height?.toDouble()
+			var iconPath = ""
+			if (control.iconPath.startsWith("http")) {
+				iconPath = control.iconPath
+			} else {
+				iconPath = UTSiOS.convert2AbsFullPath(control.iconPath)
+			}
+			let controlModel = new DCControlModel(position = position, iconPath = iconPath)
+			controlModel.id = control.id?.toInt()
+			controlModel.clickable = control.clickable
+			return controlModel
+
+		})
+		this.internalMap.setControl(list = models)
+	}
+
+	setPolygon(polygons : Polygon[]) {
+		let models = polygons.map((polygon) : DCPolygonModel => {
+			let latlngs = this.convertLatLngArray(polygon.points)
+			let polygonModel = new DCPolygonModel(points = latlngs)
+			if (polygon.strokeWidth != null) {
+				polygonModel.strokeWidth = polygon.strokeWidth!.toDouble()
+			}
+			if (polygon.strokeColor != null) {
+				polygonModel.strokeColor = UTSiOS.colorWithString(polygon.strokeColor!)
+			}
+			if (polygon.fillColor != null) {
+				polygonModel.fillColor = UTSiOS.colorWithString(polygon.fillColor!)
+			}
+			polygonModel.zIndex = polygon.zIndex?.toDouble()
+			return polygonModel
+		})
+		this.internalMap.setPolygon(list = models)
+	}
+
+	setIncludePoints(points : LocationObject[], animate : boolean = true) {
+		this.internalMap.setIncludePoints(points = this.convertLatLngArray(points), animate = animate)
+	}
+
+	enable3D(enable : boolean) {
+		this.internalMap.enable3D(enable = enable);
+	}
+
+	showCompass(enable : boolean) {
+		this.internalMap.showCompass(enable = enable);
+	}
+
+	enableZoom(enable : boolean) {
+		this.internalMap.enableZoom(enable = enable);
+	}
+
+	enableScroll(enable : boolean) {
+		this.internalMap.enableScroll(enable = enable);
+	}
+
+	enableRotate(enable : boolean) {
+		this.internalMap.enableRotate(enable = enable);
+	}
+
+	setRotate(rotate : number, animate : boolean = true) {
+		this.internalMap.setRotate(rotate = rotate.toFloat(), animate = animate);
+	}
+
+	setSkew(skew : number, animate : boolean = true) {
+		this.internalMap.setSkew(skew = skew.toFloat(), animate = animate);
+	}
+
+	setEnableOverlooking(enable : boolean) {
+		this.internalMap.setEnableOverlooking(enable = enable);
+	}
+
+	setEnableSatellite(enable : boolean) {
+		this.internalMap.setEnableSatellite(enable = enable);
+	}
+
+	setEnableTraffic(enable : boolean) {
+		this.internalMap.setEnableTraffic(enable = enable);
+	}
+
+	setEnablePoi(enable : boolean) {
+		this.internalMap.setEnablePoi(enable = enable);
+	}
+
+	setEnableBuilding(enable : boolean) {
+		this.internalMap.setEnableBuilding(enable = enable);
+	}
+
+	setShowLocation(show : boolean) {
+		this.internalMap.setShowLocation(show = show);
+	}
+
+	setEnableIndoorMap(enable : boolean) {
+		this.internalMap.setEnableIndoorMap(enable = enable);
+	}
+
+	private convertLatLng(latLng : LocationObject) : DCLatLng {
+		return new DCLatLng(latitude = latLng.latitude.toDouble(), longitude = latLng.longitude.toDouble())
+	}
+
+	private convertLatLngArray(latLngArray : LocationObject[]) : DCLatLng[] {
+		return latLngArray.map((latLng) : DCLatLng => {
+			return this.convertLatLng(latLng)
+		})
+	}
+
+	setOnMapLoadedCallback() {
+		const element = this.$element
+		this.internalMap.setOnMapLoadedCallback(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const event = new UniNativeViewEvent(map["type"] as string, {} as UTSJSONObject)
+			element.dispatchEvent("updated", event)
+		});
+	}
+
+	setOnMapClickCallback() {
+		const element = this.$element
+		this.internalMap.setOnMapClickCallback(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"] as Map<string, any>
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("tapNative", event)
+		});
+	}
+
+	setOnMapRegionChange() {
+		const element = this.$element
+		this.internalMap.setOnMapRegionChange(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const jsonObject = new UTSJSONObject(detail)
+			jsonObject["type"] = map["type"]
+			jsonObject["causedBy"] = map["causedBy"]
+			const event = new UniNativeViewEvent(map["type"] as string, jsonObject)
+			element.dispatchEvent("regionchange", event)
+		});
+	}
+
+
+	setOnMapMarkerTap() {
+		const element = this.$element
+		this.internalMap.setOnMarkerClick(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("markertap", event)
+		});
+	}
+
+	setOnMapControlTap() {
+		const element = this.$element
+		this.internalMap.setControlTap(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("controltap", event)
+		});
+	}
+
+	setOnMapAnchorPointTap() {
+		const element = this.$element
+		this.internalMap.setMyLocationClick(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("anchorpointtap", event)
+		});
+	}
+	setOnMapPoiTap() {
+		const element = this.$element
+		this.internalMap.setPoiTapClick(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("poitap", event)
+		});
+	}
+	setOnMapCalloutTap() {
+		const element = this.$element
+		this.internalMap.setOnCalloutClick(iCallBack = (param) : void => {
+			const map = param as Map<string, any>
+			const detail = map["detail"]
+			const event = new UniNativeViewEvent(map["type"] as string, new UTSJSONObject(detail))
+			element.dispatchEvent("callouttap", event)
+		});
+	}
+}
+
+
+export const createMapContext : CreateMapContext = function (mapId : string, component ?: ComponentPublicInstance | null) : MapContext | null {
+	let mapElement : UniMapElement | null = null;
+	if (component == null) {
+		mapElement = uni.getElementById(mapId) as UniMapElement | null
+	} else {
+		mapElement = component?.$el(mapId) as UniMapElement | null
+	}
+
+	if (mapElement == null) return null;
+	return new MapContextImpl(mapElement!);
+}
+
+
+@UTSiOS.keyword("private")
+class MapContextImpl implements MapContext {
+
+	constructor(private mapElement : UniMapElement) {
+	}
+	moveAlong(options : MapContextMoveAlongOptions) : void {
+		this.mapElement.moveAlong(options)
+	}
+	translateMarker(options : MapContextTranslateMarkerOptions) : void {
+		this.mapElement.translateMarker(options)
+	}
+	addGroundOverlay(options : MapContextAddGroundOverlayOptions) : void {
+		this.mapElement.addGroundOverlay(options)
+	}
+	updateGroundOverlay(options : MapContextUpdateGroundOverlayOptions) : void {
+		this.mapElement.updateGroundOverlay(options)
+	}
+	removeGroundOverlay(options : MapContextRemoveGroundOverlayOptions) : void {
+		this.mapElement.removeGroundOverlay(options)
+	}
+	getCenterLocation(options : MapContextGetCenterLocationOptions) : void {
+		this.mapElement.getCenterLocation(options)
+	}
+	addMarkers(options : MapContextAddMarkersOptions) : void {
+		this.mapElement.addMarkers(options)
+	}
+	removeMarkers(options : MapContextRemoveMarkersOptions) : void {
+		this.mapElement.removeMarkers(options)
+	}
+	getScale(options : MapContextGetScaleOptions) : void {
+		this.mapElement.getScale(options)
+	}
+	moveToLocation(options : MapContextMoveToLocationOptions) : void {
+		this.mapElement.moveToLocation(options)
+	}
+	getRegion(options : MapContextGetRegionOptions) : void {
+		this.mapElement.getRegion(options)
+	}
+	includePoints(options : MapContextIncludePointsOptions) : void {
+		this.mapElement.includePoints(options)
+	}
+}
