@@ -1,0 +1,549 @@
+<template>
+  <!-- 避免id冲突、解决web-view不支持border/padding，需要外层嵌套view -->
+  <view
+    <!-- #ifdef VUE3-VAPOR -->
+	flatten
+    <!-- #endif -->
+    <!-- #ifdef APP-ANDROID || (APP-HARMONY && VUE3-VAPOR) || (APP-IOS && VUE3-VAPOR) -->
+    v-if="props.mode != 'native'"
+    <!-- #endif -->
+    >
+    <web-view class="default" ref="webviewRef" :src="webviewSrc" :bounces="false" :verticalScrollBarAccess="false" @contentheightchange="onWebviewContentHeightChange" @message="onWebViewMessage" @load="onWebViewLoad"
+      <!-- #ifndef APP-HARMONY -->
+      :webview-styles="webviewStyles"
+      <!-- #endif -->
+      ></web-view>
+  </view>
+  <!-- #ifdef VUE3-VAPOR-->
+  <rich-text-native v-else="props.mode == 'native'" :html="htmlContent" :style="style" @itemclick="itemclick"
+  <!-- #ifdef APP -->
+   :selectable="isSelectable"
+   :selection-handle-color="props.selectionHandleColor"
+   :selection-background-color="props.selectionBackgroundColor"
+
+  <!-- #endif -->
+  ></rich-text-native>
+  <!-- #endif -->
+  <!-- #ifdef APP-ANDROID && !VUE3-VAPOR -->
+  <!-- android平台非蒸汽模式支持rich-text-native -->
+  <rich-text-native v-else="props.mode == 'native'" :nodes="props.nodes" :selectable="isSelectable" @itemclick="itemclick"></rich-text-native>
+  <!-- #endif -->
+</template>
+<script setup lang="uts">
+  import {
+    UniRichTextItemClickEventDetail,
+    UniRichTextItemClickEvent
+  } from './global.uts'
+
+  // 属性定义
+  interface RichTextProps1 {
+    /**
+     * 节点列表/HTML String
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVaporVer": "5.11"
+          },
+          "harmony": {
+            "unixVaporVer": "5.0"
+          }
+        }
+      }
+     */
+    nodes : any
+    /**
+     * 渲染模式
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVaporVer": "5.11"
+          },
+          "harmony": {
+            "unixVaporVer": "5.0"
+          }
+        }
+      }
+     */
+    mode : string
+    /**
+     * 文本是否可选。已废弃，请使用 user-select
+     * @deprecated
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVaporVer": "5.11"
+          },
+          "harmony": {
+            "unixVaporVer": "5.0"
+          }
+        },
+        "web": {
+          "uniVer": "5.24",
+          "unixVer": "5.24"
+        },
+      }
+     */
+    selectable : boolean
+    /**
+     * 文本是否可选，该属性会使节点显示为 block
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "uniVer": "x",
+            "unixVer": "3.9+",
+            "unixVaporVer": "5.24"
+          },
+          "ios": {
+            "uniVer": "x",
+            "unixVer": "4.11",
+            "unixVaporVer": "5.24"
+          },
+          "harmony": {
+            "uniVer": "4.23",
+            "unixVer": "4.61",
+            "unixVaporVer": "5.24"
+          }
+        },
+        "web": {
+          "uniVer": "5.24",
+          "unixVer": "5.24"
+        },
+        "mp": {
+          "weixin": {
+            "hostVer": "2.24.0+",
+            "uniVer": "√",
+            "unixVer": "4.41"
+          }
+        }
+      }
+     */
+    userSelect : boolean
+    /**
+     * 选择区域高亮手柄颜色
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVer": "x",
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVer": "x",
+            "unixVaporVer": "5.22"
+          },
+          "harmony": {
+            "unixVer": "x",
+            "unixVaporVer": "x"
+          }
+        }
+      }
+     */
+    selectionHandleColor : string
+    /**
+     * 选择区域高亮背景颜色
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVer": "x",
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVer": "x",
+            "unixVaporVer": "5.22"
+          },
+          "harmony": {
+            "unixVer": "x",
+            "unixVaporVer": "x"
+          }
+        }
+      }
+     */
+    selectionBackgroundColor : string
+  }
+  const props = withDefaults(defineProps<RichTextProps1>(), {
+    nodes: '',
+    mode: 'web',
+    selectable: false,
+    userSelect: false,
+    selectionHandleColor: '#4285F4FF',
+    selectionBackgroundColor: '#33B5E566',
+  })
+
+  // 事件定义
+  const emit = defineEmits<{
+    /**
+     * 内容点击事件
+     * @uniPlatform {
+        "app": {
+          "android": {
+            "unixVaporVer": "5.21"
+          },
+          "ios": {
+            "unixVaporVer": "5.11"
+          },
+          "harmony": {
+            "unixVaporVer": "5.0"
+          }
+        }
+      }
+     */
+    itemclick : [event: UniRichTextItemClickEvent]
+  }>()
+
+  //页面对象
+  const currentPage = getCurrentInstance()?.proxy?.$page
+  // web-view 属性
+  const webviewRef = ref<UniWebViewElement | null>(null)
+  let webviewSrc = 'about:blank'
+  // #ifdef APP-ANDROID
+  webviewSrc = ''
+  // #endif
+  const webviewStyles = { progress: false } as WebViewStyles
+
+  // html内容
+  const htmlContent = ref<string>('')
+
+  // Style样式监听
+  const style = useComputedStyle({
+    properties: ['font-family', 'line-height', 'font-size', 'color'],
+    filterProperties: false
+  } as UseComputedStyleOptions)
+  const fontFamily = computed<string>(() => {
+    return style.get('font-family')?.toString() ?? '-apple-system, HelveticaNeue'
+  })
+  const lineHeight = computed<string>(() => {
+    return style.get('line-height')?.toString() ?? '1.5'
+  })
+  const fontSize = computed<string>(() => {
+    return style.get('font-size')?.toString() ?? '16px'
+  })
+  const color = computed<string | null>(() => {
+    return style.get('color')?.toString() ?? null
+  })
+
+  const isSelectable = computed<boolean>(() => {
+    return props.userSelect || props.selectable
+  })
+
+  // 内部状态
+  let isNative = false
+  let isWebviewLoaded = false
+  let webviewHeight = 0
+
+
+  // ================ 核心功能函数 ================
+  const VOID_ELEMENTS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']
+  /**
+   * 递归生成 HTML 内容
+   * web-view组件和rich-text-native共用
+   */
+  function generateHTML(nodes : Array<UTSJSONObject>) : string {
+    let html = ''
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      // 处理文本节点
+      if (node['text'] != null) {
+        html += node['text'] as string
+      } else {
+        // 处理元素节点
+        if (node['name'] != null) {
+          const name = node['name'] as string
+          html += `<${name}`
+          // 处理属性
+          if (node['attrs'] != null) {
+            const attrs = node['attrs'] as UTSJSONObject
+            const keys = UTSJSONObject.keys(attrs)
+            for (let j = 0; j < keys.length; j++) {
+              const key = keys[j]
+              const value = attrs[key]
+              html += ` ${key}="${value}"`
+            }
+          }
+          // 自闭合标签（HTML void elements）
+          if (VOID_ELEMENTS.includes(name)) {
+            html += ' />'
+          } else {
+            html += '>'
+            // 处理子节点
+            if (node['children'] != null) {
+              const children = node['children']
+              if (children instanceof Array) {
+                html += generateHTML(children as Array<UTSJSONObject>)
+              }
+            }
+            html += `</${name}>`
+          }
+        }
+      }
+    }
+    return html
+  }
+
+  /**
+   * 获取 web-view 组件使用的 HTML 内容
+   */
+  function createHTMLString() : string {
+    const bodyColorStyle = color.value != null ? `\n\t\tcolor: ${color.value};` : ''
+    return `<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<style>
+	body {
+		background-color: transparent;
+		font-family: ${fontFamily.value};
+		line-height: ${lineHeight.value};
+		font-size: ${fontSize.value};
+		${bodyColorStyle}
+		overflow-x: hidden;
+		overflow-wrap: break-word;
+		word-wrap: break-word;
+	}
+	img {
+		max-width: 100%;
+		height: auto;
+        vertical-align: bottom;
+	}
+	* {
+		margin: 0;
+	}
+	</style>
+	<script>
+		function postMessage(m) {
+			window.__uniapp_x_.postMessage(JSON.stringify(m));
+		}
+		function updateSelection(enabled) {
+			if (enabled) {
+				var style = document.getElementById('disable-selection-style');
+				if (style) style.remove();
+				document.documentElement.style.webkitTouchCallout = 'default';
+			} else {
+				if (!document.getElementById('disable-selection-style')) {
+					var style = document.createElement('style');
+					style.id = 'disable-selection-style';
+					style.textContent = '* { -webkit-user-select: none !important; user-select: none !important; }';
+					document.head.appendChild(style);
+				}
+				document.documentElement.style.webkitTouchCallout = 'none';
+			}
+		}
+		window.onload = function () {
+			var aTags = document.getElementsByTagName('a');
+			for (var i = 0; i < aTags.length; i++) {
+				aTags[i].addEventListener('click', function (event) {
+					event.preventDefault();
+					var href = event.target.href;
+					postMessage({ data: { linkClick: href } });
+				});
+			}
+			var imgTags = document.getElementsByTagName('img');
+			for (var i = 0; i < imgTags.length; i++) {
+				imgTags[i].addEventListener('click', function (event) {
+					var src = event.target.src;
+					postMessage({ data: { imgClick: src } });
+				});
+			}
+			updateSelection(${isSelectable.value})
+		};
+	<\/script>
+</head>
+<body>
+	${htmlContent.value}
+</body>
+</html>`
+  }
+
+  /**
+   * web-view组件加载html内容
+   * @param asyncLoad 是否尝异步加载
+   */
+  function loadHtmlContent(asyncLoad: boolean) {
+    if(isNative||!isWebviewLoaded) return
+
+    // 确保获取webviewRef.value后再执行
+    if(null == webviewRef.value){
+      if(null == webviewRef.value){
+        if (asyncLoad) {
+          nextTick(() => {loadHtmlContent(false)})
+        }
+        return
+      }
+    }
+
+    const fullHtml = createHTMLString()
+    webviewRef.value!.loadData({ data: fullHtml } as UniWebViewElementLoadDataOptions)
+  }
+
+  /**
+   * 重置web-view渲染状态
+   */
+  function resetWebview() {
+      webviewHeight = 0
+      isWebviewLoaded = false
+      webviewRef.value = null
+  }
+
+  /**
+   * 更新选择状态
+   */
+  function updateSelectable() {
+    if(!isNative){
+      webviewRef.value?.evalJS(`updateSelection(${isSelectable.value})`)
+    }
+  }
+
+
+
+  // ================ 监听器 ================
+
+  /**
+   * 监听 font-family, line-height, font-size, color 样式变化
+   */
+  watch([fontFamily,lineHeight,fontSize,color], () => {
+    loadHtmlContent(true)
+  })
+
+  /**
+   * 监听 selectable 属性变化
+   */
+  watch(() : boolean => props.selectable, () => {
+    updateSelectable()
+  })
+
+  /**
+   * 监听 user-select 属性变化
+   */
+  watch(() : boolean => props.userSelect, () => {
+    updateSelectable()
+  })
+
+  /**
+   * 监听 mode 属性变化
+   * 仅Android平台和鸿蒙平台和iOS平台蒸汽模式支持
+   */
+  // #ifdef APP-ANDROID || (APP-HARMONY && VUE3-VAPOR) || (APP-IOS && VUE3-VAPOR)
+  watch(() : string => props.mode, (mode: string, oldMode: string) => {
+    isNative = ('native' == mode)
+    if(isNative){
+      resetWebview()
+    }
+  })
+  // #endif
+
+  /**
+   * 监听 nodes 属性变化
+   */
+  watch(() : any => props.nodes, (nodes: any, oldNodes: any) => {
+    if(nodes instanceof Array) {
+      htmlContent.value = generateHTML(nodes as Array<UTSJSONObject>)
+    }else if(typeof nodes == 'string'){
+      htmlContent.value = nodes as string
+    }else{
+      htmlContent.value = ''
+    }
+
+    // #ifdef APP-ANDROID && !VUE3-VAPOR
+    //Android平台非蒸汽模式由原生直接处理
+    if(isNative) return
+    // #endif
+
+    loadHtmlContent(true)
+  }, {immediate: true})
+
+
+  // ================ web-view 组件的事件处理 ================
+
+  /**
+   * web-view 组件 load 事件
+   */
+  const onWebViewLoad = (event : UniWebViewLoadEvent) => {
+    //仅在首次获取到webviewRef.value时加载内容
+    if(null == webviewRef.value || !isWebviewLoaded){
+      webviewRef.value = event.target as UniWebViewElement | null
+      isWebviewLoaded = true
+      loadHtmlContent(false)
+    }
+  }
+
+  /**
+   * webview 组件 contentheightchange 事件
+   */
+  const onWebviewContentHeightChange = (event : UniWebViewContentHeightChangeEvent) => {
+    if (event.detail.height != webviewHeight && event.detail.height != 8) {
+      webviewHeight = event.detail.height
+      webviewRef.value?.style.setProperty('height', `${webviewHeight}px`)
+    }
+  }
+
+  /**
+   * web-view 组件 message 事件
+   */
+  const onWebViewMessage = (event : UniWebViewMessageEvent) => {
+    if (event.detail.data.length > 0) {
+      const data = event.detail.data[0]
+
+      let src : string | null = null
+      let href : string | null = null
+
+      if (data['linkClick'] != null) {
+        href = data['linkClick'] as string
+      } else if (data['imgClick'] != null) {
+        src = data['imgClick'] as string
+      }
+
+      const eventDetail : UniRichTextItemClickEventDetail = { src, href }
+      const itemClickEvent = new UniRichTextItemClickEvent('itemclick', eventDetail)
+      emit('itemclick', itemClickEvent)
+    }
+  }
+
+
+  // ================ rich-text-native 组件的事件处理 ================
+
+  /**
+   * itemclick 事件
+   */
+  // #ifdef APP-ANDROID
+  const itemclick = (event : UniNativeRichTextItemClickEvent) => {
+    const src = event.detail.src
+    const href = event.detail.href
+    emit('itemclick', new UniRichTextItemClickEvent('itemclick', { src, href } as UniRichTextItemClickEventDetail))
+  }
+  // #endif
+  // #ifdef (APP-HARMONY && VUE3-VAPOR) || (APP-IOS && VUE3-VAPOR)
+  const itemclick = (event : UniRichTextNativeItemClickEvent) => {
+    const src = event.detail.src
+    const href = event.detail.href
+    const eventDetail : UniRichTextItemClickEventDetail = { src, href }
+    const itemClickEvent = new UniRichTextItemClickEvent('itemclick', eventDetail)
+    emit('itemclick', itemClickEvent)
+  }
+  // #endif
+
+
+  // ================ 生命周期 ================
+
+  onBeforeUnmount(() => {
+    webviewRef.value = null
+  })
+</script>
+
+<style>
+  .default {
+    width:100%;
+    /* #ifndef APP-HARMONY */
+    height:0px;
+    /* #endif */
+    /* #ifdef APP-HARMONY */
+    height:1px;
+    /* #endif */
+  }
+</style>
