@@ -65,6 +65,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
     private var camera: Camera? = null
     private var imageCapture: ImageCapture? = null
     private var imageAnalysis: ImageAnalysis? = null
+    private val imageAnalysisExecutor = Executors.newSingleThreadExecutor()
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
     private var selfieMirror: Boolean = true
@@ -76,12 +77,18 @@ class CameraImpl(private val activity: AppCompatActivity) {
     private var processOnce = 0
     private var captureFrameStatus = false
     private var analysisStatus = false
+    private var analyzerRegistered = false
 
     // 相机打开状态
     private var cameraOpen = false
 
     // 帧回调状态
     private var isFrameCallbackActive = false
+
+    // 复用的帧数据缓冲区，避免每帧都分配新内存导致 OOM
+    private var reusableRgbaArray: ByteArray? = null
+    private var lastFrameWidth = 0
+    private var lastFrameHeight = 0
 
     fun getCameraPreviewView(resolution: String): View {
         currentResolution = resolution
@@ -189,6 +196,8 @@ class CameraImpl(private val activity: AppCompatActivity) {
         cameraProvider?.unbind(imageAnalysis)
         imageAnalysis = buildImageAnalysis()
         cameraProvider?.bindToLifecycle(activity, cameraSelector, imageAnalysis)
+        analyzerRegistered = false
+        ensureAnalyzerRegistered()
     }
 
     private var setupResolution = false
@@ -320,6 +329,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 preview?.surfaceProvider = it.surfaceProvider
                 imageCapture = buildImageCapture()
                 imageAnalysis = buildImageAnalysis()
+                analyzerRegistered = false
                 videoCapture = buildVideoCapture()
 
                 val useCaseGroupBuilder = UseCaseGroup.Builder()
@@ -347,6 +357,8 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 // 恢复帧回调状态
                 if (isFrameCallbackActive) {
                     startOnFrame()
+                } else if (analysisStatus) {
+                    ensureAnalyzerRegistered()
                 }
             } catch (exc: Exception) {
                 Log.e("CameraImpl", "Error starting preview: ${exc.message}")
@@ -510,33 +522,74 @@ class CameraImpl(private val activity: AppCompatActivity) {
     fun startOnFrame() {
         captureFrameStatus = true
         isFrameCallbackActive = true
-        registerAnalyzer()
+        ensureAnalyzerRegistered()
     }
 
     fun stopOnFrame() {
         captureFrameStatus = false
         isFrameCallbackActive = false
         unRegisterAnalyzer()
+        // 释放复用的缓冲区
+        reusableRgbaArray = null
+        lastFrameWidth = 0
+        lastFrameHeight = 0
     }
 
-    private fun registerAnalyzer(cameraOriginalFrameCallback: ICallBack? = null) {
+    private fun ensureAnalyzerRegistered() {
         if (!captureFrameStatus && !analysisStatus) {
             return
         }
-        imageAnalysis?.clearAnalyzer()
-        imageAnalysis?.setAnalyzer(Executors.newSingleThreadExecutor()) { imageProxy ->
+        val currentImageAnalysis = imageAnalysis ?: return
+        if (analyzerRegistered) {
+            return
+        }
+        analyzerRegistered = true
+        currentImageAnalysis.setAnalyzer(imageAnalysisExecutor) { imageProxy ->
+            // 先检查状态，避免已停止后继续处理
+            if (!captureFrameStatus && !analysisStatus) {
+                imageProxy.close()
+                return@setAnalyzer
+            }
+
+            var shouldCloseImageProxy = true
+
             if (captureFrameStatus) {
                 cameraFrameCallback?.let {
-                    val rgba = convertYUVToRGBA(imageProxy)
-                    val byteBuffer = byteArrayToByteBuffer(rgba)
-                    it.callback("frame", mapOf("width" to imageProxy.width, "height" to imageProxy.height, "buffer" to byteBuffer))
-                }
-                if (!analysisStatus) {
-                    imageProxy.close()
+                    val width = imageProxy.width
+                    val height = imageProxy.height
+                    val requiredSize = width * height * 4
+
+                    // 复用缓冲区：只有尺寸变化时才重新分配
+                    if (reusableRgbaArray == null || lastFrameWidth != width || lastFrameHeight != height) {
+                        reusableRgbaArray = ByteArray(requiredSize)
+                        lastFrameWidth = width
+                        lastFrameHeight = height
+                    }
+
+                    // 获取局部引用，防止在使用过程中被其他线程置空
+                    val rgbaArray = reusableRgbaArray ?: return@let
+
+                    convertYUVToRGBAReusable(imageProxy, rgbaArray)
+
+                    val frameBytes = rgbaArray.copyOf(requiredSize)
+                    val byteBuffer = ByteBuffer.wrap(frameBytes)
+                    it.callback("frame", mapOf("width" to width, "height" to height, "buffer" to byteBuffer))
                 }
             }
-            if (analysisStatus && cameraOriginalFrameCallback != null) {
-                cameraOriginalFrameCallback.callback("original_frame", imageProxy)
+            if (analysisStatus) {
+                val activeAnalysisCallback = analysisCallback
+                if (activeAnalysisCallback != null) {
+                    shouldCloseImageProxy = false
+                    try {
+                        activeAnalysisCallback.callback("original_frame", imageProxy)
+                    } catch (e: Exception) {
+                        imageProxy.close()
+                        Log.e("CameraImpl", "Error dispatching analysis callback: ${e.message}", e)
+                    }
+                }
+            }
+            if (shouldCloseImageProxy) {
+                imageProxy.close()
             }
         }
     }
@@ -573,7 +626,10 @@ class CameraImpl(private val activity: AppCompatActivity) {
     }
 
 
-    private fun convertYUVToRGBA(image: ImageProxy): ByteArray {
+    /**
+     * 将 YUV 数据转换为 RGBA，写入到传入的复用缓冲区中
+     */
+    private fun convertYUVToRGBAReusable(image: ImageProxy, rgba: ByteArray) {
         val width = image.width
         val height = image.height
 
@@ -584,8 +640,6 @@ class CameraImpl(private val activity: AppCompatActivity) {
         val yRowStride = image.planes[0].rowStride
         val uvRowStride = image.planes[1].rowStride
         val uvPixelStride = image.planes[1].pixelStride
-
-        val rgba = ByteArray(width * height * 4)
 
         // 优化1：使用整数运算替代浮点运算（提升约30%性能）
         val precalcFactor = 1 shl 16  // 用于定点数运算的缩放因子
@@ -630,7 +684,6 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 }
             }
         }
-        return rgba
     }
 
     private fun unRegisterAnalyzer() {
@@ -642,7 +695,9 @@ class CameraImpl(private val activity: AppCompatActivity) {
                 imageAnalysis = buildImageAnalysis()
                 cameraProvider?.bindToLifecycle(activity, cameraSelector, imageAnalysis)
             } catch (e: Exception) {
-
+                Log.e("CameraImpl", "Error resetting image analysis: ${e.message}", e)
+            } finally {
+                analyzerRegistered = false
             }
         }
     }
@@ -779,7 +834,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
     ) {
         analysisStatus = true
         analysisCallback = cameraOriginalFrameCallback
-        registerAnalyzer(cameraOriginalFrameCallback)
+        ensureAnalyzerRegistered()
     }
 
     fun stopAnalysis() {
@@ -964,6 +1019,7 @@ class CameraImpl(private val activity: AppCompatActivity) {
         recording = null
         captureFrameStatus = false
         analysisStatus = false
+        analyzerRegistered = false
         isFrameCallbackActive = false
         processOnce = 0
 
@@ -972,5 +1028,10 @@ class CameraImpl(private val activity: AppCompatActivity) {
         stopCallBack = null
         cameraFrameCallback = null
         analysisCallback = null
+
+        // 释放复用的缓冲区
+        reusableRgbaArray = null
+        lastFrameWidth = 0
+        lastFrameHeight = 0
     }
 }

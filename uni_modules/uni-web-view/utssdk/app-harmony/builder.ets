@@ -3,7 +3,8 @@ import { deviceInfo, BusinessError } from '@kit.BasicServicesKit';
 import { abilityAccessCtrl, common, Permissions } from '@kit.AbilityKit'
 import { bundleManager } from '@kit.AbilityKit';
 import { createTelSchemeHandler } from './webview'
-import { getRealPath, getAbilityContext, UTSHarmony } from '@dcloudio/uni-app-x-runtime'
+// TODO 内部包名
+import { getRealPath, getAbilityContext, UTSHarmony } from '@dcloudio/uni-app-framework'
 
 interface Detail {}
 
@@ -150,13 +151,14 @@ const getSslErrorMessage = (event: SslError): string => {
 
 @Component
 export struct WebView {
-  @Prop webId?: string
+  @Prop webId: string
   @Prop @Watch('setSrc') src: string
   @Prop bounces: boolean = true
   @Prop @Watch('setBarAccess') horizontalScrollBarAccess?: boolean = true
   @Prop @Watch('setBarAccess') verticalScrollBarAccess?: boolean = true
   @Prop disableUserSelectMenu?: boolean = false
-  @Prop attributeUpdater?: object
+  @Prop associativeContainer: string = ''
+  @Prop attributeUpdater: object
   delegate!: webview.WebDownloadDelegate
   controller: webview.WebviewController = new webview.WebviewController()
   onAboutToAppear?: (instance: WebView) => void
@@ -197,6 +199,13 @@ export struct WebView {
       .horizontalScrollBarAccess(this.horizontalScrollBarAccess)
       .verticalScrollBarAccess(this.verticalScrollBarAccess)
       .mixedMode(MixedMode.All)
+      .nestedScroll(this.associativeContainer === 'nested-scroll-view' ? {
+        scrollForward: NestedScrollMode.PARENT_FIRST,
+        scrollBackward: NestedScrollMode.SELF_FIRST
+      } : {
+        scrollForward: NestedScrollMode.SELF_FIRST,
+        scrollBackward: NestedScrollMode.SELF_FIRST
+      })
       .editMenuOptions({
         onCreateMenu: (menuItems: Array<TextMenuItem>): Array<TextMenuItem> => {
           return this.disableUserSelectMenu ? [] : menuItems
@@ -246,8 +255,11 @@ export struct WebView {
           this.controller.setDownloadDelegate(this.delegate)
           const userAgent = `${this.controller.getUserAgent()} ${UTSHarmony.getUserAgent()}`
           this.controller.setCustomUserAgent(userAgent)
-          // TODO 调用 setCustomUserAgent 后必须重新 loadUrl，否则 controller 上方法会失效
-          this.controller.loadUrl(getRealPath(this.src))
+          const src = getRealPath(this.src)
+          if (src) {
+            // TODO 调用 setCustomUserAgent 后必须重新 loadUrl，否则 controller 上方法会失效
+            this.controller.loadUrl(src)
+          }
           this.controller.setWebSchemeHandler('tel', createTelSchemeHandler())
         } catch (error) {
           // TODO: Implement error handling.
@@ -255,33 +267,33 @@ export struct WebView {
         this.onControllerAttached?.()
       })
       .onLoadIntercept((event) => {
-        const context = this.getUIContext().getHostContext()
         let url = event.data.getRequestUrl()
+        const context = this.getUIContext().getHostContext()
         if (context) {
-          let internalHtmlDirs = [
+          let harmonyFilesDir = [
             context.filesDir,
             context.getApplicationContext().filesDir,
             context.resourceDir,
             context.getApplicationContext().resourceDir
-          ].filter(item => !!item).map(item => item + '/uni-app-x/apps')
+          ].filter(item => !!item)
+          let allowingUniversalAccess = harmonyFilesDir.map(item => item + '/uni-app-x/apps').concat(harmonyFilesDir.map(item => item + '/uni-static'))
           try {
             if (deviceInfo.sdkApiVersion < 21) {
-              if (
-                url.startsWith('file:/') &&
-                  (url.includes(context.tempDir) || url.includes(context.getApplicationContext().tempDir) ||
-                  url.includes(context.cacheDir) || url.includes(context.getApplicationContext().cacheDir))
+              if (url.startsWith('file:/') &&
+                (url.includes(context.tempDir) || url.includes(context.getApplicationContext().tempDir) ||
+                url.includes(context.cacheDir) || url.includes(context.getApplicationContext().cacheDir))
               ) {
-                internalHtmlDirs = []
+                allowingUniversalAccess = []
               }
-              this.controller?.setPathAllowingUniversalAccess(internalHtmlDirs)
+              this.controller?.setPathAllowingUniversalAccess(allowingUniversalAccess)
             } else {
-              internalHtmlDirs.push(
+              allowingUniversalAccess.push(
                 context.cacheDir,
                 context.getApplicationContext().cacheDir,
                 context.tempDir,
                 context.getApplicationContext().tempDir
               )
-              this.controller?.setPathAllowingUniversalAccess(internalHtmlDirs)
+              this.controller?.setPathAllowingUniversalAccess(allowingUniversalAccess)
             }
           } catch (error) {
             console.error('[runtime-harmony] Webview setPathAllowingUniversalAccess error: ' + error)
@@ -508,11 +520,12 @@ export function buildWeb(params: ESObject) {
   Flex() {
     WebView({
       webId: params.id,
-      src: params.src,
+      src: getRealPath(params.src),
       bounces: params.bounces,
       horizontalScrollBarAccess: params.horizontalScrollBarAccess,
       verticalScrollBarAccess: params.verticalScrollBarAccess,
       disableUserSelectMenu: params.disableUserSelectMenu,
+      associativeContainer: params.associativeContainer,
       attributeUpdater: params.attributeUpdater,
       delegate: params.delegate,
       controller: params.controller,

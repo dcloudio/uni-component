@@ -17,12 +17,10 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "x"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "x"
      *      }
@@ -38,9 +36,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -82,20 +80,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -109,9 +104,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -152,20 +147,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -179,9 +171,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -222,20 +214,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -249,9 +238,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -292,20 +281,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -319,9 +305,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -362,20 +348,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *  },
      *  "web": {
@@ -389,9 +372,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -432,20 +415,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "5.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
      *     },
      *     "ios": {
-     *       "osVer": "12.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
      *     },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *   },
      *   "web": {
@@ -459,9 +439,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -502,20 +482,17 @@ export interface CanvasContext {
      * @uniPlatform {
      *   "app": {
      *     "android": {
-     *       "osVer": "5.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
      *     },
      *     "ios": {
-     *       "osVer": "12.0",
      *       "uniVer": "x",
      *       "unixVer": "4.25"
      *     },
      *      "harmony": {
-     *        "osVer": "5.0.0",
      *        "uniVer": "x",
      *        "unixVer": "4.61",
-     *        "unixvVer": "5.0"
+     *        "unixVaporVer": "5.0"
      *      }
      *   },
      *   "web": {
@@ -529,9 +506,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -575,12 +552,10 @@ export type CreateCanvasContextAsyncOptions = {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      }
@@ -598,9 +573,9 @@ export type CreateCanvasContextAsyncOptions = {
     *
 },
     *    "alipay": {
-    *      "hostVer": "x",
-    *      "uniVer": "x",
-    *      "unixVer": "x"
+    *      "hostVer": "√",
+    *      "uniVer": "√",
+    *      "unixVer": "5.31"
     *
 },
     *    "baidu": {
@@ -649,12 +624,10 @@ export type CreateCanvasContextAsyncOptions = {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      }
@@ -670,9 +643,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -713,12 +686,10 @@ export type CreateCanvasContextAsyncOptions = {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      }
@@ -734,9 +705,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -777,12 +748,10 @@ export type CreateCanvasContextAsyncOptions = {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      }
@@ -798,9 +767,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -841,12 +810,10 @@ export type CreateCanvasContextAsyncOptions = {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *        "osVer": "5.0",
      *        "uniVer": "x",
      *        "unixVer": "4.25"
      *      },
      *      "ios": {
-     *          "osVer": "10.0",
      *          "uniVer": "x",
      *          "unixVer": "4.25"
      *      }
@@ -862,9 +829,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -912,20 +879,17 @@ export interface Uni {
      * @uniPlatform {
      *  "app": {
      *    "android": {
-     *      "osVer": "5.0",
      *      "uniVer": "x",
      *      "unixVer": "4.25"
      *    },
      *    "ios": {
-     *      "osVer": "12.0",
      *      "uniVer": "x",
      *      "unixVer": "4.25"
      *    },
      *    "harmony": {
-     *      "osVer": "5.0.0",
      *      "uniVer": "x",
      *      "unixVer": "4.61",
-     *      "unixvVer": "5.0"
+     *      "unixVaporVer": "5.0"
      *    }
      *  },
      *  "web": {
@@ -939,9 +903,9 @@ export interface Uni {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
