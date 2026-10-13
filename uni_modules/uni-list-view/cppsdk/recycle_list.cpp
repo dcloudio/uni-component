@@ -1,15 +1,6 @@
 #include <chrono>
 #include <cmath>
 #include <limits>
-#if defined(OS_IOS)
-#include <dispatch/dispatch.h>
-#elif defined(OS_ANDROID)
-#include <android/looper.h>
-#include <sys/timerfd.h>
-#include <unistd.h>
-#elif defined(OS_HARMONY)
-#include <ffrt/timer.h>
-#endif
 #include "recycle_list.h"
 #include "interface/UniCSSProperty.h"
 #include "node_api.h"
@@ -26,201 +17,10 @@ using namespace uniappx;
  */
 
 namespace recycle_list {
-#if defined(OS_IOS) || defined(OS_ANDROID) || defined(OS_HARMONY)
-    class ScrollEndDetectionTimer {
-    public:
-        explicit ScrollEndDetectionTimer(std::weak_ptr<RecycleList> owner)
-                : context(new Context{std::move(owner)}) {
-#if defined(OS_IOS)
-            this->timer = dispatch_source_create(
-                    DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-            if (!this->timer) {
-                delete this->context;
-                this->context = nullptr;
-                return;
-            }
-            dispatch_set_context(this->timer, this->context);
-            dispatch_source_set_event_handler_f(
-                    this->timer, &ScrollEndDetectionTimer::onTimer);
-            dispatch_source_set_cancel_handler_f(
-                    this->timer, &ScrollEndDetectionTimer::onTimerCanceled);
-            dispatch_resume(this->timer);
-#elif defined(OS_ANDROID)
-            this->looper = ALooper_forThread();
-            this->timerFd = timerfd_create(
-                    CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-            if (!this->looper || this->timerFd == -1 ||
-                ALooper_addFd(
-                        this->looper,
-                        this->timerFd,
-                        ALOOPER_POLL_CALLBACK,
-                        ALOOPER_EVENT_INPUT,
-                        &ScrollEndDetectionTimer::onTimer,
-                        this->context) != 1) {
-                if (this->timerFd != -1) {
-                    close(this->timerFd);
-                    this->timerFd = -1;
-                }
-                delete this->context;
-                this->context = nullptr;
-                this->looper = nullptr;
-                return;
-            }
-            ALooper_acquire(this->looper);
-#endif
-        }
-
-        ~ScrollEndDetectionTimer() {
-            this->cancel();
-#if defined(OS_IOS)
-            if (this->timer) {
-                auto timer = this->timer;
-                this->timer = nullptr;
-                this->context = nullptr;
-                dispatch_source_cancel(timer);
-                dispatch_release(timer);
-            }
-#elif defined(OS_ANDROID)
-            if (this->timerFd != -1) {
-                if (this->looper) {
-                    ALooper_removeFd(this->looper, this->timerFd);
-                }
-                close(this->timerFd);
-                this->timerFd = -1;
-            }
-            if (this->looper) {
-                ALooper_release(this->looper);
-                this->looper = nullptr;
-            }
-            delete this->context;
-            this->context = nullptr;
-#elif defined(OS_HARMONY)
-            delete this->context;
-            this->context = nullptr;
-#endif
-        }
-
-        bool schedule(uint64_t delayMs) {
-            if (!this->context) {
-                return false;
-            }
-#if defined(OS_IOS)
-            dispatch_source_set_timer(
-                    this->timer,
-                    dispatch_time(DISPATCH_TIME_NOW, delayMs * NSEC_PER_MSEC),
-                    DISPATCH_TIME_FOREVER,
-                    0);
-            return true;
-#elif defined(OS_ANDROID)
-            itimerspec timerSpec{};
-            timerSpec.it_value.tv_sec = delayMs / 1000;
-            timerSpec.it_value.tv_nsec = (delayMs % 1000) * 1000 * 1000;
-            return timerfd_settime(this->timerFd, 0, &timerSpec, nullptr) == 0;
-#elif defined(OS_HARMONY)
-            if (this->timer != -1) {
-                if (ffrt_timer_stop(ffrt_qos_default, this->timer) == 0) {
-                    delete static_cast<Context *>(this->pendingTimerContext);
-                }
-                this->timer = -1;
-                this->pendingTimerContext = nullptr;
-            }
-            auto timerContext = new Context{this->context->owner};
-            this->timer = ffrt_timer_start(
-                    ffrt_qos_default,
-                    delayMs,
-                    timerContext,
-                    &ScrollEndDetectionTimer::onTimer,
-                    false);
-            if (this->timer == -1) {
-                delete timerContext;
-                return false;
-            }
-            this->pendingTimerContext = timerContext;
-            return this->timer != -1;
-#else
-            return false;
-#endif
-        }
-
-        void cancel() {
-#if defined(OS_IOS)
-            if (this->timer) {
-                dispatch_source_set_timer(
-                        this->timer,
-                        DISPATCH_TIME_FOREVER,
-                        DISPATCH_TIME_FOREVER,
-                        0);
-            }
-#elif defined(OS_ANDROID)
-            if (this->timerFd != -1) {
-                const itimerspec timerSpec{};
-                timerfd_settime(this->timerFd, 0, &timerSpec, nullptr);
-            }
-#elif defined(OS_HARMONY)
-            if (this->timer != -1) {
-                if (ffrt_timer_stop(ffrt_qos_default, this->timer) == 0) {
-                    delete static_cast<Context *>(this->pendingTimerContext);
-                }
-                this->timer = -1;
-                this->pendingTimerContext = nullptr;
-            }
-#endif
-        }
-
-    private:
-        struct Context {
-            std::weak_ptr<RecycleList> owner;
-        };
-
-        static void notifyOnMainQueue(Context *context) {
-            auto weakOwner = context->owner;
-            Instance::GetTaskExecutor().runOnMainQueue([weakOwner]() {
-                auto owner = weakOwner.lock();
-                if (owner) {
-                    owner->handleScrollEndDetectionTimer();
-                }
-            });
-        }
-
-#if defined(OS_IOS)
-        static void onTimer(void *context) {
-            notifyOnMainQueue(static_cast<Context *>(context));
-        }
-
-        static void onTimerCanceled(void *context) {
-            delete static_cast<Context *>(context);
-        }
-
-        dispatch_source_t timer = nullptr;
-#elif defined(OS_ANDROID)
-        static int onTimer(int fd, int events, void *context) {
-            uint64_t expirations = 0;
-            if (events & ALOOPER_EVENT_INPUT) {
-                (void) read(fd, &expirations, sizeof(expirations));
-            }
-            notifyOnMainQueue(static_cast<Context *>(context));
-            return 1;
-        }
-
-        ALooper *looper = nullptr;
-        int timerFd = -1;
-#elif defined(OS_HARMONY)
-        static void onTimer(void *context) {
-            std::unique_ptr<Context> timerContext(
-                    static_cast<Context *>(context));
-            notifyOnMainQueue(timerContext.get());
-        }
-
-        ffrt_timer_t timer = -1;
-        void *pendingTimerContext = nullptr;
-#endif
-        Context *context = nullptr;
-    };
-#endif
 // common start
 /**
- * 仅listInstanceCache、sectionInstanceCache内有所有instance
- * sectionGroupByCache、headerInstanceCache仅在找不到父级时暂存，父级设置成功id后再领养并清理这些缓存内容
+ * listInstanceCache、sectionInstanceCache内有所有instance
+ * sectionGroupCache、headerInstanceCache仅在找不到父级时暂存，父级设置成功id后再领养并清理这些缓存内容
  */
     auto listInstanceCache = std::unordered_map<double, std::weak_ptr<RecycleList>>();
     auto sectionInstanceCache = std::unordered_map<double, std::weak_ptr<RecycleListSection>>();
@@ -332,25 +132,52 @@ namespace recycle_list {
 
     enum NativeChannelFnAction : uint32_t {
         NativeChannelFnActionDestroyList = 0,
-        NativeChannelFnActionDestroySection = 1
+        NativeChannelFnActionDestroySection = 1,
+        NativeChannelFnActionListUpdateList = 2,
+        NativeChannelFnActionSectionUpdateList = 3
     };
-    // 不检查napi_status，上游确保正确
+    // 不检查napi_status，上游确保参数类型正确
+    std::vector<std::string> resolveKeyList(napi_env env, napi_value jsKeyList) {
+        std::vector<std::string> keyList;
+        bool isArray = false;
+        napi_is_array(env, jsKeyList, &isArray);
+        if (!isArray) {
+            return keyList;
+        }
+        uint32_t length = 0;
+        napi_get_array_length(env, jsKeyList, &length);
+        keyList.reserve(length);
+        for (uint32_t i = 0; i < length; ++i) {
+            napi_value jsKey;
+            napi_get_element(env, jsKeyList, i, &jsKey);
+            size_t strLen = 0;
+            napi_get_value_string_utf8(env, jsKey, nullptr, 0, &strLen);
+            std::string key(strLen + 1, '\0');
+            napi_get_value_string_utf8(env, jsKey, key.data(), strLen + 1, &strLen);
+            key.resize(strLen);
+            keyList.push_back(std::move(key));
+        }
+        return keyList;
+    }
+
     napi_value NativeChannelFn(napi_env env, napi_callback_info info) {
         napi_value undefined;
         napi_get_undefined(env, &undefined);
-        size_t argc = 2;
-        napi_value args[2];
-        napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
+        size_t argc = 0;
+        napi_get_cb_info(env, info, &argc, nullptr, nullptr, nullptr);
         if (argc < 2) {
             return undefined;
         }
+        std::vector<napi_value> args(argc);
+        napi_get_cb_info(
+                env, info, &argc, args.data(), nullptr, nullptr);
         double action = 0.0;
         napi_get_value_double(env, args[0], &action);
-        double listViewOrSectionId = 0.0;
-        napi_get_value_double(env, args[1], &listViewOrSectionId);
+        double instanceId = 0.0;
+        napi_get_value_double(env, args[1], &instanceId);
         int32_t actionInt = static_cast<uint32_t>(action);
         if (actionInt == NativeChannelFnActionDestroyList) {
-            auto it = listInstanceCache.find(listViewOrSectionId);
+            auto it = listInstanceCache.find(instanceId);
             if (it != listInstanceCache.end()) {
                 auto list = it->second.lock();
                 if (list) {
@@ -358,12 +185,28 @@ namespace recycle_list {
                 }
             }
         } else if (actionInt == NativeChannelFnActionDestroySection) {
-            auto it = sectionInstanceCache.find(listViewOrSectionId);
+            auto it = sectionInstanceCache.find(instanceId);
             if (it != sectionInstanceCache.end()) {
                 auto section = it->second.lock();
                 if (section) {
                     section->setDestroyed(true);
                 }
+            }
+        } else if (actionInt == NativeChannelFnActionListUpdateList) {
+            if (argc < 3) {
+                return undefined;
+            }
+            auto list = findRecycleList(instanceId);
+            if (list) {
+                list->updateList(resolveKeyList(env, args[2]));
+            }
+        } else if (actionInt == NativeChannelFnActionSectionUpdateList) {
+            if (argc < 3) {
+                return undefined;
+            }
+            auto section = findRecycleSection(instanceId);
+            if (section) {
+                section->updateList(resolveKeyList(env, args[2]));
             }
         }
         return undefined;
@@ -371,7 +214,16 @@ namespace recycle_list {
 
     void RecycleListItemDataStore::updateKeyList(
             const std::vector<std::string> &keyList) {
+        if (this->listDataStatus == ListDataStatusNotInitialized) {
+            if (keyList.size() > 0) {
+                this->listDataStatus = ListDataStatusInitialized;
+            }
+        } else if (this->listDataStatus == ListDataStatusInitialized){
+            this->listDataStatus = ListDataStatusUpdated;
+        }
+
         this->keyList = keyList;
+        this->forceRenderInfoUpdate = true;
 
         std::vector<ItemInfo> tempList;
         tempList.reserve(keyList.size());
@@ -417,6 +269,42 @@ namespace recycle_list {
         change.wasUnknown = itemPtr->size < 0;
         change.delta = size - this->realItemSize(itemPtr->size);
         itemPtr->size = size;
+
+        /**
+         * TODO 频繁调整默认item尺寸会导致部分情况下（uni-ai-x全rich-text，每个消息分10个item，100个消息）出下闪烁，待解决
+         */
+        // // 方案1：将当前渲染出的（itemInstanceMap）item尺寸的平均值作为defaultItemSize
+        // float totalSize = 0.0f;
+        // int avgSizeItemCount = 0;
+        // for (const auto &pair: this->itemInstanceMap) {
+        //     const auto &itemInstance = pair.second;
+        //     if (itemInstance && itemInstance->size > 0.0f) {
+        //         totalSize += itemInstance->size;
+        //         avgSizeItemCount++;
+        //     }
+        // }
+        // if (totalSize > 0.0f) {
+        //     this->defaultItemSize = totalSize / avgSizeItemCount;
+        // }
+
+        // // 方案2：将已渲染过的item尺寸的平均值作为defaultItemSize
+        //        if (size > 0) {
+        //            // 将已渲染过的item尺寸的平均值作为defaultItemSize
+        //            float totalSize = 0.0f;
+        //            int avgSizeItemCount = 0;
+        //            for (const auto &item: this->list) {
+        //                if (item.size > 0) {
+        //                    totalSize += item.size;
+        //                    ++avgSizeItemCount;
+        //                }
+        //            }
+        //            if (totalSize > 0.0f) {
+        //                this->defaultItemSize = totalSize / avgSizeItemCount;
+        //                UNIAPPX_LOG_ERROR(
+        //                        "RecycleListItemDataStore::updateStoredItemSize defaultItemSize: %f listSize: %d",
+        //                        this->defaultItemSize, this->list.size());
+        //            }
+        //        }
         return change;
     }
 
@@ -432,21 +320,21 @@ namespace recycle_list {
         for (size_t i = startIndex; i < this->list.size(); ++i) {
             const auto prev = &this->list[i - 1];
             this->list[i].offset = this->itemEndOffset(prev);
+            this->onItemOffsetChange(this->list[i].key, this->list[i].offset);
         }
     }
 
-    void RecycleListItemDataStore::updateItemInstanceOffsetsFrom(
-            size_t startIndex, float baseOffset) {
-        if (this->destroyed || startIndex >= this->list.size()) {
-            return;
-        }
-
-        for (size_t i = startIndex; i < this->list.size(); ++i) {
-            auto instanceIt = this->itemInstanceMap.find(this->list[i].key);
-            if (instanceIt != this->itemInstanceMap.end() &&
-                instanceIt->second) {
-                instanceIt->second->updateItemOffset(
-                        baseOffset + this->list[i].offset);
+    void RecycleListItemDataStore::updateItemOffset() {
+        for (const auto &pair: this->itemInstanceMap) {
+            const auto &key = pair.first;
+            IRecycleListItem *itemInstance = pair.second;
+            auto it = this->keyItemMap.find(key);
+            if (it != this->keyItemMap.end()) {
+                ItemInfo *itemPtr = it->second;
+                auto index = itemPtr->index;
+                if (itemInstance) {
+                    itemInstance->updateItemOffset(itemPtr->offset + this->getItemBaseOffset());
+                }
             }
         }
     }
@@ -501,9 +389,7 @@ namespace recycle_list {
  * setElement和上述方法的调用顺序无法确定
  */
     RecycleList::RecycleList() {}
-    RecycleList::~RecycleList() {
-        this->destroyScrollEndDetectionTimer();
-    }
+    RecycleList::~RecycleList() {}
 
     void RecycleList::setDestroyed(bool destroyed) {
         if (this->destroyed == destroyed) {
@@ -511,7 +397,6 @@ namespace recycle_list {
         }
         this->destroyed = destroyed;
         if (destroyed) {
-            this->destroyScrollEndDetectionTimer();
             this->removeScrollListener();
             this->stopRootObserve();
             this->stopHeaderObserve();
@@ -527,6 +412,8 @@ namespace recycle_list {
         if (!isValidListViewId(listViewId)) {
             return;
         }
+        listInstanceCache[listViewId] = this->shared_from_this();
+        
 #if defined(OS_ANDROID)
         auto weakThis = this->weak_from_this();
         napi::v8_bridge::RunWithV8ScopeNoLocker(this->_sharedData->_env, [weakThis]() {
@@ -558,7 +445,6 @@ namespace recycle_list {
         );
         this->callMethod("setNativeChannelFn", {jsFn});
 #endif
-        listInstanceCache[listViewId] = this->shared_from_this();
 
         auto groupIt = sectionGroupCache.find(listViewId);
         if (groupIt == sectionGroupCache.end()) {
@@ -583,17 +469,19 @@ namespace recycle_list {
         this->scrollElement = scrollElement;
         // 调用getBoundingClientRect获取高度略微浪费性能。OffsetHeight返回的又是整形，不符合预期。或许需要暴露NativeView给list-view用
         // auto size = this->scrollElement->getBoundingClientRect().height;
-        auto height = layoutPx2LogicPx(this->scrollElement->GetLayoutHeight());
-        auto paddingTop = layoutPx2LogicPx(this->scrollElement->GetLayoutPaddingTop());
-        auto paddingBottom = layoutPx2LogicPx(this->scrollElement->GetLayoutPaddingBottom());
-        if (height && !std::isnan(height)) {
-            if (std::isnan(paddingTop)) {
-                paddingTop = 0;
+        if (!this->scrollElement->IsNeedLayout()) {
+            auto height = layoutPx2LogicPx(this->scrollElement->GetLayoutHeight());
+            auto paddingTop = layoutPx2LogicPx(this->scrollElement->GetLayoutPaddingTop());
+            auto paddingBottom = layoutPx2LogicPx(this->scrollElement->GetLayoutPaddingBottom());
+            if (height && !std::isnan(height)) {
+                if (std::isnan(paddingTop)) {
+                    paddingTop = 0;
+                }
+                if (std::isnan(paddingBottom)) {
+                    paddingBottom = 0;
+                }
+                this->updateContainerSize(height - paddingTop - paddingBottom);
             }
-            if (std::isnan(paddingBottom)) {
-                paddingBottom = 0;
-            }
-            this->updateContainerSize(height - paddingTop - paddingBottom);
         }
         this->addScrollListener();
         this->startRootObserve();
@@ -629,9 +517,11 @@ namespace recycle_list {
             this->stopHeaderObserve();
         }
         this->listHeaderElement = dynamic_cast<UniViewElement *>(element);
-        auto size = layoutPx2LogicPx(this->listHeaderElement->GetLayoutHeight());
-        if (size && !std::isnan(size)) {
-            this->updateHeaderSize(size);
+        if (!this->listHeaderElement->IsNeedLayout()) {
+            auto size = layoutPx2LogicPx(this->listHeaderElement->GetLayoutHeight());
+            if (!std::isnan(size)) {
+                this->updateHeaderSize(size);
+            }
         }
         this->startHeaderObserve();
     }
@@ -676,6 +566,9 @@ namespace recycle_list {
         if (this->scrolling) {
             this->scrollingToItemIgnoreNextEnd = true;
         }
+        /**
+         * 此处直接调用element scrollTo遵循用户的scroll-with-animation属性
+         */
         this->scrollElement->scrollTo(0, offset + this->headerSize);
     }
 
@@ -753,6 +646,10 @@ namespace recycle_list {
         }
     }
 
+    void RecycleList::setInitialScrollBottom(bool enabled) {
+        this->initialScrollBottom = enabled;
+    }
+
     void RecycleList::startRootObserve() {
         this->resizeObserver = new UniResizeObserver(
                 [this](const std::vector<UniResizeObserverEntry> &entries) {
@@ -802,6 +699,10 @@ namespace recycle_list {
         if (this->placeholderElement) {
             this->placeholderResizeObserver = new UniResizeObserver(
                     [this](const std::vector<UniResizeObserverEntry> &entries) {
+                        if (this->shouldAnchorToBottom()) {
+                            this->anchorToBottom();
+                            return;
+                        }
                         if (!this->scrolling && this->scrollAnchoringEnabled) {
                             this->anchorToItem();
                         }
@@ -855,58 +756,41 @@ namespace recycle_list {
     }
 
     void RecycleList::onScroll(const UniScrollEvent &event) {
+        float scrollTop = std::max(0.0f, event.detail().scrollTop());
+        /**
+         * 过滤掉滚动到底部触发的滚动以及尺寸变化引发的滚动，其他滚动都认为由用户触发，用户触发滚动后则中断滚动到底部流程
+         */
+        if (this->initialScrollBottom &&
+            this->maintainInitialScrollBottom &&
+            !this->isScrollTopTriggerByAnchorToBottom(scrollTop) &&
+            !this->isScrollAtBottom(scrollTop)) {
+            this->maintainInitialScrollBottom = false;
+        }
         if (!this->scrolling) {
             this->onScrollStart();
             this->scrolling = true;
         }
-        float scrollTop = event.detail().scrollTop();
         if (scrollTop == 0 || scrollTop >= this->placeholderSize - this->size) {
             this->itemSizeChangedCompensation = 0;
+        }
+        if (scrollTop + this->itemSizeChangedCompensation < 0) {
+            this->itemSizeChangedCompensation = 0;
+            this->internalScrollTo(0, 0);
+            return;
         }
         this->realScrollOffset = scrollTop;
         scrollTop = this->prepareFastScroll(scrollTop);
         this->updateScrollOffset(scrollTop);
-        this->scheduleScrollEndDetection();
-    }
-
-    void RecycleList::scheduleScrollEndDetection() {
-        this->scrollEndDetectionDeadline =
-                std::chrono::steady_clock::now() + std::chrono::milliseconds(30);
-        if (!this->scrollEndDetectionTimer) {
-            this->scrollEndDetectionTimer =
-                    std::make_unique<ScrollEndDetectionTimer>(this->weak_from_this());
-        }
-        this->scrollEndDetectionArmed = this->scrollEndDetectionTimer->schedule(30);
-        if (!this->scrollEndDetectionArmed) {
-            this->scrollEndDetectionTimer.reset();
-        }
-    }
-
-    void RecycleList::cancelScrollEndDetection() {
-        this->scrollEndDetectionArmed = false;
-        if (this->scrollEndDetectionTimer) {
-            this->scrollEndDetectionTimer->cancel();
-        }
-    }
-
-    void RecycleList::destroyScrollEndDetectionTimer() {
-        this->cancelScrollEndDetection();
-        this->scrollEndDetectionTimer.reset();
-    }
-
-    void RecycleList::handleScrollEndDetectionTimer() {
-        if (!this->scrollEndDetectionArmed || this->destroyed ||
-            std::chrono::steady_clock::now() < this->scrollEndDetectionDeadline) {
-            return;
-        }
-        this->scrollEndDetectionArmed = false;
-        this->onScrollEnd();
     }
 
     void RecycleList::onScrollStart() {
+        if (this->scrollTriggeredByList) {
+            this->scrollTriggeredByList = false;
+        }
         this->scrollAnchorItemKey.clear();
-        const auto anchorItem = this->getRenderStartItem();
+        const auto anchorItem = this->getSizeChangeAnchorItem();
         this->sizeChangeAnchorItemKey = anchorItem ? anchorItem->key : "";
+        this->sizeChangeAnchorItemOffset = anchorItem ? anchorItem->offset : -1.0f;
         // 不考虑同一页面多个回收列表同时滚动的场景
         this->scrollElement->GetPage()->setRecycling(true);
         if (this->resetCachedSizeOnNextScroll && !this->scrollingToItem && !this->scrollingToAnchorItem) {
@@ -916,7 +800,6 @@ namespace recycle_list {
     }
 
     void RecycleList::onScrollEnd() {
-        this->cancelScrollEndDetection();
         /**
          * 用户手指碰到scroll-view时如果scroll-view正在滚动会立刻触发scrollEnd
          */
@@ -926,17 +809,17 @@ namespace recycle_list {
 
         this->scrolling = false;
         this->sizeChangeAnchorItemKey.clear();
+        this->sizeChangeAnchorItemOffset = -1.0f;
         this->scrollElement->GetPage()->setRecycling(false);
         auto exitFastScrollMode = this->fastScrolling;
         if (this->fastScrolling) {
             this->leaveFastScrollMode();
         }
-        if (this->scrollOffset != this->realScrollOffset || exitFastScrollMode) {
-            this->scrollOffset = this->realScrollOffset;
-            this->updateMinMaxRenderOffset();
-            this->updateRenderListOnScroll();
-            this->broadcastScrollContext();
+
+        if (this->ignoreNextFastScroll) {
+            this->ignoreNextFastScroll = false;
         }
+
         if (this->scrollingToItemIgnoreNextEnd) {
             this->scrollingToItemIgnoreNextEnd = false;
         } else if (this->scrollingToItem) {
@@ -956,11 +839,40 @@ namespace recycle_list {
         if (this->scrollAnchoringEnabled) {
             this->updateScrollAnchorItem();
         }
-        if (this->itemSizeChangedCompensation != 0) {
+
+        bool renderNextFrame = false;
+        float nextScrollTop = -1.0f;
+        if (this->itemSizeChangedCompensation != 0.0f) {
             auto compensation = this->itemSizeChangedCompensation;
             this->itemSizeChangedCompensation = 0;
-            auto renderScrollOffset = this->realScrollOffset + compensation;
-            this->scrollTo(renderScrollOffset, 0);
+            auto renderScrollOffset = std::max(0.0f, this->realScrollOffset + compensation);
+            nextScrollTop = renderScrollOffset;
+            this->realScrollOffset = renderScrollOffset;
+            this->scrollOffset = renderScrollOffset;
+            this->ignoreNextFastScroll = true;
+            renderNextFrame = true;
+        } else if (this->scrollOffset != this->realScrollOffset || exitFastScrollMode) {
+            this->scrollOffset = this->realScrollOffset;
+            renderNextFrame = true;
+        }
+        /**
+         * 必须先清理锚定信息，否则可能导致internalScrollTo触发滚动+updateRenderListOnScroll更新transform时闪烁
+         */
+        if (nextScrollTop >= 0.0f) {
+            this->scrollAnchorItemKey.clear();
+            this->scrollAnchorItemOffset = 0;
+        }
+        if (renderNextFrame) {
+            this->updateMinMaxRenderOffset();
+            this->updateRenderListOnScroll();
+            this->broadcastScrollContext();
+        }
+        /**
+         * 必须放在最后，scrollTo可能会同步触发scroll、scrollEnd
+         * 如果不放在最后可能导致两次scrollEnd混在一起执行
+         */
+        if (nextScrollTop >= 0.0f) {
+            this->internalScrollTo(nextScrollTop, 0);
         }
     }
 
@@ -981,12 +893,54 @@ namespace recycle_list {
         }
     }
 
-    void RecycleList::anchorToItem() {
-        if (this->scrolling || !this->scrollAnchoringEnabled || this->scrollAnchorItemKey.empty()) {
+    void RecycleList::anchorToBottom() {
+        /**
+         * 目前有两处调用anchorToBottom
+         * - 设置placeholderHeight之前
+         * - placeholder高度变化之后
+         * 设置placeholderHeight之前调用是为了尽量及时的滚动到底部可减少部分视觉闪烁
+         * placeholder高度变化之后调用是因为前者并不一定是能滚动到的位置，关于什么时候能滚动其实衔接的不是很好，似乎也没法做到更好了
+         */
+        if (!this->scrollElement || this->scrolling || !this->shouldAnchorToBottom()) {
             return;
         }
+        auto scrollHeight = std::max(this->placeholderSize + this->headerSize, this->scrollElement->getScrollHeight());
+        auto offsetHeight = this->size;
+        if (scrollHeight > offsetHeight) {
+            auto scrollTop = scrollHeight - offsetHeight;
+            /**
+             * 此处移除了一个判断scrollTop != this->realScrollOffset
+             * 其他逻辑可能会更新realScrollOffset使其和当前真实scrollTop不一致
+             * 为了与其他逻辑解耦移除此判断
+             */
+            this->internalScrollTo(scrollHeight - offsetHeight, 0);
+        }
+    }
+
+    /**
+     * 判断是否滚动到底部
+     * 此条件用于过滤由尺寸变化引发的滚动
+     */
+    bool RecycleList::isScrollAtBottom(float scrollTop) const {
+        if (!this->scrollElement) {
+            return false;
+        }
+        auto maxScrollTop = std::max(0.0f,
+                                     std::min(this->placeholderSize + this->headerSize, this->scrollElement->getScrollHeight()) -
+                                     this->size);
+        return scrollTop >= maxScrollTop - this->calcToleranceNormal;
+    }
+
+    void RecycleList::anchorToItem() {
+        if (this->scrolling || !this->scrollAnchoringEnabled || this->scrollAnchorItemKey.empty() || this->shouldAnchorToBottom()) {
+            return;
+        }
+        this->updateItemOffset();
         auto oldOffset = this->scrollAnchorItemOffset;
         auto anchorItem = this->getItemInfo(this->scrollAnchorItemKey);
+        if (!anchorItem) {
+            return;
+        }
         auto newOffset = anchorItem->offset;
         this->queueScrollBy(newOffset - oldOffset);
     }
@@ -1010,7 +964,7 @@ namespace recycle_list {
             return offset;
         }
 
-        bool ignoreFastScrollMode = offset < 1.0f || offset >
+        bool ignoreFastScrollMode = this->ignoreNextFastScroll || offset < 1.0f || offset >
                                                      this->placeholderSize -
                                                      this->size - 1.0f;
         if (!ignoreFastScrollMode) {
@@ -1057,10 +1011,6 @@ namespace recycle_list {
             return;
         }
         this->fastScrolling = true;
-        /**
-         * 在用户注意不到的时机将补偿值设为0
-         */
-        this->itemSizeChangedCompensation = 0;
         this->fastScrollOffset = 0.0f;
     }
 
@@ -1070,29 +1020,43 @@ namespace recycle_list {
         }
         this->fastScrolling = false;
         /**
-         * 在用户注意不到的时机将补偿值设为0
-         */
-        this->itemSizeChangedCompensation = 0;
-        /**
          * 重设lastScrollOffset以便后续能判断真实滚动方向
          */
         this->lastScrollOffset = this->realScrollOffset;
         this->fastScrollOffset = 0.0f;
         this->lastScrollTimestampForFastScroll = 0;
         this->lastScrollOffsetForFastScrollRender = 0;
-        this->scrollOffset = this->realScrollOffset;
         this->resetCachedSizeOnNextRender = true;
-        this->updateMinMaxRenderOffset();
     }
 
+    /**
+     * updateList和item的updateKey不同，可以使用同步方式更新，因为发起updateList的并非renderEffect
+     *
+     * 修改历史
+     * - 为实现滚动锚定，updateList改为由组件通过napi同步调用。因为js侧发起updateList后会触发js侧的渲染范围重新计算，如果updateList不是同步调用，会先在js侧渲染新内容，native更新后再锚定。同步调用native的updateList会同步触发js侧渲染范围更新，不会闪。
+     * - 同步updateList引发了一些副作用，改回了sharedData通道调用
+     *   + [开启 scroll-anchoring 后追加消息可能出现白屏](https://issues.dcloud.net.cn/pages/issues/detail?id=32913)
+     *   + [列表内容多次同步更新时界面跳动](https://issues.dcloud.net.cn/pages/issues/detail?id=32604)
+     */
     void RecycleList::updateList(const std::vector<std::string> &keyList) {
         this->sizeChangeAnchorItemKey.clear();
         this->itemSizeChangedCompensation = 0;
         this->updateKeyList(keyList);
         auto scrollAnchorToItem = this->shouldScrollAnchorToItem();
         if (scrollAnchorToItem) {
-            this->updatePlaceholderHeight();
-            return;
+            auto oldOffset = this->scrollAnchorItemOffset;
+            auto anchorItem = this->getItemInfo(this->scrollAnchorItemKey);
+            if (anchorItem) {
+                auto newOffset = anchorItem->offset;
+                auto delta = newOffset - oldOffset;
+                this->scrollOffset += delta;
+                this->realScrollOffset += delta;
+                this->updateMinMaxRenderOffset();
+            } else {
+                this->scrollAnchorItemKey.clear();
+            }
+        } else if (this->shouldAnchorToBottom()) {
+            this->preAnchorToBottom();
         }
         this->onItemListRelayout();
         if (!this->scrolling && this->scrollAnchoringEnabled && this->scrollAnchorItemKey.empty()) {
@@ -1111,30 +1075,31 @@ namespace recycle_list {
         return true;
     }
 
+    float RecycleList::getItemBaseOffset() {
+        return this->fastScrollOffset - this->itemSizeChangedCompensation;
+    }
+
     void RecycleList::updateItemSize(const std::string &key, float size) {
         auto itemPtr = this->findItem(key);
         if (!itemPtr) {
             return;
         }
-        auto sizeChangeAnchorItem = this->getItemInfo(this->sizeChangeAnchorItemKey);
         auto change = this->updateStoredItemSize(key, size);
         if (!change.changed) {
             return;
         }
-        if (sizeChangeAnchorItem && change.index < sizeChangeAnchorItem->index) {
-            this->recordItemOffsetCompensation(change.delta);
-        }
-        this->rebuildItemOffsetsFrom(
-                    static_cast<size_t>(change.index + 1));
+        this->rebuildItemOffsetsFrom(0);
         auto scrollAnchorToItem = this->shouldScrollAnchorToItem();
         if (scrollAnchorToItem) {
             this->updatePlaceholderHeight();
             return;
+        } else if (this->shouldAnchorToBottom()) {
+            this->preAnchorToBottom();
         }
         if (this->scrollingToItem) {
             this->checkAndUpdateScrollingToItemOffset();
         }
-        this->onItemSizeRelayout(change.index);
+        this->onItemSizeRelayout();
     }
 
     void RecycleList::scrollTo(float offset, float duration) {
@@ -1148,6 +1113,13 @@ namespace recycle_list {
 #endif
     }
 
+    void RecycleList::internalScrollTo(float offset, float duration) {
+        if (this->shouldAnchorToBottom()) {
+            this->anchorToBottomHistory.push_back(offset);
+        }
+        this->scrollTo(offset, duration);
+    }
+
     void RecycleList::queueScrollBy(float offset) {
         if (!this->scrollElement) {
             return;
@@ -1157,7 +1129,20 @@ namespace recycle_list {
         this->scrollingToAnchorItem = true;
         this->cachedSizeStart = 0.0f;
         this->resetCachedSizeOnNextScroll = true;
-        this->scrollTo(this->realScrollOffset + this->totalAnchorScrollBy, 0);
+        this->scrollTo(this->scrollElement->getScrollTop() + this->totalAnchorScrollBy, 0);
+    }
+
+    /**
+     * 提前根据预估placeholder尺寸得到目标滚动位置
+     */
+    void RecycleList::preAnchorToBottom() {
+        if (this->list.empty()) {
+            return;
+        }
+        auto nextPlaceholderSize = this->itemEndOffset(&this->list.back());
+        this->scrollOffset = nextPlaceholderSize - this->size;
+        this->realScrollOffset = this->scrollOffset;
+        this->updateMinMaxRenderOffset();
     }
 
     void RecycleList::syncDefaultItemSize(float size) {
@@ -1168,18 +1153,20 @@ namespace recycle_list {
         }
     }
 
-    void RecycleList::recordItemOffsetCompensation(float delta) {
-        if (this->fastScrolling || this->scrollingToItem || !this->scrolling) {
-            return;
+    void RecycleList::onItemOffsetChange(const std::string key, float offset) {
+        if (!this->scrollingToItem && this->scrolling) {
+            if (this->sizeChangeAnchorItemKey == key) {
+                this->itemSizeChangedCompensation = offset - this->sizeChangeAnchorItemOffset;
+                this->updateMinMaxRenderOffset();
+            }
         }
-        this->itemSizeChangedCompensation += delta;
     }
 
     void RecycleList::onItemListRelayout() {
         this->updateRenderList();
     }
 
-    void RecycleList::onItemSizeRelayout(int firstDirtyIndex) {
+    void RecycleList::onItemSizeRelayout() {
         if (this->isAllRenderItemSettled()) {
             this->updateRenderListOnItemSizeChange();
         }
@@ -1189,7 +1176,7 @@ namespace recycle_list {
         if (this->size != size) {
             this->size = size;
             this->updateMinMaxRenderOffset();
-            this->updateRenderListForward();
+            this->updateRenderList();
             this->broadcastScrollContext();
         }
     }
@@ -1206,11 +1193,7 @@ namespace recycle_list {
             this->queueScrollBy(oldHeaderSize - this->headerSize);
             return;
         }
-        if(oldHeaderSize > this->headerSize) {
-            this->updateRenderListBackward();
-        } else {
-            this->updateRenderListForward();
-        }
+        this->updateRenderList();
         this->broadcastScrollContext();
     }
 
@@ -1222,8 +1205,7 @@ namespace recycle_list {
         float _placeholderSize = 0.0f;
         if(!this->list.empty()) {
             const auto lastItem = &this->list.back();
-            _placeholderSize = this->itemEndOffset(lastItem) -
-                                    this->itemSizeChangedCompensation;
+            _placeholderSize = this->itemEndOffset(lastItem);
         }
         if (this->placeholderSize != _placeholderSize) {
             this->placeholderSize = _placeholderSize;
@@ -1254,24 +1236,25 @@ namespace recycle_list {
             this->scrollOffset = offset;
 
         /**
-         * 滚动期间持续消耗补偿值，避免一次性消耗过大引起跳动，/3是随便写的一个值，没有什么特别的。希望滚动期间抖动更小，就把分母改大一点。
+         * 滚动期间持续消耗补偿值，避免一次性消耗过大引起跳动，除数是随便写的一个值，没有什么特别的。希望滚动期间抖动更小，就把分母改大一点。
          * 注意如果分母太大会导致滚动结束时补偿值剩余过多仍然会跳动。
          * 采用此方案而不是在滚动结束后一次消耗，是因为滚动结束后同时调整scrollTop和item的translateY无法确保在同一帧渲染完成，会引发明显跳动。
+         * 禁用滚动期间补偿值消费，此逻辑会导致滚动期间看起来不流畅
          */
-        if (this->itemSizeChangedCompensation != 0) {
-            auto compensationAbs = std::abs(this->itemSizeChangedCompensation);
-            auto compensationDecrease = deltaAbs / 3;
-            if (compensationAbs > compensationDecrease) {
-                auto sign = this->itemSizeChangedCompensation / compensationAbs;
-                this->itemSizeChangedCompensation -=
-                        compensationDecrease * sign;
-                if(std::abs(this->itemSizeChangedCompensation) <= 1.0f) {
-                    this->itemSizeChangedCompensation = 0;
-                }
-            } else {
-                this->itemSizeChangedCompensation = 0;
-            }
-        }
+//        if (this->itemSizeChangedCompensation != 0) {
+//            auto compensationAbs = std::abs(this->itemSizeChangedCompensation);
+//            auto compensationDecrease = deltaAbs / 3;
+//            if (compensationAbs > compensationDecrease) {
+//                auto sign = this->itemSizeChangedCompensation / compensationAbs;
+//                this->itemSizeChangedCompensation -=
+//                        compensationDecrease * sign;
+//                if(std::abs(this->itemSizeChangedCompensation) <= 1.0f) {
+//                    this->itemSizeChangedCompensation = 0;
+//                }
+//            } else {
+//                this->itemSizeChangedCompensation = 0;
+//            }
+//        }
 
         this->updateMinMaxRenderOffset();
         this->updateRenderListOnScroll();
@@ -1285,9 +1268,9 @@ namespace recycle_list {
         auto pureOffset = this->scrollOffset - this->headerSize;
         this->minRenderOffset =
                 std::max(0.0f, pureOffset - this->cachedSizeStart +
-                               this->itemSizeChangedCompensation + this->calcTolerance);
+                               this->itemSizeChangedCompensation + this->calcToleranceNormal);
         this->maxRenderOffset = pureOffset + this->size + this->cachedSizeEnd +
-                                this->itemSizeChangedCompensation - this->calcTolerance;
+                                this->itemSizeChangedCompensation - this->calcToleranceNormal;
     }
 
     void RecycleList::preTriggerRenderListUpdate() {
@@ -1310,24 +1293,15 @@ namespace recycle_list {
             this->renderRangeLength != this->lastRenderRangeLength) {
             renderInfoChanged = true;
         }
-
-        // list-item在更新key之后主动获取offset进行更新，此时机用于更新已经显示的item的offset
-        // 遍历this->itemInstanceMap，更新所有已渲染item的offset
-        for (const auto &pair: this->itemInstanceMap) {
-            const auto &key = pair.first;
-            IRecycleListItem *itemInstance = pair.second;
-            auto it = this->keyItemMap.find(key);
-            if (it != this->keyItemMap.end()) {
-                ItemInfo *itemPtr = it->second;
-                itemInstance->updateItemOffset(itemPtr->offset -
-                                               this->itemSizeChangedCompensation +
-                                               this->fastScrollOffset);
-            }
+        
+        if (!this->shouldScrollAnchorToItem()) {
+            this->updateItemOffset();
         }
         
         this->updatePlaceholderHeight();
 
-        if (renderInfoChanged) {
+        if (renderInfoChanged || this->forceRenderInfoUpdate) {
+            this->forceRenderInfoUpdate = false;
             auto sharedData = this->_sharedData;
             if (!canCallVueComponentMethod(this)) {
                 return;
@@ -1383,79 +1357,7 @@ namespace recycle_list {
     }
 
     void RecycleList::updateRenderListOnScroll() {
-        if (this->scrollOffset == this->lastScrollOffset) {
-            this->updateRenderList();
-            return;
-        }
-        if (this->scrollOffset > this->lastScrollOffset) {
-            this->updateRenderListForward();
-        } else {
-            this->updateRenderListBackward();
-        }
-    }
-
-    void RecycleList::updateRenderListForward() {
-        const int lastRenderIndex =
-                this->renderRangeLength == 0 ? -1 : (this->renderRangeStart +
-                                                     this->renderRangeLength -
-                                                     1);
-        // remove invisible from top
-        while (this->renderRangeLength > 0) {
-            auto currentItem = this->list[this->renderRangeStart];
-            if (this->itemEndOffset(&currentItem) < this->minRenderOffset) {
-                this->renderRangeStart++;
-                this->renderRangeLength--;
-            } else {
-                break;
-            }
-        }
-        // append visible at bottom
-        bool foundStart = this->renderRangeLength > 0;
-        auto listSize = static_cast<int>(this->list.size());
-        for (int i = lastRenderIndex + 1; i < listSize; ++i) {
-            const auto item = &this->list[i];
-            if (this->itemEndOffset(item) < this->minRenderOffset) {
-                continue;
-            } else if (item->offset > this->maxRenderOffset) {
-                break;
-            } else {
-                this->renderRangeLength++;
-                if (!foundStart) {
-                    foundStart = true;
-                    this->renderRangeStart = i;
-                }
-            }
-        }
-        this->preTriggerRenderListUpdate();
-    }
-
-    void RecycleList::updateRenderListBackward() {
-        const int firstRenderIndex =
-                this->renderRangeLength == 0
-                ? static_cast<int>(this->list.size()) : this->renderRangeStart;
-        // remove invisible from bottom
-        while (this->renderRangeLength > 0) {
-            auto currentItem = &this->list[this->renderRangeStart +
-                                           this->renderRangeLength - 1];
-            if (currentItem->offset > this->maxRenderOffset) {
-                this->renderRangeLength--;
-            } else {
-                break;
-            }
-        }
-        // prepend visible at top
-        for (int i = firstRenderIndex - 1; i >= 0; --i) {
-            const auto item = &this->list[i];
-            if (item->offset > this->maxRenderOffset) {
-                continue;
-            } else if (this->itemEndOffset(item) < this->minRenderOffset) {
-                break;
-            } else {
-                this->renderRangeStart = i;
-                this->renderRangeLength++;
-            }
-        }
-        this->preTriggerRenderListUpdate();
+         this->updateRenderList();
     }
 
     float RecycleList::getItemOffset(const std::string &key) {
@@ -1464,11 +1366,7 @@ namespace recycle_list {
             return -1.0f;
 
         ItemInfo *itemPtr = it->second;
-        return itemPtr->offset - this->itemSizeChangedCompensation + this->fastScrollOffset;
-    }
-
-    float RecycleList::getItemSize(const std::string &key) {
-        return this->getStoredItemSize(key);
+        return itemPtr->offset + this->getItemBaseOffset();
     }
 
     void RecycleList::linkSection() {
@@ -1629,10 +1527,10 @@ namespace recycle_list {
         context.containerSize = this->size;
         context.headerSize = this->headerSize;
         context.renderStartOffset = std::max(0.0f, this->scrollOffset -
-                                                   this->cachedSizeStart + this->calcTolerance);
+                                                   this->cachedSizeStart + this->calcToleranceNormal);
         // 此步骤未限制renderEndOffset，后续使用时判断
         context.renderEndOffset =
-                this->scrollOffset + this->size + this->cachedSizeEnd - this->calcTolerance;
+                this->scrollOffset + this->size + this->cachedSizeEnd - this->calcToleranceNormal;
         context.fastScrollOffset = this->fastScrollOffset;
         return context;
     }
@@ -1666,26 +1564,84 @@ namespace recycle_list {
     RecycleListSection::RecycleListSection() {}
     RecycleListSection::~RecycleListSection() {}
 
+    void RecycleListSection::bindElementConnectListener(Element *element) {
+        if (this->connectListenerElement == element) {
+            return;
+        }
+        this->unbindElementConnectListener();
+        auto aliveToken = element ? element->GetAliveToken() : nullptr;
+        if (!element || !aliveToken ||
+            !aliveToken->load(std::memory_order_acquire)) {
+            return;
+        }
+        auto weakThis = this->weak_from_this();
+        this->connectListenerElement = element;
+        this->connectListenerElementAliveToken = std::move(aliveToken);
+        this->connectListenerId = element->AddConnectListener(
+                [weakThis, element](bool connected) {
+                    auto self = weakThis.lock();
+                    if (!self || self->destroyed ||
+                        self->viewElement != element) {
+                        return;
+                    }
+                    self->nextSection = nullptr;
+                    self->prevSection = nullptr;
+                    auto listView = self->getListView();
+                    if (!listView) {
+                        return;
+                    }
+                    listView->linkSection();
+                    if (connected) {
+                        self->syncFromRecycleList();
+                    }
+                });
+    }
+
+    void RecycleListSection::unbindElementConnectListener() {
+        if (this->connectListenerElement &&
+            this->connectListenerId != kInvalidElementConnectListenerId &&
+            this->connectListenerElementAliveToken &&
+            this->connectListenerElementAliveToken->load(
+                    std::memory_order_acquire)) {
+            this->connectListenerElement->RemoveConnectListener(
+                    this->connectListenerId);
+        }
+        this->connectListenerElement = nullptr;
+        this->connectListenerElementAliveToken.reset();
+        this->connectListenerId = kInvalidElementConnectListenerId;
+    }
+
     void RecycleListSection::setDestroyed(bool destroyed) {
         if (this->destroyed == destroyed) {
             return;
         }
         this->destroyed = destroyed;
         if (destroyed) {
+            this->unbindElementConnectListener();
             this->placeholderSize = 0;
             this->bindStickyHeader(nullptr);
             this->unregisterSectionBinding(this->listViewId, this->sectionId);
+            this->nextSection = nullptr;
+            this->prevSection = nullptr;
+            this->viewElement = nullptr;
             this->itemInstanceMap.clear();
         }
     }
 
     void RecycleListSection::setElement(Element *element) {
-        if (this->viewElement == element) {
-            // section被复用，重新连接
+        if (this->destroyed) {
+            return;
+        }
+        auto viewElement = dynamic_cast<UniViewElement *>(element);
+        if (this->viewElement != viewElement) {
             this->nextSection = nullptr;
             this->prevSection = nullptr;
+            this->viewElement = viewElement;
+            this->bindElementConnectListener(viewElement);
         }
-        this->viewElement = dynamic_cast<UniViewElement *>(element);
+        if (!this->viewElement) {
+            return;
+        }
         auto listView = this->getListView();
         if (listView) {
             listView->linkSection();
@@ -1797,17 +1753,11 @@ namespace recycle_list {
     }
 
     void RecycleListSection::onItemListRelayout() {
-        this->updateItemInstanceOffsetsFrom(0, this->headerSize);
         this->updatePlaceholderSize();
         this->syncFromRecycleList();
     }
 
-    void RecycleListSection::onItemSizeRelayout(int firstDirtyIndex) {
-        if (firstDirtyIndex >= 0) {
-            this->updateItemInstanceOffsetsFrom(
-                    static_cast<size_t>(firstDirtyIndex + 1),
-                    this->headerSize);
-        }
+    void RecycleListSection::onItemSizeRelayout() {
         this->updatePlaceholderSize();
         this->syncFromRecycleList();
     }
@@ -1901,26 +1851,23 @@ namespace recycle_list {
         }
     }
 
+    float RecycleListSection::getItemBaseOffset() {
+        return this->headerSize;
+    }
+
     void RecycleListSection::updateRenderInfo(int renderRangeStart,
                                               int renderRangeLength) {
         // list-item在更新key之后主动获取offset进行更新，此时机用于更新已经显示的item的offset
         // 遍历this->itemInstanceMap，更新所有已渲染item的offset
-        for (const auto &pair: this->itemInstanceMap) {
-            const auto &key = pair.first;
-            IRecycleListItem *itemInstance = pair.second;
-            auto it = this->keyItemMap.find(key);
-            if (it != this->keyItemMap.end()) {
-                ItemInfo *itemPtr = it->second;
-                itemInstance->updateItemOffset(this->headerSize + itemPtr->offset);
-            }
-        }
+        this->updateItemOffset();
 
         if (this->renderRangeStart == renderRangeStart &&
-            this->renderRangeLength == renderRangeLength) {
+            this->renderRangeLength == renderRangeLength && !this->forceRenderInfoUpdate) {
             return;
         }
         this->renderRangeStart = renderRangeStart;
         this->renderRangeLength = renderRangeLength;
+        this->forceRenderInfoUpdate = false;
 
         auto sharedData = this->_sharedData;
         if (!canCallVueComponentMethod(this)) {
@@ -1971,9 +1918,6 @@ namespace recycle_list {
         this->defaultItemSize = size;
         this->hasSyncedDefaultItemSize = true;
         this->rebuildItemOffsetsFrom(0);
-        this->updateItemInstanceOffsetsFrom(
-                0,
-                this->headerSize);
         this->updatePlaceholderSize();
         this->syncFromRecycleList();
     }
@@ -2060,9 +2004,9 @@ namespace recycle_list {
          * 例如点击跳转到section-E，此时section-D期望header归位，但是由于存在些许误差导致section-D的header到了section-D的最下方。
          */
         auto sectionOffset = 0.0f;
-        if (sectionTopInContainer + this->calcTolerance >
+        if (sectionTopInContainer + this->calcToleranceNormal >
             visibleBottomInContainer ||
-            sectionBottomInContainer - this->calcTolerance <
+            sectionBottomInContainer - this->calcToleranceNormal <
             visibleTopInContainer) {
             // 原始位置不影响快速滚动区域展示，则更新translate为0，此方案能减少部分section translate调用
             sectionOffset = 0;
@@ -2084,7 +2028,7 @@ namespace recycle_list {
         auto stickyRaw = context.scrollTop + prevHeaderPinnedSize - sectionTopInContainer;
         auto stickyMax = this->pushPinnedHeader ? std::max(0.0f, sectionHeight - this->headerSize) : std::numeric_limits<float>::infinity();
         auto stickyHeaderOffset = std::min(
-            std::max(0.0f, stickyRaw - this->calcTolerancePrecise), stickyMax);
+            std::max(0.0f, stickyRaw - this->calcToleranceStrict), stickyMax);
         
         if (this->stickyHeader) {
             this->stickyHeader->applyHeaderOffset(stickyHeaderOffset);
@@ -2176,15 +2120,14 @@ namespace recycle_list {
             this->syncDefaultItemSize(size);
             return;
         }
-        this->rebuildItemOffsetsFrom(
-                    static_cast<size_t>(change.index + 1));
+        this->rebuildItemOffsetsFrom(0);
         if (this->scrollingToItem && !this->scrollingToItemKey.empty()) {
             auto listView = this->getListView();
             if (listView) {
                 listView->checkAndUpdateScrollingToItemOffset();
             }
         }
-        this->onItemSizeRelayout(change.index);
+        this->onItemSizeRelayout();
     }
 
     float RecycleListSection::getItemOffset(const std::string &key) {
@@ -2194,7 +2137,7 @@ namespace recycle_list {
 
         ItemInfo *itemPtr = it->second;
         // item的实际offset需要加上header高度（header是sticky-header，position: absolute）
-        return this->headerSize + itemPtr->offset;
+        return itemPtr->offset + this->getItemBaseOffset();
     }
 
 // RecycleListSection end
@@ -2249,7 +2192,7 @@ namespace recycle_list {
     }
 
     void RecycleListHeader::initSize() {
-        if (!this->viewElement) {
+        if (!this->viewElement || this->viewElement->IsNeedLayout()) {
             return;
         }
         this->setSize(layoutPx2LogicPx(this->viewElement->GetLayoutHeight()));
@@ -2273,7 +2216,7 @@ namespace recycle_list {
     }
 
     void RecycleListHeader::setSize(float size) {
-        if (std::isnan(size) || size <= 0.0f || this->size == size) {
+        if (std::isnan(size) || size < 0.0f || this->size == size) {
             return;
         }
         this->size = size;
@@ -2346,6 +2289,9 @@ namespace recycle_list {
     RecycleListItem::RecycleListItem() {}
 
     RecycleListItem::~RecycleListItem() {
+        if (!this->key.empty()) {
+            this->removeInstance(this->key);
+        }
         this->stopObserve();
     }
 
@@ -2369,12 +2315,12 @@ namespace recycle_list {
     }
 
     void RecycleListItem::initSize() {
-        if (!this->viewElement || this->sizeInited) {
+        if (!this->viewElement || this->viewElement->IsNeedLayout() || !this->viewElement->isConnected() || !this->viewElement->HasLayout()) {
             return;
         }
-        auto size = layoutPx2LogicPx(this->viewElement->GetLayoutHeight());
+        auto layoutHeightPx = this->viewElement->GetLayoutHeight();
+        auto size = layoutPx2LogicPx(layoutHeightPx);
         if (!std::isnan(size)) {
-            this->sizeInited = true;
             this->setSize(size);
         }
     }
@@ -2403,7 +2349,7 @@ namespace recycle_list {
     float RecycleListItem::getSize() { return this->size; }
 
     void RecycleListItem::updateItemSize() {
-        if (this->key.empty() || this->size <= 0.0f) {
+        if (this->key.empty() || this->size < 0.0f) {
             return;
         }
         auto recycleList = this->getRecycleContainer();
@@ -2414,28 +2360,31 @@ namespace recycle_list {
 
     void RecycleListItem::setSize(float size) {
         // 过滤排版器返回的NaN
-        if (!std::isnan(size) && size > 0.0f) {
-            this->size = size;
-            this->updateItemSize();
-        }
-    }
-
-    void RecycleListItem::updateKey(const std::string &key) {
-        auto prevKey = this->key;
-        if (prevKey == key) {
+        if (std::isnan(size) || size < 0.0f) {
             return;
         }
-        if (!prevKey.empty()) {
-            // key更新逻辑
-            this->removeInstance(prevKey);
+        this->size = size;
+        this->updateItemSize();
+    }
+
+    /**
+     * 注意item的updateKey不能改成同步，因为updateKey在js侧是由renderEffect->renderList触发的
+     * 而在c层会触发updateKey -> updateItemSize -> updateRenderInfo->renderEffect导致任务批次混乱
+     */
+    void RecycleListItem::updateKey(const std::string &key) {
+        auto prevKey = this->key;
+        bool isKeyUpdated = prevKey != key;
+        if (isKeyUpdated) {
+            if (!prevKey.empty()) {
+                this->removeInstance(prevKey);
+            }
         }
         this->key = key;
         this->setInstance(key);
         // key变更后需要重置offset
         this->offset = -1.0f;
         this->getAndUpdateItemOffset();
-        // 先使用旧item的size，等待resizeObserver通知
-        this->updateItemSize();
+        this->initSize();
     }
 
     std::shared_ptr<IRecycleContainer> RecycleListItem::getRecycleContainer() {
@@ -2497,10 +2446,6 @@ namespace recycle_list {
     void RecycleListItem::applyItemOffset(float offset) {
         if (!this->viewElement || !isValidVueComponent(this)) {
             return;
-        }
-
-        if (offset < 0.0f) {
-            offset = 0.0f;
         }
 
         if (this->offset == offset) {

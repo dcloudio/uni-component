@@ -15,12 +15,12 @@
       ></web-view>
   </view>
   <!-- #ifdef VUE3-VAPOR-->
-  <rich-text-native v-else="props.mode == 'native'" :html="htmlContent" :style="style" @itemclick="itemclick"
+  <rich-text-native v-else="props.mode == 'native'" :html="htmlContent" :style="nativeStyle" @itemclick="itemclick"
   <!-- #ifdef APP -->
    :selectable="isSelectable"
    :selection-handle-color="props.selectionHandleColor"
    :selection-background-color="props.selectionBackgroundColor"
-
+   :disable-split-screen-render="isInRecycleContainer" 
   <!-- #endif -->
   ></rich-text-native>
   <!-- #endif -->
@@ -100,22 +100,22 @@
           "android": {
             "uniVer": "x",
             "unixVer": "3.9+",
-            "unixVaporVer": "5.24"
+            "unixVaporVer": "5.25"
           },
           "ios": {
             "uniVer": "x",
             "unixVer": "4.11",
-            "unixVaporVer": "5.24"
+            "unixVaporVer": "5.25"
           },
           "harmony": {
             "uniVer": "4.23",
             "unixVer": "4.61",
-            "unixVaporVer": "5.24"
+            "unixVaporVer": "5.25"
           }
         },
         "web": {
-          "uniVer": "5.24",
-          "unixVer": "5.24"
+          "uniVer": "5.25",
+          "unixVer": "5.25"
         },
         "mp": {
           "weixin": {
@@ -210,12 +210,25 @@
 
   // html内容
   const htmlContent = ref<string>('')
+  
+  // 是否开启分屏渲染
+  const recycleStateMap = inject('__uni_recycle_state_map', null) as Map<string, any> | null
+  const isInRecycleContainer = recycleStateMap != null
 
   // Style样式监听
   const style = useComputedStyle({
     properties: ['font-family', 'line-height', 'font-size', 'color'],
     filterProperties: false
   } as UseComputedStyleOptions)
+  const nativeStyle = computed(() : Map<string, any> => {
+    const result = new Map<string, any>()
+    style.forEach((value, key) => {
+      if (value != null) {
+        result.set(key, value)
+      }
+    })
+    return result
+  })
   const fontFamily = computed<string>(() => {
     return style.get('font-family')?.toString() ?? '-apple-system, HelveticaNeue'
   })
@@ -241,6 +254,20 @@
 
   // ================ 核心功能函数 ================
   const VOID_ELEMENTS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']
+  // #ifdef VUE3-VAPOR
+  const HTML_ESCAPES = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  };
+  function escapeText(str) {
+    return String(str).replace(/[&<>"']/g, (match) => {
+      return HTML_ESCAPES[match];
+    });
+  }
+  // #endif
   /**
    * 递归生成 HTML 内容
    * web-view组件和rich-text-native共用
@@ -251,7 +278,12 @@
       const node = nodes[i]
       // 处理文本节点
       if (node['text'] != null) {
+        // #ifdef VUE3-VAPOR
+        html += escapeText(node['text'] as string)
+        // #endif
+        // #ifndef VUE3-VAPOR
         html += node['text'] as string
+        // #endif
       } else {
         // 处理元素节点
         if (node['name'] != null) {

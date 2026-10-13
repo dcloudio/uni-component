@@ -1,8 +1,8 @@
 <template>
-    <view :section-id="sectionId satisfies number" change:section-id="recycleListItemCpp.setSectionId" :list-view-id="listViewId satisfies number"
-        change:list-view-id="recycleListItemCpp.setListViewId" :item-key="('' + props.itemKey) satisfies string"
-        change:item-key="recycleListItemCpp.updateKey" :ref="recycleListItemCpp.setElement" class="uni-list-item"
-        style="position: absolute; width: 100%">
+    <view :section-id="sectionId satisfies number" change:section-id="recycleListItemCpp.setSectionId"
+        :list-view-id="listViewId satisfies number" change:list-view-id="recycleListItemCpp.setListViewId"
+        :item-key="('' + props.itemKey) satisfies string" change:item-key="recycleListItemCpp.updateKey"
+        :ref="recycleListItemCpp.setElement" class="uni-list-item" style="position: absolute; width: 100%">
         <slot></slot>
     </view>
 </template>
@@ -22,12 +22,7 @@ const props = defineProps({
     itemKey: {
         type: [String, Number],
         required: true,
-    },
-    itemHeight: {
-        type: Number,
-        required: false,
-        default: 0,
-    },
+    }
 });
 const listViewId = inject<number>("__uni_recycle_view_id", 0);
 const sectionId = inject<number>('__uni_recycle_section_id', 0);

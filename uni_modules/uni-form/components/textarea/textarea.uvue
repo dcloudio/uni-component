@@ -85,9 +85,7 @@
 	const style = useComputedStyle({
 		properties: [
 			'font-size', 'color', 'line-height', 'letter-spacing', 'font-weight', 'font-style', 'font-family', 'text-align',
-			// #ifdef APP-ANDROID || APP-HARMONY
 			'direction',
-			// #endif
 			// #ifndef APP-ANDROID
 			'height', 'min-height', 'max-height',
 			// #endif
@@ -160,12 +158,10 @@
 				styleText += `font-size:${parseInt(styleFontSize)}px;`
 			}
 		}
-		// #ifdef APP-ANDROID || APP-HARMONY
 		const styleDirection = style.get('direction')
 		if (typeof styleDirection == 'string' && styleDirection.length > 0) {
 			styleText += `direction:${styleDirection};`
 		}
-		// #endif
 		// #ifdef APP-IOS || APP-HARMONY
 		styleText += textareaPaddingStyle.value
 		// #endif
@@ -244,6 +240,22 @@
 	   "app": {
 		 "harmony": {
 		   "unixVaporVer": "5.0"
+		 }
+	   },
+	   "web": {
+		 "uniVer": "x",
+		 "unixVer": "x"
+	   },
+	   "mp": {
+		 "weixin": {
+		   "hostVer": "x",
+		   "uniVer": "x",
+		   "unixVer": "x"
+		 },
+		 "alipay": {
+		   "hostVer": "x",
+		   "uniVer": "x",
+		   "unixVer": "x"
 		 }
 	   }
 	 }
@@ -507,6 +519,107 @@
 
 	const showPlaceholder = ref<boolean>(initialValue.value == '' && props.placeholder != '')
 
+	// #ifdef APP-ANDROID
+	watch(() => props.value, (newValue : string) => {
+		if (newValue == textareaValue.value) return
+		const value = newValue != null ? newValue : ''
+		textareaValue.value = normalizeByMaxLength(value.toString())
+		textareaView?.updateValue(textareaValue.value)
+	})
+
+	watch(() => [textareaValue.value, props.placeholder, isComposing.value], ([value, placeholder, composing] : [string, string, boolean]) => {
+		showPlaceholder.value = value == '' && placeholder != '' && !composing;
+	})
+
+	watch(() => style.get('font-size'), (value : string) => {
+		textareaView?.updateFontSize(rpx2px(value))
+	})
+	watch(() => style.get('color'), (value : string) => {
+		textareaView?.updateColor(value)
+	})
+	watch(() => style.get('line-height'), (value : string) => {
+		textareaView?.updateLineHeight(rpx2px(value))
+	})
+	watch(() => style.get('letter-spacing'), (value : string) => {
+		textareaView?.updateLetterSpacing(rpx2px(value))
+	})
+	watch(() => style.get('font-weight'), (value : string) => {
+		textareaView?.updateFontWeight(value)
+	})
+	watch(() => style.get('font-style'), (value : string) => {
+		textareaView?.updateFontStyle(value)
+	})
+	watch(() => style.get('font-family'), (value : string) => {
+		textareaView?.updateFontFamily(value)
+	})
+	watch(() => style.get('text-align'), (value : string) => {
+		textareaView?.updateTextAlign(value)
+	})
+	watch(() => style.get('direction'), (value : string) => {
+		textareaView?.updateDirection(value)
+	})
+
+	watch(() => props.disabled, (newValue : boolean) => {
+		textareaView?.updateDisabled(newValue)
+	})
+	watch(() => props.maxlength, (newValue : number | string) => {
+		const oldValue = textareaValue.value
+		textareaValue.value = normalizeByMaxLength(textareaValue.value)
+		if (textareaValue.value != oldValue) {
+			textareaView?.updateValue(textareaValue.value)
+		}
+		textareaView?.updateMaxLength(getMaxLength(newValue))
+	})
+	// input 光标与键盘的距离，单位 px 。实际生效值会受可视区域高度限制
+	watch(() => props.cursorSpacing, (newValue : number) => {
+		textareaView?.updateCursorSpacing(newValue)
+	})
+	watch(() => props.cursorColor, (newValue : string) => {
+		textareaView?.updateCursorColor(newValue)
+	})
+
+	watch(() => props.focus, (newValue : boolean) => {
+		textareaView?.updateFocus(newValue)
+	})
+
+	watch(() => props.confirmType, (newValue : string) => {
+		textareaView?.updateConfirmType(newValue)
+	})
+
+	watch(() => props.confirmHold, (newValue : boolean) => {
+		textareaView?.updateConfirmHold(newValue)
+	})
+
+	watch(() => props.autoHeight, (newValue : boolean) => {
+		syncAndroidTextareaAutoHeightStyle()
+		textareaView?.updateAutoHeight(newValue)
+	})
+
+	watch(() => androidTextareaHeightStyle.get('height'), () => {
+		rememberAndroidTextareaHeightIfNeeded()
+	})
+
+	watch(() => props.cursor, (newValue : number) => {
+		textareaView?.updateCursor(newValue)
+	})
+
+	watch(() => props.selectionStart, (newValue : number) => {
+		textareaView?.updateSelectionStart(newValue)
+	})
+
+	watch(() => props.selectionEnd, (newValue : number) => {
+		textareaView?.updateSelectionEnd(newValue)
+	})
+
+	watch(() => props.adjustPosition, (newValue : boolean) => {
+		textareaView?.updateAdjustPosition(newValue)
+	})
+
+	watch(() => props.holdKeyboard, (newValue : boolean) => {
+		textareaView?.updateHoldKeyboard(newValue)
+	})
+	// #endif
+
 	const instance = getCurrentInstance()
 	function onNativeViewReady() {
 		if (!textareaView) return
@@ -607,11 +720,11 @@
 				case 'text-align':
 					textareaView.updateTextAlign(value as string)
 					break
-				// #ifdef APP-HARMONY
 				case 'direction':
+					// #ifdef APP-IOS || APP-HARMONY
 					textareaView.updateDirection(value as string)
+					// #endif
 					break
-				// #endif
 				case 'height':
 					// #ifndef APP-ANDROID
 					textareaView.updateHeight(rpx2px(value as string))
@@ -834,6 +947,21 @@
 		})
 		// #endif
 
+		// #ifndef APP-ANDROID
+		watch(() => props.value, (newValue : string) => {
+			if (newValue == textareaValue.value) return
+			const value = newValue != null ? newValue : ''
+			textareaValue.value = normalizeByMaxLength(value.toString())
+			textareaView?.updateValue(textareaValue.value)
+			// #ifdef APP-HARMONY
+			textareaElement?.updateValue(textareaValue.value);
+			// #endif
+		})
+
+		watch(() => [textareaValue.value, props.placeholder, isComposing.value], ([value, placeholder, composing] : [string, string, boolean]) => {
+			showPlaceholder.value = value == '' && placeholder != '' && !composing;
+		})
+
 		watch(() => style.get('font-size'), (value : string) => {
 			textareaView?.updateFontSize(rpx2px(value))
 		})
@@ -858,12 +986,9 @@
 		watch(() => style.get('text-align'), (value : string) => {
 			textareaView?.updateTextAlign(value)
 		})
-		// #ifdef APP-ANDROID || APP-HARMONY
 		watch(() => style.get('direction'), (value : string) => {
 			textareaView?.updateDirection(value)
 		})
-		// #endif
-		// #ifndef APP-ANDROID
 		watch(() => style.get('height'), (value : string) => {
 			textareaView?.updateHeight(rpx2px(value))
 		})
@@ -873,7 +998,6 @@
 		watch(() => style.get('max-height'), (value : string) => {
 			textareaView?.updateMaxHeight(rpx2px(value))
 		})
-		// #endif
 		// #ifdef APP-IOS || APP-HARMONY
 		watch(() => style.get('padding-top'), () => {
 			syncTextareaPaddingStyle()
@@ -888,19 +1012,6 @@
 			syncTextareaPaddingStyle()
 		})
 		// #endif
-
-		watch(() => [textareaValue.value, props.placeholder, isComposing.value], ([value, placeholder, composing] : [string, string, boolean]) => {
-			showPlaceholder.value = value == '' && placeholder != '' && !composing;
-		})
-		watch(() => props.value, (newValue : string) => {
-			if (newValue == textareaValue.value) return
-			const value = newValue != null ? newValue : ''
-			textareaValue.value = normalizeByMaxLength(value.toString())
-			textareaView?.updateValue(textareaValue.value)
-			// #ifdef APP-HARMONY
-			textareaElement?.updateValue(textareaValue.value);
-			// #endif
-		})
 
 		watch(() => props.disabled, (newValue : boolean) => {
 			textareaView?.updateDisabled(newValue)
@@ -937,18 +1048,8 @@
 		})
 
 		watch(() => props.autoHeight, (newValue : boolean) => {
-			// #ifdef APP-ANDROID
-			syncAndroidTextareaAutoHeightStyle()
-			textareaView?.updateAutoHeight(newValue)
-			return
-			// #endif
 			textareaView?.updateAutoHeight(newValue)
 		})
-		// #ifdef APP-ANDROID
-		watch(() => androidTextareaHeightStyle.get('height'), () => {
-			rememberAndroidTextareaHeightIfNeeded()
-		})
-		// #endif
 
 		watch(() => props.cursor, (newValue : number) => {
 			textareaView?.updateCursor(newValue)
@@ -969,6 +1070,7 @@
 		watch(() => props.holdKeyboard, (newValue : boolean) => {
 			textareaView?.updateHoldKeyboard(newValue)
 		})
+		// #endif
 
 		const formCtx = inject<TextareaInFormContext | null>(FORM_KEY, null)
 		if (formCtx && props.name) {

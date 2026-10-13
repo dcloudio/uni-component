@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chrono>
+#include <atomic>
 #include "dom/resize_observer.h"
 #include "dom/scroll_element.h"
 #include "event/event_listener.h"
@@ -20,8 +20,6 @@
 #include "interface/UniCSSTransform.h"
 
 namespace recycle_list {
-    class ScrollEndDetectionTimer;
-
     using namespace uniappx;
     using uniappx::Element;
     using uniappx::EventListener;
@@ -39,6 +37,12 @@ namespace recycle_list {
         float renderStartOffset = 0.0f;
         float renderEndOffset = 0.0f;
         float fastScrollOffset = 0.0f;
+    };
+
+    enum ListDataStatus : uint32_t {
+        ListDataStatusNotInitialized = 0,
+        ListDataStatusInitialized = 1,
+        ListDataStatusUpdated = 2
     };
 
     class IRecycleListSection {
@@ -91,8 +95,19 @@ namespace recycle_list {
         std::string scrollingToItemKey;
 
         bool scrolling = false;
+        /**
+         * 是否需要持续维持初始滚动到底部
+         * 发生离开底部的滚动后停止维持
+         */
+        bool maintainInitialScrollBottom = true;
         bool scrollAnchoringEnabled = false;
         bool scrollingToAnchorItem = false;
+
+        bool initialScrollBottom = false;
+        /**
+         * 暂时仅处理无动画scroll，有动画的后续有需求再处理
+         */
+        bool scrollTriggeredByList = false;
 
         virtual void linkSection() = 0;
 
@@ -120,17 +135,18 @@ namespace recycle_list {
 
     class IRecycleContainer {
     public:
-        float calcTolerance = 0.2f;
-        float calcTolerancePrecise = 0.01f;
-
         virtual ~IRecycleContainer() = default;
 
-        virtual void updateItemSize(const std::string &key, float size) = 0;
-
-        virtual float getItemOffset(const std::string &key) { return 0.0f; }
-
-        virtual float getItemSize(const std::string &key) { return -1.0f; }
+        float calcToleranceLoose = 1.0f;
+        float calcToleranceNormal = 0.2f;
+        float calcToleranceStrict = 0.01f;
         std::unordered_map<std::string, IRecycleListItem *> itemInstanceMap;
+
+
+        virtual void updateItemSize(const std::string &key, float size) = 0;
+        virtual float getItemOffset(const std::string &key) { return 0.0f; }
+        virtual float getItemSize(const std::string &key) { return -1.0f; }
+        virtual void onItemOffsetChange(const std::string key, float offset) = 0;
     };
 
     class RecycleListItemDataStore : public IRecycleContainer {
@@ -154,17 +170,18 @@ namespace recycle_list {
         std::vector<ItemInfo> list;
         std::unordered_map<std::string, ItemInfo *> keyItemMap;
         float defaultItemSize = 150.0f;
-        int firstDirtyItemSizeIndex = -1;
+        bool forceRenderInfoUpdate = false;
         bool destroyed = false;
+
+        int32_t listDataStatus = ListDataStatusNotInitialized;
 
         void updateKeyList(const std::vector<std::string> &keyList);
 
         ItemSizeChange updateStoredItemSize(const std::string &key, float size);
 
         void rebuildItemOffsetsFrom(size_t startIndex);
-
-        void updateItemInstanceOffsetsFrom(size_t startIndex,
-                                           float baseOffset);
+        
+        void updateItemOffset();
 
         inline float realItemSize(float size) const {
             return size < 0 ? defaultItemSize : size;
@@ -180,9 +197,16 @@ namespace recycle_list {
 
         virtual void onItemListRelayout() = 0;
 
-        virtual void onItemSizeRelayout(int firstDirtyIndex) = 0;
+        virtual void onItemSizeRelayout() = 0;
+        
+        virtual float getItemBaseOffset() = 0;
 
     public:
+        int renderRangeStart = 0;
+        int renderRangeLength = 0;
+        int lastRenderRangeStart = 0;
+        int lastRenderRangeLength = 0;
+
         float getItemSize(const std::string &key) override;
 
         std::tuple<int, int> getRenderRange(float minRenderOffset, float maxRenderOffset);
@@ -199,11 +223,12 @@ namespace recycle_list {
         // UniViewElement *viewElement = nullptr;
         uniappx::UniViewElement *placeholderElement = nullptr;
         std::shared_ptr<RecycleListHeader> stickyHeader = nullptr;
-        int renderRangeStart = 0;
-        int renderRangeLength = 0;
         bool hasSyncedDefaultItemSize = false;
         float offset = 0.0f;
         bool preload = false;
+        Element *connectListenerElement = nullptr;
+        std::shared_ptr<std::atomic<bool>> connectListenerElementAliveToken;
+        ElementConnectListenerId connectListenerId = kInvalidElementConnectListenerId;
 
         std::shared_ptr<IRecycleList> getListView();
 
@@ -215,9 +240,15 @@ namespace recycle_list {
 
         void unregisterSectionBinding(double listViewId, double sectionId);
 
+        void bindElementConnectListener(Element *element);
+
+        void unbindElementConnectListener();
+
         void onItemListRelayout() override;
 
-        void onItemSizeRelayout(int firstDirtyIndex) override;
+        void onItemSizeRelayout() override;
+                  
+        float getItemBaseOffset() override;
 
     public:
         RecycleListSection();
@@ -264,6 +295,7 @@ namespace recycle_list {
         bool checkSectionOrHeaderId(std::string id) override;
         
         void scrollIntoView() override;
+        void onItemOffsetChange(const std::string key, float offset) {}
     };
 // RecycleListSection end
 
@@ -342,7 +374,6 @@ namespace recycle_list {
         double listViewId = 0.0;
         double sectionId = 0.0;
         std::string key;
-        bool sizeInited = false;
 
         void setElement(Element *element);
 
@@ -357,6 +388,20 @@ namespace recycle_list {
         void getAndUpdateItemOffset();
 
         void setListViewId(double listViewId);
+
+        void queueRenderTask(std::function<void()>&& callback) {
+            auto weakThis = this->weak_from_this();
+            Instance::GetTaskExecutor().runOnDomQueue(
+                    [weakThis, cb = std::move(callback)]() {
+                        auto self = weakThis.lock();
+                        if (!self || !self->viewElement) {
+                            return;
+                        }
+                        self->viewElement->QueueRenderTask([callback = std::move(cb)]() {
+                            callback();
+                        });
+                    });
+        }
     };
 // RecycleListItem end
 
@@ -372,15 +417,14 @@ namespace recycle_list {
         uniappx::UniViewElement *listBodyElement = nullptr;
         std::shared_ptr<EventListener> scrollListener = nullptr;
         std::shared_ptr<EventListener> scrollEndListener = nullptr;
-        std::chrono::steady_clock::time_point scrollEndDetectionDeadline;
-        std::unique_ptr<ScrollEndDetectionTimer> scrollEndDetectionTimer;
-        bool scrollEndDetectionArmed = false;
         UniResizeObserver *resizeObserver = nullptr;
         UniResizeObserver *headerResizeObserver = nullptr;
         UniResizeObserver *placeholderResizeObserver = nullptr;
         std::string sizeChangeAnchorItemKey;
+        float sizeChangeAnchorItemOffset = -1.0f;
         std::string scrollAnchorItemKey;
         float scrollAnchorItemOffset = 0.0f;
+        std::vector<float> anchorToBottomHistory;
 
         float size = 0.0f;
         float headerSize = 0.0f;
@@ -400,10 +444,6 @@ namespace recycle_list {
         float originalCachedSize = 200.0f;
         bool resetCachedSizeOnNextRender = false;
         bool resetCachedSizeOnNextScroll = false;
-        int renderRangeStart = 0;
-        int renderRangeLength = 0;
-        int lastRenderRangeStart = 0;
-        int lastRenderRangeLength = 0;
         float totalAnchorScrollBy = 0.0f;
         /**
          * 记录由于item size变化引起的offset补偿值，上方元素变小时此值为负值
@@ -420,6 +460,7 @@ namespace recycle_list {
          * - 滚动条快速滚动，但是内容缓慢滚动，通过translate将缓慢滚动的内容持续显示在可视区域
          */
         bool fastScrolling = false;
+        bool ignoreNextFastScroll = false;
         /**
          * fastScrollVelocity 判断是否为快速滚动加速度阈值
          * fastScrollDeltaLimit 快速滚动时单次滚动（每帧）距离限制，fastScrollVelocity * 8（120Hz屏幕每帧时间）
@@ -461,6 +502,8 @@ namespace recycle_list {
         void setScrollIntoViewId(const std::string id);
 
         void setScrollAnchoring(bool enabled);
+
+        void setInitialScrollBottom(bool enabled);
     
         void setDestroyed(bool destroyed);
 
@@ -498,8 +541,6 @@ namespace recycle_list {
 
         float getItemOffset(const std::string &key) override;
 
-        float getItemSize(const std::string &key) override;
-
         void linkSection() override;
 
         void registerSection(double sectionId, std::shared_ptr<IRecycleListSection> section) override;
@@ -521,23 +562,13 @@ namespace recycle_list {
         void syncDefaultItemSize(float size) override;
 
         void updateScrollAnchorItem();
+        void preAnchorToBottom();
+        void onItemOffsetChange(const std::string key, float offset) override;
 
     private:
         std::unordered_map<double, std::shared_ptr<IRecycleListSection>> sectionInstanceMap;
 
         void broadcastScrollContext();
-
-        void scheduleScrollEndDetection();
-
-        void cancelScrollEndDetection();
-
-        void destroyScrollEndDetectionTimer();
-
-        void handleScrollEndDetectionTimer();
-
-        friend class ScrollEndDetectionTimer;
-
-        void flushRelayout();
 
         void updateMinMaxRenderOffset();
 
@@ -551,17 +582,13 @@ namespace recycle_list {
 
         void updateRenderListOnScroll();
 
-        void updateRenderListForward();
-
-        void updateRenderListBackward();
-
         bool isAllRenderItemSettled();
-
-        void recordItemOffsetCompensation(float delta);
 
         void onItemListRelayout() override;
 
-        void onItemSizeRelayout(int firstDirtyIndex) override;
+        void onItemSizeRelayout() override;
+                            
+        float getItemBaseOffset() override;
                             
         float getScrollToOffset(const std::shared_ptr<IRecycleListSection> &section, const std::string &key);
 
@@ -576,19 +603,10 @@ namespace recycle_list {
             return it->second;
         }
 
-        ItemInfo *getRenderStartItem() {
+        ItemInfo *getSizeChangeAnchorItem() {
             if (this->renderRangeStart >= 0 &&
                 this->renderRangeStart < static_cast<int>(this->list.size())) {
-                return &this->list[this->renderRangeStart];
-            }
-            return nullptr;
-        }
-
-        ItemInfo *getRenderEndItem() {
-            int endIndex = this->renderRangeStart + this->renderRangeLength - 1;
-            if (endIndex >= 0 &&
-                endIndex < static_cast<int>(this->list.size())) {
-                return &this->list[endIndex];
+                return &this->list[this->renderRangeStart + this->renderRangeLength - 1];
             }
             return nullptr;
         }
@@ -602,13 +620,36 @@ namespace recycle_list {
         void updatePlaceholderHeight();
 
         void anchorToItem();
+
+        void anchorToBottom();
                             
         void queueScrollBy(float offset);
-                            
+
         void scrollTo(float offset, float duration);
+
+        /**
+         * 区分用户触发和系统触发的滚动，duration通常无意义
+         * scrollIntoView等方式触发的滚动算用户触发滚动
+         * 锚定等方式触发的滚动算系统滚动
+         */
+        void internalScrollTo(float offset, float duration);
+
+        bool isScrollAtBottom(float scrollTop) const;
                             
         bool shouldScrollAnchorToItem() {
-            return this->scrollAnchoringEnabled && !this->scrolling && this->sectionInstanceMap.size() == 0 && !this->scrollAnchorItemKey.empty() && !this->scrollingToItem && this->realScrollOffset > 0;
+            return !this->shouldAnchorToBottom() && this->scrollAnchoringEnabled && !this->scrolling && this->sectionInstanceMap.size() == 0 && !this->scrollAnchorItemKey.empty() && !this->scrollingToItem && this->realScrollOffset > 0;
+        }
+
+        bool shouldAnchorToBottom() {
+            return this->maintainInitialScrollBottom && this->initialScrollBottom && !this->scrolling && this->sectionInstanceMap.size() == 0 && this->listDataStatus == ListDataStatusInitialized;
+        }
+
+        /**
+         * 多次scrollTo调用后可能会在最后一次scrollTo调用后多次触发scroll事件，暂时使用这种方式判断哪些滚动是由滚动到底部触发的。
+         */
+        bool isScrollTopTriggerByAnchorToBottom(float scrollTop) {
+            return std::any_of(this->anchorToBottomHistory.begin(), this->anchorToBottomHistory.end(),
+                               [this, scrollTop](float offset) { return std::abs(scrollTop - offset) < this->calcToleranceLoose; });
         }
     };
 // RecycleList end

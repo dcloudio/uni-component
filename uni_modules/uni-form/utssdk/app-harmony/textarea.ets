@@ -1,5 +1,4 @@
 import { window } from "@kit.ArkUI";
-import { deviceInfo } from '@kit.BasicServicesKit';
 import type {UniInputFileOptions} from "./index"
 
 // TextDirection is not declared by compile SDKs earlier than API 22.
@@ -29,8 +28,9 @@ class TextareaDirectionModifier implements AttributeModifier<TextAreaAttribute> 
 	}
 
 	applyNormalAttribute(instance: TextAreaAttribute): void {
-		if (deviceInfo.sdkApiVersion >= 22) {
-			(instance as ESObject).textDirection(
+		const dynamicInstance: ESObject = instance
+		if (typeof dynamicInstance.textDirection == 'function') {
+			dynamicInstance.textDirection(
 				this.direction == 'rtl' ? TEXT_DIRECTION_RTL : TEXT_DIRECTION_LTR
 			)
 		}

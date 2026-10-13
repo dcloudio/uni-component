@@ -1,8 +1,82 @@
 import { BuilderNode, UIContext, KeyboardAvoidMode, window, ComponentContent } from "@kit.ArkUI";
 import { UniInputOptions, wrapBuilderCustomKeyboard, InputBuilder } from './input.ets'
 import { TextareaBuilder, UniTextareaOptions, UniTextareaPadding } from './textarea.ets'
-import { getCurrentMP, toUniNativeColor } from "@dcloudio/uni-runtime";
+import { getCurrentMP, UTSHarmony } from "@dcloudio/uni-runtime";
 import { deviceInfo } from '@kit.BasicServicesKit';
+
+let harmonyInputPositionOwnerSeed = 0
+let harmonyInputPositionOwner = 0
+let harmonyInputPositionReset: (() => void) | null = null
+let harmonyInputInheritedPositionReset: (() => void) | null = null
+let harmonyInputKeyboardHeight = 0
+
+export function createHarmonyInputPositionOwner(): number {
+	harmonyInputPositionOwnerSeed++
+	return harmonyInputPositionOwnerSeed
+}
+
+export function activateHarmonyInputPositionOwner(owner: number) {
+	if (harmonyInputPositionOwner == owner) return
+	// Keep the previous input's automatic scroll while focus moves between
+	// inputs with the keyboard open. The new owner adopts the reset callback
+	// and restores the whole chain only after the keyboard closes.
+	const previousReset = harmonyInputPositionReset
+	if (previousReset != null) {
+		const inheritedReset = harmonyInputInheritedPositionReset
+		harmonyInputInheritedPositionReset = inheritedReset == null
+			? previousReset
+			: () => {
+				previousReset()
+				inheritedReset()
+			}
+	}
+	harmonyInputPositionReset = null
+	harmonyInputPositionOwner = owner
+}
+
+export function registerHarmonyInputPositionReset(owner: number, reset: (() => void) | null) {
+	if (harmonyInputPositionOwner != owner) return
+	// Keep the inherited reset separate. Recalculating the current input's
+	// position must not undo the scroll still owned by the previous input.
+	harmonyInputPositionReset = reset
+}
+
+export function resetHarmonyInputPositionOwner(owner: number, release: boolean = false) {
+	if (harmonyInputPositionOwner != owner) return
+	harmonyInputPositionReset?.()
+	harmonyInputPositionReset = null
+	if (release) {
+		harmonyInputInheritedPositionReset?.()
+		harmonyInputInheritedPositionReset = null
+		harmonyInputPositionOwner = 0
+	}
+}
+
+export function isHarmonyInputPositionOwner(owner: number): boolean {
+	return harmonyInputPositionOwner == owner
+}
+
+export function setHarmonyInputKeyboardHeight(height: number) {
+	harmonyInputKeyboardHeight = Math.max(0, height)
+}
+
+export function getHarmonyInputKeyboardHeight(): number {
+	return harmonyInputKeyboardHeight
+}
+
+export function setHarmonyInputDefaultKeyboardAvoidEnabled(enabled: boolean) {
+	try {
+		const mainWindow = getCurrentMP().window
+		if (!mainWindow) return
+		const uiContext = mainWindow.getUIContext()
+		if (!uiContext) return
+		uiContext.setKeyboardAvoidMode(
+			enabled ? KeyboardAvoidMode.OFFSET : KeyboardAvoidMode.NONE
+		)
+	} catch (e) {
+		console.error(e.message)
+	}
+}
 
 // @ts-expect-error
 const INPUT_TYPES = new Map<string, InputType>([
@@ -42,6 +116,8 @@ const CONFIRM_TYPES = new Map<string, EnterKeyType>([
 	// @ts-expect-error
 	['done', EnterKeyType.Done],
 ])
+
+const defaultCursorColor = '#007DFF'
 
 interface SelectionData {
 	start: number,
@@ -244,8 +320,12 @@ class NativeInputFileView {
 	}
 	protected cursor = -1
 	protected autoFocus = false
+	// 原生焦点立即更新；isFocusing 延迟到键盘动画结束，仅用于高度变化处理。
+	protected isNativeFocused = false
+	protected focusRequestPending = false
 	protected isFocusing = false
 	protected needFocusWhenMounted = false
+	protected destroyed = false
 	protected selection: SelectionData = { start: -1, end: -1 }
 	protected holdKeyboard = false
 	protected adjustPosition = true
@@ -313,26 +393,27 @@ class NativeInputFileView {
 	}
 
 	updateFocus(value: boolean) {
-		if (value && !this.isFocusing) {
+		if (this.destroyed) return
+		if (value) {
+			if (this.isNativeFocused || this.focusRequestPending) return
+
 			if (!this.mounted) {
 				this.needFocusWhenMounted = true
 				return
 			}
+			this.needFocusWhenMounted = false
 			this.triggerFocus()
-		} else {
-			if (this.isFocusing) {
-				this.triggerBlur()
-			}
+			return
+		}
+
+		this.needFocusWhenMounted = false
+		if (this.isNativeFocused || this.focusRequestPending) {
+			this.triggerBlur()
 		}
 	}
 
 	triggerFocus() {
-		if (this.dispatchBlurTimer != null) {
-			clearTimeout(this.dispatchBlurTimer)
-			this.dispatchBlurTimer = null
-		}
-		this.adoptActiveElementPositionReset()
-		this.preTextValue = this.value
+		if (this.destroyed) return
 		if (!this.mounted) {
 			this.needFocusWhenMounted = true
 			return
@@ -341,21 +422,28 @@ class NativeInputFileView {
 		const uiContext = this.getUIContext()
 		if (!uiContext) return
 
-		this.isFocusing = true
-		uiContext.getFocusController().requestFocus(this.params.key)
+		try {
+			// 由 handleFocus 确认聚焦并接管清理任务，请求失败时保留原失焦流程。
+			this.focusRequestPending = true
+			uiContext.getFocusController().requestFocus(this.params.key)
+		} catch (e) {
+			this.focusRequestPending = false
+			console.error(e.message)
+			return
+		}
 		if (this.updateSelectionTimer != null) {
 			clearTimeout(this.updateSelectionTimer)
 		}
 	}
 
 	updateCursorColor(value: string) {
-		this.params.caretColor = toUniNativeColor(null, value, this.params.caretColor)
+		this.params.caretColor = UTSHarmony.colorWithString(value == '' ? defaultCursorColor : value)
 		this.updateParams()
 	}
 
 	updateAutoFocus(value: boolean) {
 		this.autoFocus = value
-		if (value && this.mounted && !this.isFocusing) {
+		if (value && this.mounted && !this.isNativeFocused && !this.focusRequestPending) {
 			this.triggerFocus()
 		}
 	}
@@ -461,6 +549,7 @@ class NativeInputFileView {
 	}
 
 	handleMountedFocus() {
+		if (this.destroyed) return
 		this.mounted = true
 		this.collectScrollAbleParents()
 		// @ts-expect-error
@@ -470,18 +559,18 @@ class NativeInputFileView {
 			currentWindow.on('keyboardHeightChange', this.dispatchKeyboardHeightChange.bind(this))
 		})
 		if (this.needFocusWhenMounted || this.autoFocus) {
+			this.needFocusWhenMounted = false
 			this.triggerFocus()
 		}
 	}
 
 	triggerBlur() {
+		this.focusRequestPending = false
 		try {
 			const uiContext = this.getUIContext()
 			if (!uiContext) return
 
-			const cursor = this.getCurrentCursorPosition()
 			uiContext.getFocusController().clearFocus()
-			this.dispatchBlur(this.value, cursor)
 		} catch (e) {
 			console.error(e.message)
 		}
@@ -525,7 +614,9 @@ class NativeInputFileView {
 	}
 
 	handleBlur() {
-		if (!this.isFocusing) return
+		this.focusRequestPending = false
+		if (this.destroyed || !this.isNativeFocused) return
+		this.isNativeFocused = false
 
 		const uiContext = this.getUIContext()
 		if (!uiContext) return
@@ -550,11 +641,17 @@ class NativeInputFileView {
 		this.focusEvent = event
 	}
 	handleFocus() {
+		this.focusRequestPending = false
+		if (this.destroyed) {
+			this.releaseEditingState()
+			return
+		}
 		if (this.dispatchBlurTimer != null) {
 			clearTimeout(this.dispatchBlurTimer)
 			this.dispatchBlurTimer = null
 		}
 		this.adoptActiveElementPositionReset()
+		this.isNativeFocused = true
 		this.isFocusing = true
 		this.preTextValue = this.value
 		this.dispatchFocus(this.keyboardHeight, this.value)
@@ -630,8 +727,17 @@ class NativeInputFileView {
 		}, delay)
 	}
 
+	protected scheduleElementPositionResetWhenKeyboardHidden() {
+		if (this.isNativeFocused || NativeInputFileView.activePositionOwner !== this) return
+		const resetElementPosition = this.takeElementPositionReset()
+		if (resetElementPosition == null) return
+		this.resetElementPositionWhenBlur = resetElementPosition
+		// 避免在 keyboardHeightChange 原生回调栈内直接访问滚动节点
+		this.scheduleElementPositionReset(0)
+	}
+
 	dispatchBlur(value: string, cursor: number) {
-		this.scheduleElementPositionReset()
+		this.scheduleElementPositionReset(this.keyboardHeight <= 0 ? 0 : this.keyboardAnimationDuration)
 
 		this.dispatchChange()
 
@@ -655,6 +761,10 @@ class NativeInputFileView {
 		const _height = px2vp(height)
 		this.keyboardHeight = _height
 		this.keyboardHeightChangeEvent?.(new UniKeyboardHeightChangeEventEvent({ height: _height, duration: 0 } as KeyboardHeightChangeEventDetail))
+		if (_height <= 0) {
+			this.scheduleElementPositionResetWhenKeyboardHidden()
+			return
+		}
 
 		this.handleElementPositionWhenFocus();
 	}
@@ -676,6 +786,7 @@ class NativeInputFileView {
 		const scrollAdjustRecords: ScrollAdjustRecord[] = []
 		let lastRollAbleParentPaddingBottom = "-1px"
 		let changedBodyPosition = false
+		let pageRootOriginTransform = ''
 		const lastRollAbleParent = this.rollAbleParents.length > 0
 			? this.rollAbleParents[this.rollAbleParents.length - 1]
 			: null
@@ -720,16 +831,19 @@ class NativeInputFileView {
 			// 通过滚动容器滚动无法露出输入框, 通过移动 body 露出输入框
 			changedBodyPosition = true
 			pageRootElement = this.getPageRootElement()
+			pageRootOriginTransform = pageRootElement?.style.getPropertyValue('transform') ?? ''
 			pageRootElement?.style.setProperty("transform", `translateY(-${needMoreScrollDistance})`)
 		}
 		this.resetElementPositionWhenBlur = () => {
 			if(scrollAdjustRecords.length > 0){
 				const SCROLL_TOP_EPSILON = 1
+				// 旧版 Harmony 运行时未实现 isConnected，仅排除明确断开连接的节点
 				const connectedScrollAdjustRecords = scrollAdjustRecords.filter(
-					(record: ScrollAdjustRecord): boolean => record.element.isConnected
+					(record: ScrollAdjustRecord): boolean => record.element.isConnected !== false
 				)
 				// 如果当前 scrollTop 已经偏离自动滚动后的目标位置，说明聚焦期间用户主动滚动过页面。
-				const hasUserScrolled = connectedScrollAdjustRecords.some((record: ScrollAdjustRecord): boolean => {
+				// 销毁流程中不再读取 scrollTop，避免访问已经释放的原生节点。
+				const hasUserScrolled = !this.destroyed && connectedScrollAdjustRecords.some((record: ScrollAdjustRecord): boolean => {
 					return Math.abs(record.element.scrollTop - record.adjustedScrollTop) > SCROLL_TOP_EPSILON
 				})
 				if(!hasUserScrolled){
@@ -741,13 +855,14 @@ class NativeInputFileView {
 				scrollAdjustRecords.length = 0
 			}
 			if(lastRollAbleParentPaddingBottom !== "-1px"){
-				if (lastRollAbleParent?.isConnected) {
+				if (lastRollAbleParent != null && lastRollAbleParent.isConnected !== false) {
 					lastRollAbleParent.style.setProperty("padding-bottom", `${lastRollAbleParentPaddingBottom}px`)
 				}
 			}
 			if(changedBodyPosition){
-				if (pageRootElement?.isConnected) {
-					pageRootElement.style.setProperty("transform", `translateY(0)`)
+				// 旧版 Harmony 运行时未实现 isConnected，仅在明确断开连接时跳过恢复
+				if (pageRootElement != null && pageRootElement.isConnected !== false) {
+					pageRootElement.style.setProperty("transform", pageRootOriginTransform)
 				}
 			}
 			previousElementPositionReset?.()
@@ -794,12 +909,34 @@ class NativeInputFileView {
 	}
 
 	handlePageTouchEndFocus() {
-		if (!this.holdKeyboard && this.isFocusing) {
+		if (!this.holdKeyboard && this.isNativeFocused) {
 			this.getUIContext()?.getFocusController().clearFocus()
 		}
 	}
 
+	protected stopEditing() {}
+
+	private releaseEditingState() {
+		try {
+			this.stopEditing()
+		} catch (e) {
+			console.error(e.message)
+		}
+	}
+
 	destroy() {
+		if (this.destroyed) return
+		this.destroyed = true
+		this.mounted = false
+		this.needFocusWhenMounted = false
+		const shouldReleaseEditingState = this.isNativeFocused || this.focusRequestPending
+		this.isNativeFocused = false
+		this.focusRequestPending = false
+		this.isFocusing = false
+		if (shouldReleaseEditingState) {
+			// 已聚焦节点被移除时 ArkUI 可能不回调 onBlur，需要主动退出编辑态。
+			this.releaseEditingState()
+		}
 		if (this.triggerFocusTimer != null) {
 			clearTimeout(this.triggerFocusTimer)
 		}
@@ -883,13 +1020,18 @@ export class NativeInputView extends NativeInputFileView {
 		this.value = value
 		this.params.value = value
 		this.updateParams()
-		if (this.mounted && this.isFocusing) {
+		if (this.mounted && this.isNativeFocused) {
 			this.updateSelection()
 		}
 	}
 
+	protected stopEditing() {
+		this.controller.stopEditing()
+	}
+
 	handleFocus() {
 		super.handleFocus()
+		if (this.destroyed) return
 		// 保存光标信息，避免切换 type none 时光标回到开头
 		const positionInfo = this.controller.getCaretOffset()
 		this._params.caretPosition = positionInfo.index
@@ -1033,7 +1175,7 @@ export class NativeInputView extends NativeInputFileView {
 	// @ts-expect-error
 	dispatchInput(value: string, cursor?: number | null) {
 		super.dispatchInput(value, cursor)
-		if (!this.isFocusing) return
+		if (!this.isNativeFocused) return
 		this.inputEvent?.(new UniInputEventEvent({ value, cursor } as InputEventDetail))
 	}
 }
@@ -1485,6 +1627,10 @@ export class NativeTextareaView extends NativeInputFileView {
 		super.destroy()
 	}
 
+	protected stopEditing() {
+		this.controller.stopEditing()
+	}
+
 	// @ts-expect-error
 	triggerFocus() {
 		super.triggerFocus()
@@ -1537,7 +1683,7 @@ export class NativeTextareaView extends NativeInputFileView {
 	dispatchInput(value: string, cursor?: number | null) {
 		super.dispatchInput(value, cursor)
 		this.calcHeight()
-		if (!this.isFocusing) return
+		if (!this.isNativeFocused) return
 		this.updateLineCount()
 		this.inputEvent?.(new UniInputEventEvent({ value, cursor } as InputEventDetail))
 	}

@@ -22,10 +22,15 @@ public:
   void setBold(bool bold);
 
 private:
+  struct NodeBinding {
+    NativeNodeView *node;
+    std::shared_ptr<LoadingPainter> painter;
+  };
+
   void draw(ArkUI_DrawContext *draw_context);
   void invalidate();
 
-  NativeNodeView *node_ = nullptr;
+  std::weak_ptr<NodeBinding> binding_;
   uint32_t color_ = 0xFF000000;
   bool bold_ = false;
 };

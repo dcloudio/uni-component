@@ -1,14 +1,12 @@
 <template>
   <view style="width: 100%;flex-direction: row;box-sizing: border-box;overflow: visible;padding: 4px;">
-    <view ref="containerRef" style="position: relative;flex: 1;align-items: center;justify-content: center;overflow: visible;cursor: pointer;"
-      @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
-
+    <view ref="containerRef" class="slider-track" @touchstart="handleTouchStart" @touchmove="handleTouchMove" @touchend="handleTouchEnd">
       <!-- 背景轨道 -->
       <view
         <!-- #ifndef APP-ANDROID -->
         flatten
         <!-- #endif -->
-        class="slider-track-bg" :class="props.trackClass">
+        ref="backgroundRef" class="slider-track-bg" :class="props.trackClass">
         <!-- 填充条(左边线) -->
         <view
           <!-- #ifndef APP-ANDROID -->
@@ -234,6 +232,74 @@
      }
      */
     showValue : boolean
+    /** 滑块左侧已选择部分的线条颜色 */
+    activeColor : string.ColorString
+    /** 滑块左侧已选择部分的线条颜色，优先级高于 activeColor
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+    */
+    activeBackgroundColor : string.ColorString
+    /** 背景条的颜色
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+    */
+    backgroundColor : string.ColorString
+    /** 滑块的大小，取值范围为 12 到 28，单位为 px；未设置时使用 thumbClass 或默认样式
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+    */
+    blockSize : number | null
+    /** 滑块的颜色 (使用foreColor替代) */
+    blockColor : string.ColorString
+    /** 滑块的颜色
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+    */
+    foreColor : string.ColorString
     /**
      * slider 背景条样式类名
      * @uniPlatform {
@@ -305,6 +371,12 @@
     value: 0,
     disabled: false,
     showValue: false,
+    activeColor: '',
+    activeBackgroundColor: '',
+    backgroundColor: '',
+    blockSize: null,
+    blockColor: '',
+    foreColor: '',
     trackClass: '',
     trackActiveClass: '',
     thumbClass: ''
@@ -312,10 +384,40 @@
 
   // Refs
   const containerRef = ref<UniElement | null>(null)
+  const backgroundRef = ref<UniElement | null>(null)
   const fillRef = ref<UniElement | null>(null)
   const handleRef = ref<UniElement | null>(null)
   const thumbRef = ref<UniElement | null>(null)
   const showValueRef = ref<UniTextElement | null>(null)
+
+  function setColor(element : UniElement | null, color : string) {
+    if (element == null) return
+    if (color.length > 0) {
+      element.style.setProperty('background-color', color)
+    } else {
+      element.style.removeProperty('background-color')
+    }
+  }
+
+  watchEffect(() => {
+    setColor(backgroundRef.value, props.backgroundColor)
+    setColor(fillRef.value, props.activeBackgroundColor.length > 0 ? props.activeBackgroundColor : props.activeColor)
+    setColor(thumbRef.value, props.foreColor.length > 0 ? props.foreColor : props.blockColor)
+    const blockSize = props.blockSize
+    const thumbEl = thumbRef.value
+    if (thumbEl != null) {
+      if (blockSize != null && !isNaN(blockSize)) {
+        const size = Math.min(Math.max(blockSize, 12), 28)
+        thumbEl.style.setProperty('width', size + 'px')
+        thumbEl.style.setProperty('height', size + 'px')
+        thumbEl.style.setProperty('border-radius', size / 2 + 'px')
+      } else {
+        thumbEl.style.removeProperty('width')
+        thumbEl.style.removeProperty('height')
+        thumbEl.style.removeProperty('border-radius')
+      }
+    }
+  })
 
   // 状态
   const initialValue = props.value
@@ -789,6 +891,17 @@
 </script>
 
 <style>
+  .slider-track {
+    position: relative;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    /* #ifdef WEB */
+    cursor: pointer;
+    /* #endif */
+  }
+
   .slider-track-bg {
     width: 100%;
     border-radius: 2px;

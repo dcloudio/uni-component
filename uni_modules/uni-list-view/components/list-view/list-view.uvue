@@ -8,7 +8,8 @@
         :refresher-triggered="props.refresherTriggered" :custom-nested-scroll="props.customNestedScroll"
         :nested-scroll-child="props.nestedScrollChild" :associative-container="props.associativeContainer"
         :enable-back-to-top="props.enableBackToTop" :refresher-default-style="props.refresherDefaultStyle"
-        :android-scrollbar-draggable="props.androidScrollbarDraggable" :scroll-anchoring="_scrollAnchoring satisfies boolean" 
+        :android-scrollbar-draggable="props.androidScrollbarDraggable" :initial-scroll-bottom="_initialScrollBottom satisfies boolean"
+        change:initial-scroll-bottom="recycleListCpp.setInitialScrollBottom" :scroll-anchoring="_scrollAnchoring satisfies boolean" 
         change:scroll-anchoring="recycleListCpp.setScrollAnchoring" :list-view-id="listViewId satisfies number"
         change:list-view-id="recycleListCpp.setListViewId" :list="keyList satisfies string[]"
         change:list="recycleListCpp.updateList" :scroll-into-view-key="scrollIntoViewKey satisfies string"
@@ -30,7 +31,7 @@
 <script module="recycleListCpp" lang="cpp" class-name="RecycleList" src="../../cppsdk/recycle_list.h"
     namespace="recycle_list"></script>
 <script setup>
-import { generateUniqueId, NATIVE_CHANNEL_ACTIONS } from '../../common/utils'
+import { generateUniqueId, NATIVE_CHANNEL_ACTIONS, useNativeChannelFn } from '../../common/utils'
 import { UniListViewElement } from '../../common/element'
 import type { SectionState } from '../../common/types'
 
@@ -131,6 +132,10 @@ const props = defineProps({
     scrollAnchoring: {
         type: [Boolean, String],
         default: false
+    },
+    initialScrollBottom: {
+        type: [Boolean, String],
+        default: false
     }
 })
 const listViewId = generateUniqueId();
@@ -140,6 +145,10 @@ provide('__uni_recycle_view_id', listViewId);
 provide('__uni_recycle_state_map', new Map<string, Map<string, unknown>>());
 provide('__uni_recycle_section_map', sectionMap);
 
+const {
+    ensureNativeChannelFn,
+    setNativeChannelFn
+} = useNativeChannelFn();
 const idKeyMap = new Map<string, string>();
 function updateIdKeyMap(ids: string[], keys: string[]) {
     if (keys.length !== ids.length) {
@@ -155,7 +164,6 @@ function updateIdKeyMap(ids: string[], keys: string[]) {
         idKeyMap.set(id, key);
     }
 }
-
 const keyList = shallowRef<string[]>([])
 function updateList(newList: string[]) {
     keyList.value = newList
@@ -197,11 +205,11 @@ watch(() => props.scrollIntoView, (newVal) => {
     immediate: true
 })
 
-const _scrollAnchoring = ref<boolean>(false);
-watch(() => props.scrollAnchoring, (newVal) => {
-    _scrollAnchoring.value = !!newVal;
-}, {
-    immediate: true
+const _scrollAnchoring = computed<boolean>(() => {
+    return !!props.scrollAnchoring;
+})
+const _initialScrollBottom = computed<boolean>(() => {
+    return !!props.initialScrollBottom;
 })
 
 const renderRange = ref<[number, number]>([0, 0]);
@@ -210,15 +218,10 @@ function updateRenderInfo(renderRangeStart: number, renderRangeEnd: number) {
     renderRange.value = [renderRangeStart, renderRangeEnd];
 }
 
-let nativeChannelFn: Function | null = null;
-function setNativeChannelFn(fn: Function) {
-    nativeChannelFn = fn;
-}
-
 onBeforeUnmount(() => {
-    if (nativeChannelFn) {
+    ensureNativeChannelFn((nativeChannelFn: Function) => {
         nativeChannelFn(NATIVE_CHANNEL_ACTIONS.DESTROY_LIST, listViewId);
-    }
+    })
 })
 
 defineExpose({

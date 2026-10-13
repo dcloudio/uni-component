@@ -2,7 +2,13 @@
   <text
     v-if="!hasDefaultSlot"
     class="uni-checkbox-view uni-checkbox-icon"
-    :class="disabled ? 'uni-checkbox-disabled' : [isChecked ? checkboxActiveClass : checkboxClass, iconClass]"
+    :class="classes(
+      [disabled, 'uni-checkbox-disabled'],
+      [!disabled && isChecked, checkboxActiveClass],
+      [!disabled && !isChecked, checkboxClass],
+      [!disabled, iconClass]
+    )"
+    :style="activeStyle"
     @click.stop="handleTap"
   >
     {{ isChecked ? fontUnicode : '' }}
@@ -10,7 +16,13 @@
   <view v-else class="uni-checkbox" @click.stop="handleTap">
     <text
       class="uni-checkbox-view uni-checkbox-icon"
-      :class="disabled ? 'uni-checkbox-disabled' : [isChecked ? checkboxActiveClass : checkboxClass, iconClass]"
+      :class="classes(
+        [disabled, 'uni-checkbox-disabled'],
+        [!disabled && isChecked, checkboxActiveClass],
+        [!disabled && !isChecked, checkboxClass],
+        [!disabled, iconClass]
+      )"
+      :style="activeStyle"
     >{{ isChecked ? fontUnicode : '' }}</text>
     <text v-if="isStringSlot">
       <slot></slot>
@@ -20,11 +32,28 @@
 </template>
 
 <script lang="uts" setup>
-  import { CHECKBOX_GROUP_KEY, FORM_KEY, LABEL_KEY, buildPointerEvent, toStringOrEmpty } from '../common.uts'
+  import { CHECKBOX_GROUP_KEY, FORM_KEY, LABEL_KEY, buildPointerEvent, classes, toStringOrEmpty } from '../common.uts'
   import { UniCheckboxElement } from './global.uts'
   import { LabelContext, CheckboxGroupContext } from '../types.uts'
 
   interface CheckboxProps {
+    /**
+     * checkbox 的颜色，同css的color
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+     */
+    color?: string;
     /**
      * 是否禁用
      * @uniPlatform {
@@ -89,6 +118,22 @@
         "harmony": {
            "unixVaporVer": "5.0"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -105,6 +150,22 @@
          },
         "harmony": {
            "unixVaporVer": "5.0"
+         }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
          }
        }
      }
@@ -123,6 +184,22 @@
         "harmony": {
            "unixVaporVer": "5.0"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -130,6 +207,7 @@
   }
 
   const props = withDefaults(defineProps<CheckboxProps>(), {
+    color: '',
     disabled: false,
     checked: false,
     value: '',
@@ -157,6 +235,13 @@
   const proxy = getCurrentInstance()?.proxy
 
   const isChecked = ref(props.checked)
+
+  const activeStyle = computed(() => {
+    if (isChecked.value && !props.disabled && props.color) {
+      return { color: props.color }
+    }
+    return {}
+  })
 
   // TODO 需编译器修复
   const fontUnicode = '\ueA08'
@@ -237,12 +322,6 @@
     align-items: center;
   }
 
-  .uni-checkbox-disabled {
-    background-color: #e1e1e1;
-    border-color: #d1d1d1;
-    color: #adadad;
-  }
-
   .uni-checkbox-view {
     width: 22px;
     height: 22px;
@@ -262,5 +341,24 @@
     font-size: 16px;
     color: #007aff;
     font-family: uni-icon;
+  }
+
+  .uni-checkbox-disabled {
+    background-color: #e1e1e1;
+    border-color: #d1d1d1;
+    color: #adadad;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .uni-checkbox-view,
+    .uni-checkbox-disabled {
+      background-color: #2c2c2c;
+      border-color: #656565;
+    }
+
+    .uni-checkbox-disabled {
+      border-color: #373737;
+      color: #656565;
+    }
   }
 </style>

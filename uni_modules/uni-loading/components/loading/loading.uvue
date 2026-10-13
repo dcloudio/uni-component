@@ -54,6 +54,10 @@ import { NativeLoading } from "@/uni_modules/uni-loading";
 // #ifndef APP
 import { UniLoadingElement } from './element';
 // #endif
+// #ifdef WEB
+import { ref, reactive, computed } from 'vue'
+import { useLoadingStyle } from './useLoadingStyle'
+// #endif
 
 const props = withDefaults(defineProps<{
   /**
@@ -103,6 +107,7 @@ const props = withDefaults(defineProps<{
 
 defineOptions({
   name: 'loading',
+  styleIsolation: 'app-and-page',
   // @ts-ignore
   rootElement: {
     name: 'uni-loading-element',
@@ -111,8 +116,6 @@ defineOptions({
 });
 
 // #ifdef WEB
-import { useLoadingStyle } from './useLoadingStyle'
-
 const LoadingRef = ref<HTMLElement | null>(null)
 const loadingStyle = reactive(useLoadingStyle(LoadingRef, computed(() => props.bold)))
 // #endif
@@ -259,6 +262,8 @@ const onviewinit = (e : UniNativeViewInitEvent) => {
 
 onUnmounted(() => {
   loadingState.nativeLoading?.destroy()
+  // 置空引用，避免组件卸载后仍有待执行的 watchEffect 调用到已销毁的原生对象
+  loadingState.nativeLoading = null
 })
 // #endif
 

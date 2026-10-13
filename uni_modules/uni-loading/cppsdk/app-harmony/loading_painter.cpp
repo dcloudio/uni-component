@@ -34,25 +34,23 @@ uint32_t parseColor(const std::string &color) {
 } // namespace
 
 void LoadingPainter::setElement(Element *element) {
-  node_ = static_cast<NativeNodeView *>(element->GetNativeView()->GetPlatformView());
-  node_->SetDrawCallback([this](ArkUI_DrawContext *draw_context) {
+  auto *node = static_cast<NativeNodeView *>(element->GetNativeView()->GetPlatformView());
+  auto binding = std::make_shared<NodeBinding>(NodeBinding{node, shared_from_this()});
+  binding_ = binding;
+  node->SetDrawCallback([this](ArkUI_DrawContext *draw_context) {
     draw(draw_context);
-  }, shared_from_this());
+  }, std::move(binding));
   invalidate();
 }
 
 void LoadingPainter::setColor(const std::string &color) {
   color_ = parseColor(color);
-  if (node_ != nullptr) {
-    invalidate();
-  }
+  invalidate();
 }
 
 void LoadingPainter::setBold(bool bold) {
   bold_ = bold;
-  if (node_ != nullptr) {
-    invalidate();
-  }
+  invalidate();
 }
 
 void LoadingPainter::draw(ArkUI_DrawContext *draw_context) {
@@ -77,7 +75,9 @@ void LoadingPainter::draw(ArkUI_DrawContext *draw_context) {
 }
 
 void LoadingPainter::invalidate() {
-  node_->SetNeedRender();
+  if (auto binding = binding_.lock()) {
+    binding->node->SetNeedRender();
+  }
 }
 
 } // namespace uniappx::loading

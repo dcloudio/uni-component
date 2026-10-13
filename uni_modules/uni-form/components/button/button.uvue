@@ -2,23 +2,22 @@
   <view
     v-if="loading && !disabled"
     class="uni-button"
-    :class="{
-      'uni-button-type-default_view': buttonType == 'default',
-      'uni-button-type-primary_view': buttonType == 'primary',
-      'uni-button-type-warn_view': buttonType == 'warn',
-      'uni-button-view-plain': plain,
-      'uni-button-has-type': type != null,
-      'uni-button-no-type': type == null,
-      'uni-button-disabled': disabled,
-      'uni-button-size-mini': size == 'mini',
-      'transition-enabled': enableTransition,
-      'uni-button-type-default_text': buttonType == 'default',
-      'uni-button-type-primary_text': buttonType == 'primary',
-      'uni-button-type-warn_text': buttonType == 'warn',
-      'uni-button-text-plain': plain && loading,
-      'uni-button-text-size-mini': size == 'mini',
-      'uni-button-text-size-default': size == 'default'
-    }"
+    :class="classes(
+      [buttonType == 'default', 'uni-button-type-default_view'],
+      [buttonType == 'primary', 'uni-button-type-primary_view'],
+      [buttonType == 'warn', 'uni-button-type-warn_view'],
+      [plain, 'uni-button-view-plain'],
+      [type != null, 'uni-button-has-type', 'uni-button-no-type'],
+      [disabled, 'uni-button-disabled'],
+      [size == 'mini', 'uni-button-size-mini'],
+      [enableTransition, 'transition-enabled'],
+      [buttonType == 'default', 'uni-button-type-default_text'],
+      [buttonType == 'primary', 'uni-button-type-primary_text'],
+      [buttonType == 'warn', 'uni-button-type-warn_text'],
+      [plain && loading, 'uni-button-text-plain'],
+      [size == 'mini', 'uni-button-text-size-mini'],
+      [size == 'default', 'uni-button-text-size-default']
+    )"
     style="justify-content: center;flex-direction: row;align-items: center"
     :hover-class="disabled ? 'none' : hoverClasses"
     :hover-start-time="hoverStartTime"
@@ -28,14 +27,12 @@
   >
     <loading
       class="uni-loading"
-      :class="[
-        {
-          'uni-loading-default': buttonType == 'default',
-          'uni-loading-plain-primary': plain && buttonType == 'primary',
-          'uni-loading-plain-warn': plain && buttonType == 'warn'
-        },
+      :class="classes(
+        [buttonType == 'default', 'uni-loading-default'],
+        [plain && buttonType == 'primary', 'uni-loading-plain-primary'],
+        [plain && buttonType == 'warn', 'uni-loading-plain-warn'],
         loadingClass || ''
-      ]"
+      )"
       <!-- #ifdef APP-IOS -->
       :ios-spinner="iosLoadingSnow"
       <!-- #endif -->
@@ -48,23 +45,22 @@
     v-else
     ref="textRef"
     class="uni-button uni-button-text"
-    :class="{
-      'uni-button-type-default_view': buttonType == 'default',
-      'uni-button-type-primary_view': buttonType == 'primary',
-      'uni-button-type-warn_view': buttonType == 'warn',
-      'uni-button-view-plain': plain,
-      'uni-button-has-type': type != null,
-      'uni-button-no-type': type == null,
-      'uni-button-disabled': disabled,
-      'uni-button-size-mini': size == 'mini',
-      'transition-enabled': enableTransition,
-      'uni-button-type-default_text': buttonType == 'default',
-      'uni-button-type-primary_text': buttonType == 'primary',
-      'uni-button-type-warn_text': buttonType == 'warn',
-      'uni-button-text-plain': plain && loading,
-      'uni-button-text-size-mini': size == 'mini',
-      'uni-button-text-size-default': size == 'default'
-    }"
+    :class="classes(
+      [buttonType == 'default', 'uni-button-type-default_view'],
+      [buttonType == 'primary', 'uni-button-type-primary_view'],
+      [buttonType == 'warn', 'uni-button-type-warn_view'],
+      [plain, 'uni-button-view-plain'],
+      [type != null, 'uni-button-has-type', 'uni-button-no-type'],
+      [disabled, 'uni-button-disabled'],
+      [size == 'mini', 'uni-button-size-mini'],
+      [enableTransition, 'transition-enabled'],
+      [buttonType == 'default', 'uni-button-type-default_text'],
+      [buttonType == 'primary', 'uni-button-type-primary_text'],
+      [buttonType == 'warn', 'uni-button-type-warn_text'],
+      [plain && loading, 'uni-button-text-plain'],
+      [size == 'mini', 'uni-button-text-size-mini'],
+      [size == 'default', 'uni-button-text-size-default']
+    )"
     :hover-class="disabled ? 'none' : hoverClasses"
     :hover-start-time="hoverStartTime"
     :hover-stay-time="hoverStayTime"
@@ -76,7 +72,7 @@
 </template>
 
 <script lang="uts" setup>
-  import { FORM_KEY } from '../common.uts'
+  import { FORM_KEY, classes } from '../common.uts'
   import { UniButtonElement } from './global.uts'
   import { FormContext } from '../types.uts'
 
@@ -172,6 +168,22 @@
         "harmony": {
            "unixVaporVer": "5.0"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -189,6 +201,22 @@
         "harmony": {
            "unixVaporVer": "5.21"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -205,6 +233,22 @@
          },
         "harmony": {
            "unixVaporVer": "5.0"
+         }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
          }
        }
      }
@@ -357,14 +401,14 @@
 		filterProperties: false
 	})
 
-  const loadingTextStyle = computed(() : Map<string, any> => {
+  const loadingTextStyle = computed(() => {
     if (props.loadingTextClass == null) {
       return textStyle
     }
-    const style = new Map<string, any>()
+    const style = {}
     textStyle.forEach((value, key) => {
       if (key != 'color') {
-        style.set(key, value)
+        style[key] = value
       }
     })
     return style

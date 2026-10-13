@@ -13,9 +13,6 @@ import android.os.Looper
 import android.view.View
 import android.view.animation.LinearInterpolator
 import androidx.annotation.DrawableRes
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.tencent.tencentmap.mapsdk.maps.MapView
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptor
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory
@@ -23,6 +20,7 @@ import com.tencent.tencentmap.mapsdk.maps.model.LatLng
 import com.tencent.tencentmap.mapsdk.maps.model.Marker
 import com.tencent.tencentmap.mapsdk.maps.model.MarkerOptions
 import com.tencent.tencentmap.mapsdk.vector.utils.animation.MarkerTranslateAnimator
+import uts.sdk.modules.uniMapTencent.FrescoImageLoader
 import uts.sdk.modules.uniMapTencent.ICallBack
 
 
@@ -236,31 +234,20 @@ class TencentMarker(val markerModel: MarkerModel, val mapView: MapView) : IUniMa
 
     private var errorBitmap: Bitmap? = null
     private fun createBitmapDescriptor(iconPath: String, width: Int?, height: Int?, completeCallback: ICallBack) {
-        val requestBuilder = Glide.with(mapView.context)
-            .asBitmap()
-            .load(iconPath)
-        val target = object : CustomTarget<Bitmap>() {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                completeCallback.callback(BitmapDescriptorFactory.fromBitmap(resource))
-            }
-
-            override fun onLoadCleared(placeholder: Drawable?) {
-                completeCallback.callback(null)
-            }
-
-            override fun onLoadFailed(errorDrawable: Drawable?) {
+        FrescoImageLoader.loadBitmap(
+            mapView.context,
+            iconPath,
+            width,
+            height,
+            { bitmap ->
+                completeCallback.callback(BitmapDescriptorFactory.fromBitmap(bitmap))
+            },
+            {
                 val drawableId = mapView.context.resources.getIdentifier("uni_app_map_marker_ic", "drawable", mapView.context.packageName)
                 errorBitmap = getBitmapFromDrawable(drawableId, width, height)
                 completeCallback.callback(BitmapDescriptorFactory.fromBitmap(errorBitmap))
             }
-        }
-
-        if (width == null || height == null) {
-            requestBuilder.into(target)
-        } else {
-            requestBuilder.override(width, height)
-                .into(target)
-        }
+        )
     }
 
     private fun getBitmapFromDrawable(@DrawableRes drawableRes: Int, width: Int?, height: Int?): Bitmap {

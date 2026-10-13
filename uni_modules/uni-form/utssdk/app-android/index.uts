@@ -1428,10 +1428,18 @@ export class NativeInputView implements UniAndroidKeyboardClient {
 	private syncInputSingleLineState() {
 		if (this.editText == null) return
 
+		const selectionStart = this.editText!.getSelectionStart()
+		const selectionEnd = this.editText!.getSelectionEnd()
 		this.editText!.setSingleLine(true)
 		this.editText!.setMaxLines(1)
 		this.editText!.setHorizontallyScrolling(true)
 		this.applyPasswordTransformationIfNeeded()
+		if (selectionStart >= 0 && selectionEnd >= 0) {
+			const length = this.editText!.getText()?.length ?? 0
+			const start = Math.min(Math.max(0, selectionStart), length).toInt()
+			const end = Math.min(Math.max(0, selectionEnd), length).toInt()
+			this.editText!.setSelection(start, end)
+		}
 		this.syncInputTextScrollIfNeeded()
 	}
 
@@ -2462,6 +2470,7 @@ export class NativeInputView implements UniAndroidKeyboardClient {
 		}
 		this.rootView = null
 		this.editText = null
+		UTSAndroid.destroyInstance(this)
 	}
 }
 
@@ -3341,6 +3350,7 @@ export class NativeTextareaView implements UniAndroidKeyboardClient {
 		}
 		this.rootView = null
 		this.editText = null
+		UTSAndroid.destroyInstance(this)
 	}
 
 	private scheduleApplySelectionRequest() {

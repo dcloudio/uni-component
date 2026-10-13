@@ -1,16 +1,12 @@
 package uts.sdk.modules.uniMapTencent.ground
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.tencent.tencentmap.mapsdk.maps.TencentMap
 import com.tencent.tencentmap.mapsdk.maps.model.BitmapDescriptorFactory
 import com.tencent.tencentmap.mapsdk.maps.model.GroundOverlay
 import com.tencent.tencentmap.mapsdk.maps.model.GroundOverlayOptions
 import uts.sdk.modules.uniMapTencent.ICallBack
+import uts.sdk.modules.uniMapTencent.FrescoImageLoader
 
 class GroundManager(private val context: Context, val map: TencentMap) {
     private var mGroundCaches = mutableMapOf<String, GroundOverlay>()
@@ -85,26 +81,25 @@ class GroundManager(private val context: Context, val map: TencentMap) {
                 groundInstance.bitmap(descriptor)
                 completeCallback?.callback(null)
             } else {
-                //网络图片地址
-                Glide.with(context)
-                    .asBitmap()
-                    .load(ground.src)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            groundInstance.bitmap(BitmapDescriptorFactory.fromBitmap(resource))
-                            completeCallback?.callback(null)
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            groundInstance.bitmap(null)
-                            iCallBack.callback(
-                                mapOf(
-                                    "type" to "fail",
-                                    "errMsg" to "network image loading failed"
-                                )
+                FrescoImageLoader.loadBitmap(
+                    context,
+                    ground.src,
+                    null,
+                    null,
+                    { bitmap ->
+                        groundInstance.bitmap(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        completeCallback?.callback(null)
+                    },
+                    {
+                        groundInstance.bitmap(null)
+                        iCallBack.callback(
+                            mapOf(
+                                "type" to "fail",
+                                "errMsg" to "network image loading failed"
                             )
-                        }
-                    })
+                        )
+                    }
+                )
             }
         } else if (groundInstance is GroundOverlay) {
             groundInstance.setVisibility(ground.visible)
@@ -121,26 +116,25 @@ class GroundManager(private val context: Context, val map: TencentMap) {
                 groundInstance.setBitmap(descriptor)
                 completeCallback?.callback(null)
             } else {
-                //网络图片地址
-                Glide.with(context)
-                    .asBitmap()
-                    .load(ground.src)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                            groundInstance.setBitmap(BitmapDescriptorFactory.fromBitmap(resource))
-                            completeCallback?.callback(null)
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            groundInstance.setBitmap(null)
-                            iCallBack.callback(
-                                mapOf(
-                                    "type" to "fail",
-                                    "errMsg" to "network image loading failed"
-                                )
+                FrescoImageLoader.loadBitmap(
+                    context,
+                    ground.src,
+                    null,
+                    null,
+                    { bitmap ->
+                        groundInstance.setBitmap(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        completeCallback?.callback(null)
+                    },
+                    {
+                        groundInstance.setBitmap(null)
+                        iCallBack.callback(
+                            mapOf(
+                                "type" to "fail",
+                                "errMsg" to "network image loading failed"
                             )
-                        }
-                    })
+                        )
+                    }
+                )
             }
         }
     }

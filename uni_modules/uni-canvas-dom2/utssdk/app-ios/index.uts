@@ -281,18 +281,83 @@ export class UniCanvasContext implements CanvasContext {
 
 export const createCanvasContextAsync : CreateCanvasContextAsync =
   function (options : CreateCanvasContextAsyncOptions) {
-    const element = uni.getElementById(options.id)
-    if (element != null && UTSiOS.instanceof(element, UniCanvasElementImpl.self)) {
+    let page : UniPage | null = options.component?.$page ?? null
+    let renderChangeId : number | null = null
+    let finished = false
+
+    const removeRenderChangeListener = () => {
+      if (renderChangeId != null && page != null) {
+        page!.offRenderChange(renderChangeId!)
+        renderChangeId = null
+      }
+    }
+
+    const fail = () => {
+      if (finished) {
+        return
+      }
+      finished = true
+      removeRenderChangeListener()
+      const uniError = new UniError('uni-createCanvasContextAsync', -1, 'canvas id invalid.')
+      options.fail?.(uniError)
+      options.complete?.()
+    }
+
+    const resolve = (element : UniElement | null) : boolean => {
+      if (finished) {
+        return true
+      }
+      if (element == null) {
+        return false
+      }
+      if (!UTSiOS.instanceof(element, UniCanvasElementImpl.self)) {
+        fail()
+        return true
+      }
+
+      finished = true
+      removeRenderChangeListener()
       const canvasElement = element as UniCanvasElementImpl
       canvasElement.onViewReadyOnce(() => {
         options.success?.(new UniCanvasContext(canvasElement))
         options.complete?.()
       })
-    } else {
-      const uniError = new UniError('uni-createCanvasContextAsync', -1, 'canvas id invalid.')
-      options.fail?.(uniError)
-      options.complete?.()
+      return true
     }
+
+    if (resolve(uni.getElementById(options.id))) {
+      return
+    }
+
+    if (page == null) {
+      const pages = getCurrentPages()
+      if (pages.length > 0) {
+        page = pages[pages.length - 1]
+      }
+    }
+    if (page == null) {
+      fail()
+      return
+    }
+
+    if (resolve(page!.getElementById(options.id))) {
+      return
+    }
+
+    renderChangeId = page!.onRenderChange(() => {
+      removeRenderChangeListener()
+      if (!resolve(page!.getElementById(options.id))) {
+        fail()
+      }
+    })
+
+    if (renderChangeId == null || renderChangeId!.intValue < 0) {
+      fail()
+      return
+    }
+
+    // 注册监听后再次查询，避免元素在查询与监听之间完成创建。
+    resolve(page!.getElementById(options.id))
   }
 
 export {

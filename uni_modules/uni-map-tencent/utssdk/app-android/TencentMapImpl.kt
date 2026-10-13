@@ -171,8 +171,8 @@ class TencentMapImpl : IInternalMap, LocationSource, TencentLocationListener {
             override fun onMapStable() {
             }
 
-//            override fun onMapStableBy(p0: CameraPosition.Trigger?) {
-//            }
+            override fun onMapStableBy(p0: CameraPosition.Trigger?) {
+            }
         })
 
         mapView?.map?.setOnMapClickListener {

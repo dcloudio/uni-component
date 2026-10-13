@@ -3,7 +3,7 @@ package uts.sdk.modules.uniMapTencent.control
 import android.graphics.BitmapFactory
 import android.widget.FrameLayout
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import uts.sdk.modules.uniMapTencent.FrescoImageLoader
 import uts.sdk.modules.uniMapTencent.ICallBack
 
 class ControlView(control: Control, private val frameLayout: FrameLayout, private val callback: ICallBack) {
@@ -34,15 +34,18 @@ class ControlView(control: Control, private val frameLayout: FrameLayout, privat
             val path = control.iconPath.replace("file:///android_asset/", "")
             try {
                 val bitmap = BitmapFactory.decodeStream(frameLayout.context.assets.open(path))
-                Glide.with(frameLayout.context)
-                    .load(bitmap)
-                    .into(imageView)
+                imageView.setImageBitmap(bitmap)
             } catch (e: Exception) {
             }
         } else {
-            Glide.with(frameLayout.context)
-                .load(control.iconPath)
-                .into(imageView)
+            FrescoImageLoader.loadBitmap(
+                frameLayout.context,
+                control.iconPath,
+                null,
+                null,
+                { bitmap -> imageView.setImageBitmap(bitmap) },
+                {}
+            )
         }
     }
 

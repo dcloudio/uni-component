@@ -44,9 +44,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -114,9 +114,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -183,9 +183,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -252,9 +252,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -321,9 +321,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -390,9 +390,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -459,9 +459,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -528,9 +528,9 @@ export interface CanvasContext {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",
@@ -603,9 +603,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -672,9 +672,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -741,9 +741,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -810,9 +810,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -879,9 +879,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -948,9 +948,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1015,9 +1015,9 @@ export interface CanvasContext extends JSExport {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1086,9 +1086,9 @@ export type CreateCanvasContextAsyncOptions = {
     *
 },
     *    "alipay": {
-    *      "hostVer": "x",
-    *      "uniVer": "x",
-    *      "unixVer": "x"
+    *      "hostVer": "√",
+    *      "uniVer": "√",
+    *      "unixVer": "5.31"
     *
 },
     *    "baidu": {
@@ -1158,9 +1158,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1222,9 +1222,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1286,9 +1286,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1350,9 +1350,9 @@ export type CreateCanvasContextAsyncOptions = {
    *      "unixVer": "4.41"
    *    },
    *    "alipay": {
-   *      "hostVer": "x",
-   *      "uniVer": "x",
-   *      "unixVer": "x"
+   *      "hostVer": "√",
+   *      "uniVer": "√",
+   *      "unixVer": "5.31"
    *    },
    *    "baidu": {
    *      "hostVer": "x",
@@ -1426,9 +1426,9 @@ export interface Uni {
      *      "unixVer": "4.41"
      *    },
      *    "alipay": {
-     *      "hostVer": "x",
-     *      "uniVer": "x",
-     *      "unixVer": "x"
+     *      "hostVer": "√",
+     *      "uniVer": "√",
+     *      "unixVer": "5.31"
      *    },
      *    "baidu": {
      *      "hostVer": "x",

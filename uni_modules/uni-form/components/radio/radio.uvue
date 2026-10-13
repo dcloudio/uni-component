@@ -2,7 +2,14 @@
   <text
     v-if="!hasDefaultSlot"
     class="uni-radio-view uni-radio-icon"
-    :class="disabled ? 'uni-radio-disabled' : [{ 'uni-radio-active': isChecked }, isChecked ? radioActiveClass : radioClass, iconClass]"
+    :class="classes(
+      [disabled, 'uni-radio-disabled'],
+      [!disabled && isChecked, 'uni-radio-active'],
+      [!disabled && isChecked, radioActiveClass],
+      [!disabled && !isChecked, radioClass],
+      [!disabled, iconClass]
+    )"
+    :style="activeStyle"
     @click.stop="handleTap"
   >
     {{ isChecked ? fontUnicode : '' }}
@@ -10,7 +17,14 @@
   <view v-else class="uni-radio" @click.stop="handleTap">
     <text
       class="uni-radio-view uni-radio-icon"
-      :class="disabled ? 'uni-radio-disabled' : [{ 'uni-radio-active': isChecked }, isChecked ? radioActiveClass : radioClass, iconClass]"
+      :class="classes(
+        [disabled, 'uni-radio-disabled'],
+        [!disabled && isChecked, 'uni-radio-active'],
+        [!disabled && isChecked, radioActiveClass],
+        [!disabled && !isChecked, radioClass],
+        [!disabled, iconClass]
+      )"
+      :style="activeStyle"
     >{{ isChecked ? fontUnicode : '' }}</text>
     <text v-if="isStringSlot">
       <slot></slot>
@@ -20,7 +34,7 @@
 </template>
 
 <script lang="uts" setup>
-  import { LABEL_KEY, RADIO_GROUP_KEY, buildPointerEvent, toStringOrEmpty } from '../common.uts'
+  import { LABEL_KEY, RADIO_GROUP_KEY, buildPointerEvent, classes, toStringOrEmpty } from '../common.uts'
   import { UniRadioElement } from './global.uts'
   import { LabelContext } from '../types.uts'
 
@@ -31,6 +45,23 @@
   }
 
   interface RadioProps {
+    /**
+     * radio 的颜色，同css的color
+     * @uniPlatform {
+       "app": {
+         "ios": {
+           "unixVaporVer": "5.33"
+         },
+         "android": {
+           "unixVaporVer": "5.33"
+         },
+         "harmony": {
+           "unixVaporVer": "5.33"
+         }
+       }
+     }
+     */
+    color?: string;
     /**
      * 是否禁用
      * @uniPlatform {
@@ -95,6 +126,22 @@
         "harmony": {
            "unixVaporVer": "5.0"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -111,6 +158,22 @@
          },
         "harmony": {
            "unixVaporVer": "5.0"
+         }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
          }
        }
      }
@@ -129,6 +192,22 @@
         "harmony": {
            "unixVaporVer": "5.0"
          }
+       },
+       "web": {
+         "uniVer": "x",
+         "unixVer": "x"
+       },
+       "mp": {
+         "weixin": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         },
+         "alipay": {
+           "hostVer": "x",
+           "uniVer": "x",
+           "unixVer": "x"
+         }
        }
      }
      */
@@ -136,6 +215,7 @@
   }
 
   const props = withDefaults(defineProps<RadioProps>(), {
+    color: '',
     disabled: false,
     checked: false,
     value: '',
@@ -163,6 +243,16 @@
   const proxy = getCurrentInstance()?.proxy
 
   const isChecked = ref(false)
+
+  const activeStyle = computed(() => {
+    if (isChecked.value && !props.disabled && props.color) {
+      return {
+        'background-color': props.color,
+        'border-color': props.color
+      }
+    }
+    return {}
+  })
   const groupCtx = inject<InjectedRadioGroupContext | null>(RADIO_GROUP_KEY, null)
   const labelCtx = inject<LabelContext | null>(LABEL_KEY, null)
 
@@ -282,5 +372,24 @@
     font-size: 16px;
     font-family: uni-icon;
     color: #ffffff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .uni-radio-view,
+    .uni-radio-disabled {
+      background-color: #2c2c2c;
+      border-color: #656565;
+    }
+
+    .uni-radio-disabled {
+      border-color: #373737;
+      color: #656565;
+    }
+
+    .uni-radio-active {
+      background-color: #007AFF;
+      border-color: #007AFF;
+      color: #ffffff;
+    }
   }
 </style>

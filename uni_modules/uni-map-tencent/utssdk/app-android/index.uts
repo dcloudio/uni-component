@@ -338,11 +338,12 @@ export class TencentMap {
 
 
 	start() {
-		// const context = UTSAndroid.getUniActivity()!!
-		TencentMapInitializer.setAgreePrivacy(true);
+		const context = this.$element.getAndroidActivity()!!
+		const applicationContext = context.applicationContext;
+		TencentMapInitializer.setAgreePrivacy(applicationContext, true);
+		TencentMapInitializer.start(applicationContext);
 		TencentLocationManager.setUserAgreePrivacy(true);
-		// TencentMapInitializer.start(context);
-		let mapView = this.internalMap.getMap(this.$element.getAndroidActivity()!!);
+		let mapView = this.internalMap.getMap(context);
 		this.$element.bindAndroidView(mapView);
 		this.internalMap.onStart();
 		this.internalMap.onResume();
@@ -368,6 +369,7 @@ export class TencentMap {
 		this.internalMap.onStop();
 		this.internalMap.onDestroy();
 		UTSAndroid.offActivityCallback(this.acvitiyLifeCycleCallback!)
+		UTSAndroid.destroyInstance(this)
 	}
 
 	setCenter(latitude : number, longitude : number, animate: boolean= true) {
