@@ -12,13 +12,6 @@ uts组件插件基本都会依赖三方SDK，需要使用自定义基座才能�
 关闭manifest.json后重新打开即可。
 
 
-## uni-animation-view
-动画组件 animation-view
-
-
-## uni-video
-视频播放组件 video-view，暂时仅支持Android平台的 uni-app x 项目
-
 ### 仓库分支与 HBuilder 版本对应关系
 
 - master 对应 [HBuilder](https://www.dcloud.io/hbuilderx.html) 正式版
